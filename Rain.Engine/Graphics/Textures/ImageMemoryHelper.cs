@@ -5,13 +5,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rain.Engine.Graphics.Textures;
 
-public static class ImageMemoryHelper
+static internal class ImageMemoryHelper
 {
-	internal static IMemoryOwner<TPixel> AllocateContiguousMemory<TPixel>(int size)
+	static internal IMemoryOwner<TPixel> AllocateContiguousMemory<TPixel>(int size)
 		where TPixel : unmanaged, IPixel<TPixel>
 		=> Configuration.Default.MemoryAllocator.Allocate<TPixel>(size);
 	
-	internal static Memory<TPixel> CopyImageToMemory<TPixel>(this Image<TPixel> image, IMemoryOwner<TPixel> owner)
+	static internal Memory<TPixel> CopyImageToMemory<TPixel>(this Image<TPixel> image, IMemoryOwner<TPixel> owner)
 		where TPixel : unmanaged, IPixel<TPixel>
 	{
 		if (image.DangerousTryGetSinglePixelMemory(out var memory))
@@ -26,7 +26,7 @@ public static class ImageMemoryHelper
 		throw new Exception($"Could not copy image (TPixels: {imageSize}) to memory (Length: {memorySize})");
 	}
 
-	internal static Span<byte> Bytes<TPixel>(this Image<TPixel> image)
+	static internal Span<byte> Bytes<TPixel>(this Image<TPixel> image)
 		where TPixel : unmanaged, IPixel<TPixel>
 	{
 		var bytes = new Span<byte>(new byte[4 * image.Width * image.Height]);

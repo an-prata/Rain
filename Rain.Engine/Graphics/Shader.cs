@@ -8,7 +8,7 @@ class Shader
 
 	private readonly Dictionary<string, int> uniformLocations;
 
-	public Shader(ShaderComponent[] shaderComponents)
+	public Shader(List<ShaderComponent> shaderComponents)
 	{
 		Handle = GL.CreateProgram();
 
