@@ -1,48 +1,18 @@
-using System.Diagnostics;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Windowing;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
+using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL;
 
-namespace Rain.Game;
-
-class Program
-{
-	static void Main()
-	{
-		using var game = new Game("game", new(1280, 720));
-		game.Run(); // starts rendering cycle.
-	}
-}
+namespace Rain.Engine;
 
 public class Game : GameWindow
 {
-	private int vertexBuffer;
-
-	private int shaderProgram;
-
-	private int vertexArray;
-
-	private int indexBuffer;
-
-	private Stopwatch stopwatch;
-	
-	float[] vertices = {
-		-0.5f,	0.5f,	1.0f,	1.0f,	0.0f, 	1.0f,	1.0f,
-		0.5f,	0.5f,	1.0f,	1.0f, 	0.0f,	0.0f,	1.0f,
-		0.5f,	-0.5f,	1.0f,	0.0f,	1.0f,	0.0f,	1.0f,
-		-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f
-	};
-
-	uint[] indices = {
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	public Game(string title, Vector2i size) : base(GameWindowSettings.Default, new NativeWindowSettings 
+	public Game(string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
 	{
 		Title = title,
-		Size = size,
+		Size = new(width, height),
 		WindowBorder = WindowBorder.Fixed,
 		StartVisible = false,
 		StartFocused = true,
@@ -51,8 +21,7 @@ public class Game : GameWindow
 		APIVersion = new Version(3, 3)
 	})
 	{
-		CenterWindow(new Vector2i(1280, 720));
-		stopwatch = new();
+		CenterWindow(new(width, height));
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -65,7 +34,7 @@ public class Game : GameWindow
 	{
 		IsVisible = true;
 		// Set the color to clear to. Needs to be set before calling GL.Clear().
-		GL.ClearColor(new Color4(0.4f, 0.1f, 0.6f, 1.0f)); 
+		GL.ClearColor(); 
 		base.OnLoad();
 
 		vertexBuffer = GL.GenBuffer(); // OpenGL creates a vertex buffer and then returns a handle to it.
