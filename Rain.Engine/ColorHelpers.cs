@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 using OpenTK.Mathematics;
 
+=======
+>>>>>>> ff5192dbc0ca0f91c892cdfa8c0e64706d0bb738
 namespace Rain.Engine;
 
 static class ColorHelpers
 {
+<<<<<<< HEAD
 	public static Color4 ColorToColor4(Color<float> color) 
 		=> new(color.R, color.G, color.B, color.A);
 
@@ -64,4 +68,7 @@ static class ColorHelpers
 
 		return new(r, g, b, a);
 	}
+=======
+
+>>>>>>> ff5192dbc0ca0f91c892cdfa8c0e64706d0bb738
 }
