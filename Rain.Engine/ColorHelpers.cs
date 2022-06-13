@@ -2,7 +2,7 @@ using OpenTK.Mathematics;
 
 namespace Rain.Engine;
 
-static class ColorHelpers
+public static class ColorHelpers
 {
 	public static Color4 ColorToColor4(Color<float> color) 
 		=> new(color.R, color.G, color.B, color.A);

@@ -1,10 +1,12 @@
+using System.Numerics;
+
 namespace Rain.Engine;
 
 /// <summary>
 /// Stores an RGBA color, for floating point types all values should be between 0 and 1, for integer types values are just
 /// between whatever the minimum and maximum values of that given type are.
 /// </summary>
-public struct Color<T> where T : unmanaged 
+public struct Color<T> where T : INumber<T> 
 {
 	/// <summary> The color's red component. </summary>
 	/// <value> 
@@ -40,20 +42,6 @@ public struct Color<T> where T : unmanaged
 
 	/// <summary> The unmanaged type used to store color values. </summary>
 	public Type Type { get => typeof(T); } 
-
-	/// <summary>
-	/// Makes a new <c>Color</c> instance with red, green, and blue components, alpha is initialized to <c>T</c>'s default.
-	/// </summary>
-	/// <param name="r"> The color's red component. </param>
-	/// <param name="g"> The color's green component. </param>
-	/// <param name="b"> The color's blue component. </param>
-	public Color(T r, T g, T b)
-	{
-		R = r;
-		G = g;
-		B = b;
-		A = default;
-	}
 
 	/// <summary>
 	/// Makes a new <c>Color</c> instance with red, green, blue and alpha components.
