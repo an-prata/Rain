@@ -7,9 +7,30 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Rain.Engine;
 
-public class Game : GameWindow
+public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 {
-	public Game(string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
+	private int vertexBuffer;
+
+	private int shaderProgram;
+
+	private int vertexArray;
+
+	private int indexBuffer;
+	
+	float[] vertices = {
+		-0.5f,	0.5f,	1.0f,	1.0f,	0.0f, 	1.0f,	1.0f,
+		0.5f,	0.5f,	1.0f,	1.0f, 	0.0f,	0.0f,	1.0f,
+		0.5f,	-0.5f,	1.0f,	0.0f,	1.0f,	0.0f,	1.0f,
+		-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f
+	};
+
+	uint[] indices = {
+		0, 1, 2,
+		0, 2, 3
+	};
+
+
+	public GameWindow(string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
 	{
 		Title = title,
 		Size = new(width, height),
@@ -33,8 +54,8 @@ public class Game : GameWindow
 	protected override void OnLoad()
 	{
 		IsVisible = true;
-		// Set the color to clear to. Needs to be set before calling GL.Clear().
-		GL.ClearColor(); 
+		GL.ClearColor(new Color<byte>(255, 0, 255, 255).ToColor4()); 
+
 		base.OnLoad();
 
 		vertexBuffer = GL.GenBuffer(); // OpenGL creates a vertex buffer and then returns a handle to it.
@@ -123,8 +144,6 @@ public class Game : GameWindow
 
 	protected override void OnRenderFrame(FrameEventArgs args)
 	{
-		stopwatch.Start();
-
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 
 		Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
@@ -133,7 +152,6 @@ public class Game : GameWindow
 
 
 		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
-		// Sends data to graphics card through buffer.
 		GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
 		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
 
@@ -156,8 +174,5 @@ public class Game : GameWindow
 		Context.SwapBuffers();
 
 		base.OnRenderFrame(args);
-		stopwatch.Stop();
-		Console.WriteLine(stopwatch.ElapsedMilliseconds);
-		stopwatch.Reset();
 	}
 }
