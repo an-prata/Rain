@@ -2,8 +2,6 @@ using System.Numerics;
 
 namespace Rain.Engine;
 
-// Thank the C# and dotnet overlords for their gracious implementation of INumber<>, it will save me much work. :)
-
 /// <summary> Represents the location of a point in 3D space. </summary>
 public struct Vertex<T> where T : INumber<T>
 {
