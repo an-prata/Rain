@@ -8,6 +8,9 @@ namespace Rain.Engine;
 /// </summary>
 public struct Color<T> where T : INumber<T> 
 {
+	/// <summary> The length of any array outputed by <c>Color<T>.Array</c>. </summary>
+	public const int SizeInT = 4;
+
 	/// <summary> The color's red component. </summary>
 	/// <value> 
 	/// A value between 0 and 1 if <c>T</c> is a floating point type and if <c>T</c> is an integer type then a value between 
@@ -38,7 +41,7 @@ public struct Color<T> where T : INumber<T>
 
 	/// <summary> An array representing the color. </summary>
 	/// <value> A <c>T[]</c> comprised of the <c>R</c>, <c>G</c>, <c>B</c>, and <c>A</c> values in that order. </value>
-	public T[] Array { get => new T[] {R, G, B, A}; }
+	public T[] Array { get => new T[4] {R, G, B, A}; }
 
 	/// <summary> The unmanaged type used to store color values. </summary>
 	public Type Type { get => typeof(T); } 

@@ -63,4 +63,19 @@ public interface IModel<T> where T : INumber<T>
 			return greatest - least;
 		}
 	}
+
+	/// <summary> An array representing the vertex data of the model. </summary>
+	public T[] Array
+	{
+		get
+		{
+			T[] vertexData = new T[Points.Length * Point<T>.SizeInT];
+
+			for (var i = 0; i < Points.Length; i += Point<T>.SizeInT)
+				for (var y = 0; y < Point<T>.SizeInT; y ++)
+					vertexData[i + y] = Points[i].Array[y];
+
+			return vertexData;
+		}
+	}
 }
