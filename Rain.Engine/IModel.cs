@@ -10,6 +10,9 @@ public interface IModel<T> where T : INumber<T>
 	/// <summary> An array of points representing the object. </summary>
 	public Point<T>[] Points { get; }
 
+	/// <summary> An array of indices in groups of three, correlating to triangles to draw the model. </summary>
+	public uint[] Elements { get; }
+
 	/// <summary> The length of the model along the X axis. </summary>
 	public INumber<T> Width
 	{ 

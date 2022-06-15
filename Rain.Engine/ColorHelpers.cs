@@ -47,10 +47,10 @@ public static class ColorHelpers
 
 	public static Color4 ColorToColor4(Color<int> color)
 	{
-		float r = (uint)(Math.Abs(int.MinValue) + color.R) / uint.MaxValue;
-		float g = (uint)(Math.Abs(int.MinValue) + color.G) / uint.MaxValue;
-		float b = (uint)(Math.Abs(int.MinValue) + color.B) / uint.MaxValue;
-		float a = (uint)(Math.Abs(int.MinValue) + color.A) / uint.MaxValue;
+		float r = color.R / uint.MaxValue;
+		float g = color.G / uint.MaxValue;
+		float b = color.B / uint.MaxValue;
+		float a = color.A / uint.MaxValue;
 
 		return new(r, g, b, a);
 	}

@@ -11,6 +11,6 @@ out vec4 fragmentColor; // specify a color output to the fragment shader
 
 void main()
 {
-    gl_Position = vec4(vertexPosition, 1.0) * model * view * projection; // see how we directly give a vec3 to vec4's constructor
-    fragmentColor = color; // set the output variable to a dark-red color
+    gl_Position = vec4(vertexPosition, 1.0); 
+    fragmentColor = color;
 }

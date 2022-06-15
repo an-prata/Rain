@@ -30,4 +30,10 @@ public struct Point<T> where T : INumber<T>
 			return vertexData;
 		}
 	}
+
+	public Point(Vertex<T> vertex, Color<T> color)
+	{
+		Vertex = vertex;
+		Color = color;
+	}
 }

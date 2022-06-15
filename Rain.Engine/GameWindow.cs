@@ -1,4 +1,3 @@
-/*
 using System.Numerics;
 using OpenTK.Windowing;
 using OpenTK.Windowing.Common;
@@ -11,9 +10,17 @@ namespace Rain.Engine;
 
 public class GameWindow<T> : GameWindow where T : INumber<T>
 {
-	public Scene<T>? ActiveScene { get; set; }
+	public Scene<T> ActiveScene { get; set; }
 
-	public GameWindow(string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
+	private int vertexBuffer;
+
+	private int indexBuffer;
+
+	private int vertexArray;
+
+	private int shaderProgram;
+
+	public GameWindow(Scene<T> scene, string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
 	{
 		Title = title,
 		Size = new(width, height),
@@ -26,6 +33,7 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 	})
 	{
 		CenterWindow(new(width, height));
+		ActiveScene = scene;
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -37,19 +45,29 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 	protected override void OnLoad()
 	{
 		IsVisible = true;
-		GL.ClearColor(new Color<byte>(255, 0, 255, 255).ToColor4()); 
+		GL.ClearColor(new Color<double>(0.5, 0.5, 0.5, 1.0).ToColor4()); 
 
 		base.OnLoad();
 
 		vertexBuffer = GL.GenBuffer(); // OpenGL creates a vertex buffer and then returns a handle to it.
 		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
+
 		// Sends data to graphics card through buffer.
-		GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+		GL.BufferData(BufferTarget.ArrayBuffer,
+			ActiveScene.VertexMemorySpan.Length * sizeof(float),
+			ActiveScene.GetVertexPointer(),
+			BufferUsageHint.DynamicDraw);
+
 		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
 
 		indexBuffer = GL.GenBuffer();
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-		GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
+
+		GL.BufferData(BufferTarget.ElementArrayBuffer,
+			ActiveScene.ElementMemorySpan.Length * sizeof(uint),
+			ActiveScene.GetElementPointer(),
+			BufferUsageHint.DynamicDraw);
+
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0); // Binding to 0 unbinds.
 
 		vertexArray = GL.GenVertexArray();
@@ -135,11 +153,11 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 
 
 		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
-		GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+		GL.BufferData(BufferTarget.ArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(float), ActiveScene.GetVertexPointer(), BufferUsageHint.DynamicDraw);
 		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
 
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-		GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
+		GL.BufferData(BufferTarget.ElementArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(uint), ActiveScene.GetElementPointer(), BufferUsageHint.DynamicDraw);
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0); // Binding to 0 unbinds.
 
 		GL.BindVertexArray(vertexArray);
@@ -148,7 +166,7 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 		GL.UseProgram(shaderProgram);
 		GL.BindVertexArray(vertexArray);
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-		GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+		GL.DrawElements(PrimitiveType.Triangles, ActiveScene.ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
 
 		GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "model"), true, ref model);
 		GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "view"), true, ref view);
@@ -159,4 +177,3 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 		base.OnRenderFrame(args);
 	}
 }
-*/
