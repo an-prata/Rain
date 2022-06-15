@@ -1,3 +1,5 @@
+/*
+using System.Numerics;
 using OpenTK.Windowing;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -7,28 +9,9 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Rain.Engine;
 
-public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
+public class GameWindow<T> : GameWindow where T : INumber<T>
 {
-	private int vertexBuffer;
-
-	private int shaderProgram;
-
-	private int vertexArray;
-
-	private int indexBuffer;
-	
-	float[] vertices = {
-		-0.5f,	0.5f,	1.0f,	1.0f,	0.0f, 	1.0f,	1.0f,
-		0.5f,	0.5f,	1.0f,	1.0f, 	0.0f,	0.0f,	1.0f,
-		0.5f,	-0.5f,	1.0f,	0.0f,	1.0f,	0.0f,	1.0f,
-		-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f
-	};
-
-	uint[] indices = {
-		0, 1, 2,
-		0, 2, 3
-	};
-
+	public Scene<T>? ActiveScene { get; set; }
 
 	public GameWindow(string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
 	{
@@ -176,3 +159,4 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		base.OnRenderFrame(args);
 	}
 }
+*/
