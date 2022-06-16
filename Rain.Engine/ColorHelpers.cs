@@ -14,53 +14,81 @@ public static class ColorHelpers
 		=> new((float)color.R, (float)color.G, (float)color.B, (float)color.A);
 
 	public static Color4 ColorToColor4(Color<byte> color)
-		=> new(color.R / byte.MaxValue, color.G / byte.MaxValue, color.B / byte.MaxValue, color.A / byte.MaxValue);
+	{
+		float r = (float)color.R / byte.MaxValue;
+		float g = (float)color.G / byte.MaxValue;
+		float b = (float)color.B / byte.MaxValue;
+		float a = (float)color.A / byte.MaxValue;
+
+		return new(r, g, b, a);
+	}
 
 	public static Color4 ColorToColor4(Color<ushort> color)
-		=> new(color.R / ushort.MaxValue, color.G / ushort.MaxValue, color.B / ushort.MaxValue, color.A / ushort.MaxValue);
+	{
+		float r = (float)color.R / ushort.MaxValue;
+		float g = (float)color.G / ushort.MaxValue;
+		float b = (float)color.B / ushort.MaxValue;
+		float a = (float)color.A / ushort.MaxValue;
+
+		return new(r, g, b, a);
+	}
 
 	public static Color4 ColorToColor4(Color<uint> color)
-		=> new(color.R / uint.MaxValue, color.G / uint.MaxValue, color.B / uint.MaxValue, color.A / uint.MaxValue);
+	{
+		float r = (float)color.R / uint.MaxValue;
+		float g = (float)color.G / uint.MaxValue;
+		float b = (float)color.B / uint.MaxValue;
+		float a = (float)color.A / uint.MaxValue;
+
+		return new(r, g, b, a);
+	}
 
 	public static Color4 ColorToColor4(Color<ulong> color)
-		=> new(color.R / ulong.MaxValue, color.G / ulong.MaxValue, color.B / ulong.MaxValue, color.A / ulong.MaxValue);
+	{
+		float r = (float)color.R / ulong.MaxValue;
+		float g = (float)color.G / ulong.MaxValue;
+		float b = (float)color.B / ulong.MaxValue;
+		float a = (float)color.A / ulong.MaxValue;
+
+		return new(r, g, b, a);
+	}
 
 	public static Color4 ColorToColor4(Color<sbyte> color)
 	{
-		float r = (byte)(Math.Abs(sbyte.MinValue) + color.R) / byte.MaxValue;
-		float g = (byte)(Math.Abs(sbyte.MinValue) + color.G) / byte.MaxValue;
-		float b = (byte)(Math.Abs(sbyte.MinValue) + color.B) / byte.MaxValue;
-		float a = (byte)(Math.Abs(sbyte.MinValue) + color.A) / byte.MaxValue;
+		float r = (float)color.R / sbyte.MaxValue;
+		float g = (float)color.G / sbyte.MaxValue;
+		float b = (float)color.B / sbyte.MaxValue;
+		float a = (float)color.A / sbyte.MaxValue;
 
 		return new(r, g, b, a);
 	}
 
 	public static Color4 ColorToColor4(Color<short> color)
 	{
-		float r = (ushort)(Math.Abs(short.MinValue) + color.R) / ushort.MaxValue;
-		float g = (ushort)(Math.Abs(short.MinValue) + color.G) / ushort.MaxValue;
-		float b = (ushort)(Math.Abs(short.MinValue) + color.B) / ushort.MaxValue;
-		float a = (ushort)(Math.Abs(short.MinValue) + color.A) / ushort.MaxValue;
+		float r = (float)color.R / short.MaxValue;
+		float g = (float)color.G / short.MaxValue;
+		float b = (float)color.B / short.MaxValue;
+		float a = (float)color.A / short.MaxValue;
 
 		return new(r, g, b, a);
 	}
 
 	public static Color4 ColorToColor4(Color<int> color)
 	{
-		float r = color.R / uint.MaxValue;
-		float g = color.G / uint.MaxValue;
-		float b = color.B / uint.MaxValue;
-		float a = color.A / uint.MaxValue;
+		float r = (float)color.R / int.MaxValue;
+		float g = (float)color.G / int.MaxValue;
+		float b = (float)color.B / int.MaxValue;
+		float a = (float)color.A / int.MaxValue;
 
 		return new(r, g, b, a);
 	}
 
 	public static Color4 ColorToColor4(Color<long> color)
 	{
-		float r = (ulong)(Math.Abs(long.MinValue) + color.R) / ulong.MaxValue;
-		float g = (ulong)(Math.Abs(long.MinValue) + color.G) / ulong.MaxValue;
-		float b = (ulong)(Math.Abs(long.MinValue) + color.B) / ulong.MaxValue;
-		float a = (ulong)(Math.Abs(long.MinValue) + color.A) / ulong.MaxValue;
+		float r = (float)color.R / ulong.MaxValue;
+		float g = (float)color.G / ulong.MaxValue;
+		float b = (float)color.B / ulong.MaxValue;
+		float a = (float)color.A / ulong.MaxValue;
 
 		return new(r, g, b, a);
 	}
