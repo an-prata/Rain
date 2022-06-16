@@ -20,6 +20,10 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 
 	private int shaderProgram;
 
+	private IntPtr elementPointer;
+
+	private IntPtr vertexPointer;
+
 	public GameWindow(Scene<T> scene, string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
 	{
 		Title = title,
@@ -49,13 +53,16 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 
 		base.OnLoad();
 
+		vertexPointer = ActiveScene.GetVertexPointer();
+		elementPointer = ActiveScene.GetElementPointer();
+
 		vertexBuffer = GL.GenBuffer(); // OpenGL creates a vertex buffer and then returns a handle to it.
 		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
 
 		// Sends data to graphics card through buffer.
 		GL.BufferData(BufferTarget.ArrayBuffer,
 			ActiveScene.VertexMemorySpan.Length * sizeof(float),
-			ActiveScene.GetVertexPointer(),
+			vertexPointer,
 			BufferUsageHint.DynamicDraw);
 
 		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
@@ -65,7 +72,7 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 
 		GL.BufferData(BufferTarget.ElementArrayBuffer,
 			ActiveScene.ElementMemorySpan.Length * sizeof(uint),
-			ActiveScene.GetElementPointer(),
+			elementPointer,
 			BufferUsageHint.DynamicDraw);
 
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0); // Binding to 0 unbinds.
@@ -153,11 +160,11 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 
 
 		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
-		GL.BufferData(BufferTarget.ArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(float), ActiveScene.GetVertexPointer(), BufferUsageHint.DynamicDraw);
+		GL.BufferData(BufferTarget.ArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(float), vertexPointer, BufferUsageHint.DynamicDraw);
 		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
 
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-		GL.BufferData(BufferTarget.ElementArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(uint), ActiveScene.GetElementPointer(), BufferUsageHint.DynamicDraw);
+		GL.BufferData(BufferTarget.ElementArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(uint), elementPointer, BufferUsageHint.DynamicDraw);
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0); // Binding to 0 unbinds.
 
 		GL.BindVertexArray(vertexArray);
