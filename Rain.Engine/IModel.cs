@@ -5,16 +5,16 @@ namespace Rain.Engine;
 public interface IModel<T> where T : INumber<T>
 {
 	/// <summary> The location of the IModel in 3D space. </summary>
-	public Vertex<T> Location { get; }
+	Vertex<T> Location { get; }
 
 	/// <summary> An array of points representing the object. </summary>
-	public Point<T>[] Points { get; }
+	Point<T>[] Points { get; }
 
 	/// <summary> An array of indices in groups of three, correlating to triangles to draw the model. </summary>
-	public uint[] Elements { get; }
+	uint[] Elements { get; }
 
 	/// <summary> The length of the model along the X axis. </summary>
-	public INumber<T> Width
+	INumber<T> Width
 	{ 
 		get
 		{
@@ -32,7 +32,7 @@ public interface IModel<T> where T : INumber<T>
 	}
 
 	/// <summary> The length of the model along the Y axis. </summary>
-	public INumber<T> Height
+	INumber<T> Height
 	{ 
 		get
 		{
@@ -50,7 +50,7 @@ public interface IModel<T> where T : INumber<T>
 	}
 
 	/// <summary> The length of the model along the Z axis. </summary>
-	public INumber<T> Length
+	INumber<T> Length
 	{ 
 		get
 		{
@@ -68,7 +68,7 @@ public interface IModel<T> where T : INumber<T>
 	}
 
 	/// <summary> An array representing the vertex data of the model. </summary>
-	public T[] Array
+	T[] Array
 	{
 		get
 		{

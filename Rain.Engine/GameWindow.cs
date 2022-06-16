@@ -49,7 +49,7 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 	protected override void OnLoad()
 	{
 		IsVisible = true;
-		GL.ClearColor(new Color<double>(0.5, 0.5, 0.5, 1.0).ToColor4()); 
+		GL.ClearColor(new Color<int>(int.MaxValue, 9000, 9000, int.MaxValue).ToColor4()); 
 
 		base.OnLoad();
 
