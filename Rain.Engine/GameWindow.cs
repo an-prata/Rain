@@ -88,10 +88,20 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		// normalize (false)
 		// size of vertex in bytes, (3 times element size)
 		// where to start in the array
-		GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 7 * sizeof(float), 0);
+		GL.VertexAttribPointer(0,
+						 Vertex.BufferSize,
+						 VertexAttribPointerType.Float,
+						 false,
+						 (Vertex.BufferSize + Color.BufferSize) * sizeof(float),
+						 0);
 		GL.EnableVertexAttribArray(0);
 
-		GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 7 * sizeof(float), 3 * sizeof(float));
+		GL.VertexAttribPointer(1,
+						 Color.BufferSize,
+						 VertexAttribPointerType.Float,
+						 false,
+						 (Vertex.BufferSize + Color.BufferSize) * sizeof(float),
+						 Vertex.BufferSize * sizeof(float));
 		GL.EnableVertexAttribArray(1);
 
 		GL.BindVertexArray(0);
@@ -154,13 +164,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	{
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 
-		Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
-		Matrix4 view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-		Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 1280f / 720f, 0.1f, 100.0f);
-
-
 		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
-		GL.BufferData(BufferTarget.ArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(float), vertexPointer, BufferUsageHint.DynamicDraw);
+		GL.BufferData(BufferTarget.ArrayBuffer, ActiveScene.VertexMemorySpan.Length * sizeof(float), vertexPointer, BufferUsageHint.DynamicDraw);
 		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
 
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
@@ -174,10 +179,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		GL.BindVertexArray(vertexArray);
 		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
 		GL.DrawElements(PrimitiveType.Triangles, ActiveScene.ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
-
-		GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "model"), true, ref model);
-		GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "view"), true, ref view);
-		GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, "projection"), true, ref projection);
 		
 		Context.SwapBuffers();
 
