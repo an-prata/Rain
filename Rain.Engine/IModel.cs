@@ -1,25 +1,23 @@
-using System.Numerics;
-
 namespace Rain.Engine;
 
-public interface IModel<T> where T : INumber<T>
+public interface IModel
 {
 	/// <summary> The location of the IModel in 3D space. </summary>
-	Vertex<T> Location { get; }
+	Vertex Location { get; }
 
 	/// <summary> An array of points representing the object. </summary>
-	Point<T>[] Points { get; }
+	Point[] Points { get; }
 
 	/// <summary> An array of indices in groups of three, correlating to triangles to draw the model. </summary>
 	uint[] Elements { get; }
 
 	/// <summary> The length of the model along the X axis. </summary>
-	INumber<T> Width
+	float Width
 	{ 
 		get
 		{
-			T greatest = Points[0].Vertex.X;
-			T least = Points[0].Vertex.X;
+			var greatest = Points[0].Vertex.X;
+			var least = Points[0].Vertex.X;
 
 			foreach (var point in Points)
 			{
@@ -32,12 +30,12 @@ public interface IModel<T> where T : INumber<T>
 	}
 
 	/// <summary> The length of the model along the Y axis. </summary>
-	INumber<T> Height
+	float Height
 	{ 
 		get
 		{
-			T greatest = Points[0].Vertex.Y;
-			T least = Points[0].Vertex.Y;
+			var greatest = Points[0].Vertex.Y;
+			var least = Points[0].Vertex.Y;
 
 			foreach (var point in Points)
 			{
@@ -50,12 +48,12 @@ public interface IModel<T> where T : INumber<T>
 	}
 
 	/// <summary> The length of the model along the Z axis. </summary>
-	INumber<T> Length
+	float Length
 	{ 
 		get
 		{
-			T greatest = Points[0].Vertex.Z;
-			T least = Points[0].Vertex.Z;
+			var greatest = Points[0].Vertex.Z;
+			var least = Points[0].Vertex.Z;
 
 			foreach (var point in Points)
 			{
@@ -68,17 +66,7 @@ public interface IModel<T> where T : INumber<T>
 	}
 
 	/// <summary> An array representing the vertex data of the model. </summary>
-	T[] Array
-	{
-		get
-		{
-			T[] vertexData = new T[Points.Length * Point<T>.SizeInT];
+	float[] Array { get; }
 
-			for (var i = 0; i < Points.Length; i += Point<T>.SizeInT)
-				for (var y = 0; y < Point<T>.SizeInT; y ++)
-					vertexData[i + y] = Points[i].Array[y];
-
-			return vertexData;
-		}
-	}
+	// TODO: Define and Implement transform functions usingg Matrices.
 }

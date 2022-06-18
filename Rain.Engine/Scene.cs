@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 
 namespace Rain.Engine;
 
-public class Scene<T> : IDisposable where T : INumber<T>
+public class Scene : IDisposable
 {
-	private readonly IMemoryOwner<T> vertexOwner;
+	private readonly IMemoryOwner<float> vertexOwner;
 
 	private readonly IMemoryOwner<uint> elementOwner;
 
-	private readonly Memory<T> vertexMemory;
+	private readonly Memory<float> vertexMemory;
 
 	private readonly Memory<uint> elementMemory;
 
@@ -18,15 +18,15 @@ public class Scene<T> : IDisposable where T : INumber<T>
 
 	private GCHandle elementHandle;
 
-	public Span<T> VertexMemorySpan { get => vertexMemory.Span; }
+	public Span<float> VertexMemorySpan { get => vertexMemory.Span; }
 
-	public Span<T> ElementMemorySpan { get => vertexMemory.Span; }
+	public Span<float> ElementMemorySpan { get => vertexMemory.Span; }
 
-	public Scene(IModel<T>[] models)
+	public Scene(IModel[] models)
 	{
 		GetModelData(models, out var vertexData, out var elementData);
 
-		vertexOwner = MemoryPool<T>.Shared.Rent(vertexData.Length);
+		vertexOwner = MemoryPool<float>.Shared.Rent(vertexData.Length);
 		vertexMemory = vertexOwner.Memory;
 
 		elementOwner = MemoryPool<uint>.Shared.Rent(elementData.Length);
@@ -58,14 +58,15 @@ public class Scene<T> : IDisposable where T : INumber<T>
 
 	public void FreeElementHandleToGC() => elementHandle.Free();
 
-	private static void GetModelData(IModel<T>[] models, out T[] vertexData, out uint[] elementData)
+	private static void GetModelData(IModel[] models, out float[] vertexData, out uint[] elementData)
 	{
 		// Get vertex data.
-		var sceneSizeInT = 0;
-		for (var i = 0; i < models.Length; i++)
-			sceneSizeInT += models[i].Points.Length * Point<T>.SizeInT;
+		var sceneBufferSize = 0;
 
-		vertexData = new T[sceneSizeInT];
+		for (var i = 0; i < models.Length; i++)
+			sceneBufferSize += models[i].Points.Length * Point.BufferSize;
+
+		vertexData = new float[sceneBufferSize];
 
 		var verticesAdded = 0;
 

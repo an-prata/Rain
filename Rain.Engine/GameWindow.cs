@@ -8,9 +8,9 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Rain.Engine;
 
-public class GameWindow<T> : GameWindow where T : INumber<T>
+public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 {
-	public Scene<T> ActiveScene { get; set; }
+	public Scene ActiveScene { get; set; }
 
 	private int vertexBuffer;
 
@@ -24,7 +24,7 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 
 	private IntPtr vertexPointer;
 
-	public GameWindow(Scene<T> scene, string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
+	public GameWindow(Scene scene, string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
 	{
 		Title = title,
 		Size = new(width, height),
@@ -49,7 +49,7 @@ public class GameWindow<T> : GameWindow where T : INumber<T>
 	protected override void OnLoad()
 	{
 		IsVisible = true;
-		GL.ClearColor(new Color<int>(int.MaxValue, 9000, 9000, int.MaxValue).ToColor4()); 
+		GL.ClearColor(new Color(255, 128, 128, 255).ToColor4()); 
 
 		base.OnLoad();
 

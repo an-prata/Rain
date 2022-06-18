@@ -1,36 +1,55 @@
-using System.Numerics;
-
 namespace Rain.Engine;
 
 /// <summary> Represents the location of a point in 3D space. </summary>
-public struct Vertex<T> where T : INumber<T>
+public struct Vertex
 {
-	/// <summary> The length of any array outputed by <c>Vertex<T>.Array</c>. </summary>
-	public const int SizeInT = 3;
+	/// <summary> The length of any array outputed by <c>Vertex.Array</c>. </summary>
+	public const int BufferSize = 4;
 
 	/// <summary> The Vertex's X cooridinate. </summary>
-	public T X { get; set; }
+	public float X { get; set; }
 
 	/// <summary> The Vertex's Y cooridinate. </summary>
-	public T Y { get; set; }
+	public float Y { get; set; }
 
 	/// <summary> The Vertex's Z cooridinate. </summary>
-	public T Z { get; set; }
+	public float Z { get; set; }
 
-	public T[] Array { get => new T[3] {X, Y, Z}; }
+	/// <summary> The Vertex's W cooridinate. </summary>
+	public float W { get; set; }
 
-	public Vertex(T x, T y, T z)
+	public float[] Array { get => new float[BufferSize] {X, Y, Z, W}; }
+
+	/// <summary> Creates a new Vertex from X, Y, and Z cooridinates. </summary>
+	/// <param name="x"> The X coordinate. </param>
+	/// <param name="y"> The Y coordinate. </param>
+	/// <param name="z"> The Z coordinate. </param>
+	public Vertex(float x, float y, float z)
 	{
 		X = x;
 		Y = y;
 		Z = z;
+		W = 1.0f;
 	}
 
-	public static Vertex<T> operator +(Vertex<T> a, Vertex<T> b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+	/// <summary> Creates a new Vertex from X, Y, Z, and W cooridinates. </summary>
+	/// <param name="x"> The X coordinate. </param>
+	/// <param name="y"> The Y coordinate. </param>
+	/// <param name="z"> The Z coordinate. </param>
+	/// <param name="w"> The W coordinate. </param>
+	public Vertex(float x, float y, float z, float w)
+	{
+		X = x;
+		Y = y;
+		Z = z;
+		W = w;
+	}
 
-	public static Vertex<T> operator -(Vertex<T> a, Vertex<T> b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
 
-	public static Vertex<T> operator *(Vertex<T> a, Vertex<T> b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
 
-	public static Vertex<T> operator /(Vertex<T> a, Vertex<T> b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+	public static Vertex operator *(Vertex a, Vertex b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+
+	public static Vertex operator /(Vertex a, Vertex b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
 } 
