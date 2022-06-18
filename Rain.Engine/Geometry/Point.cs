@@ -1,4 +1,4 @@
-namespace Rain.Engine;
+namespace Rain.Engine.Geometry;
 
 /// <summary> A colored point in 3D space that can be rendered by the GPU. </summary>
 public struct Point

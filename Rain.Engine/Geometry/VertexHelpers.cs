@@ -2,7 +2,7 @@ using OpenTK.Mathematics;
 
 using static System.Math;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Geometry;
 
 public static class VertexHelpers
 {

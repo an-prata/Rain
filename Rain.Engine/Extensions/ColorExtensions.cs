@@ -1,6 +1,6 @@
 using OpenTK.Mathematics;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Extensions;
 
 public static class ColorExtensions
 {

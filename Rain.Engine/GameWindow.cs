@@ -5,6 +5,8 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using Rain.Engine.Geometry;
+using Rain.Engine.Extensions;
 
 namespace Rain.Engine;
 

@@ -1,6 +1,7 @@
 using OpenTK.Mathematics;
+using Rain.Engine.Geometry;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Extensions;
 
 public static class Vector3Extensions
 {

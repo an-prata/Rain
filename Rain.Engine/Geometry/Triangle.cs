@@ -1,11 +1,12 @@
-namespace Rain.Engine;
+namespace Rain.Engine.Geometry;
 
 public class Triangle : IModel
 {
 	public const int BufferSize = Point.BufferSize * 3;
+
 	public Vertex Location { get => Points[0].Vertex; }
 
-	public Point[] Points { get; set; }
+	public Point[] Points { get; }
 
 	public uint[] Elements { get => new uint[3] { 0, 1, 2 }; }
 

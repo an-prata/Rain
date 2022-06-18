@@ -1,4 +1,4 @@
-namespace Rain.Engine;
+namespace Rain.Engine.Geometry;
 
 /// <summary> Represents the location of a point in 3D space. </summary>
 public struct Vertex

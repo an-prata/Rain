@@ -1,6 +1,4 @@
-using System.Numerics;
-
-namespace Rain.Engine;
+namespace Rain.Engine.Geometry;
 
 public class Rectangle : IModel
 {

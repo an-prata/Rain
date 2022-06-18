@@ -1,8 +1,9 @@
 using OpenTK.Mathematics;
+using Rain.Engine.Geometry;
 
-using static Rain.Engine.VertexHelpers;
+using static Rain.Engine.Geometry.VertexHelpers;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Extensions;
 
 public static class VertexExtensions
 {
@@ -14,5 +15,5 @@ public static class VertexExtensions
 	/// <summary> Finds the distance between two Vertex<float> instances. </summary>
 	/// <returns> The distance between the two vertices. </returns>
 	public static double DistanceBetween(this Vertex a, Vertex b)
-		=>  GetDistance(a, b);
+		=> GetDistance(a, b);
 }

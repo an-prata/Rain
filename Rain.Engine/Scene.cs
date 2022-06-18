@@ -1,6 +1,6 @@
 using System.Buffers;
-using System.Numerics;
 using System.Runtime.InteropServices;
+using Rain.Engine.Geometry;
 
 namespace Rain.Engine;
 
