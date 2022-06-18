@@ -6,8 +6,16 @@ class Program
 {
 	static void Main()
 	{
-		var triangle = new Triangle(new(-0.5f, -0.5f, 1.0f), 0.2f, 0.2f, new(0.6f, 0.1f, 0.8f, 1.0f));
-		//triangle.RotateClockwise(45f);
+		var triangle = new Triangle(new(-0.5f, -0.5f, 1.0f), 0.2f, 0.2f, new(255, 255, 255, 255));
+
+		triangle.Points[0].Color = new(255, 0, 0);
+		triangle.Points[1].Color = new(0, 255, 0);
+		triangle.Points[2].Color = new(0, 0, 255);
+
+		var rotation = TransformMatrix.CreateTranslationMatrix(0.6f, 0.6f, 0.0f);
+
+		triangle = rotation * triangle;
+
 		var models = new IModel[] { triangle };
 		var scene = new Scene(models);
 		using var game = new GameWindow(scene, "square is cool", 1280, 720);
