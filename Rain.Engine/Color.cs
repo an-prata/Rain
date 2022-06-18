@@ -62,6 +62,18 @@ public struct Color
 		this.a = Math.Clamp(a, 0.0f, 1.0f);
 	}
 
+	/// <summary> Makes a new <c>Color</c> instance with red, green, and blue components. </summary>
+	/// <param name="r"> The color's red component. </param>
+	/// <param name="g"> The color's green component. </param>
+	/// <param name="b"> The color's blue component. </param>
+	public Color(byte r, byte g, byte b)
+	{
+		this.r = (float)r / byte.MaxValue;
+		this.g = (float)g / byte.MaxValue;
+		this.b = (float)b / byte.MaxValue;
+		this.a = (float)255 / byte.MaxValue;
+	}
+
 	/// <summary> Makes a new <c>Color</c> instance with red, green, blue and alpha components. </summary>
 	/// <param name="r"> The color's red component. </param>
 	/// <param name="g"> The color's green component. </param>
