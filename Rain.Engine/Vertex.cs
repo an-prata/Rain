@@ -45,6 +45,31 @@ public struct Vertex
 		W = w;
 	}
 
+	/// <summary> Creates a new vertex from an array fo floats. </summary>
+	/// <remarks> Note that this array must have length equal to <c>Vertex.BufferSize</c>. </remarks>
+	/// <param name="vertexArray"> The array to assemble a Vertex from. </param>
+	public Vertex(float[] vertexArray)
+	{
+		X = vertexArray[0];
+		Y = vertexArray[1];
+		Z = vertexArray[2];
+		W = vertexArray[3];
+	}
+
+	public override int GetHashCode()
+		=> Array.GetHashCode();
+
+	public override bool Equals(object? obj)
+	{
+		if (obj == null)
+			return false;
+
+		if (obj.GetType() != typeof(TransformMatrix))
+			return false;
+
+        return (Vertex)obj == this;
+	}
+
 	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
 
 	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
@@ -52,4 +77,22 @@ public struct Vertex
 	public static Vertex operator *(Vertex a, Vertex b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
 
 	public static Vertex operator /(Vertex a, Vertex b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+
+	public static bool operator ==(Vertex a, Vertex b)
+	{
+		for (var i = 0; i < BufferSize; i++)
+			if (a.Array[i] != b.Array[i])
+				return false;
+	
+		return true;
+	}
+
+	public static bool operator !=(Vertex a, Vertex b)
+	{
+		for (var i = 0; i < BufferSize; i++)
+			if (a.Array[i] != b.Array[i])
+				return !false;
+	
+		return !true;
+	}
 } 
