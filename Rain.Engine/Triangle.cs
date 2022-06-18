@@ -1,18 +1,17 @@
-using OpenTK.Mathematics;
-
 namespace Rain.Engine;
 
 public class Triangle : IModel
 {
+	public const int BufferSize = Point.BufferSize * 3;
 	public Vertex Location { get => Points[0].Vertex; }
 
-	public Point[] Points { get; }
+	public Point[] Points { get; set; }
 
 	public uint[] Elements { get => new uint[3] { 0, 1, 2 }; }
 
 	public float[] Array 
 	{ 
-		get => new float[3 * Vertex.BufferSize + 3 * Color.BufferSize]
+		get => new float[BufferSize]
 		{
 			Points[0].Vertex.X, Points[0].Vertex.Y, Points[0].Vertex.Z, Points[0].Vertex.W,
 			Points[0].Color.R, Points[0].Color.G, Points[0].Color.B, Points[0].Color.A,
@@ -34,4 +33,14 @@ public class Triangle : IModel
 			new Point(new(location.X, location.Y + height, location.Z), color)
 		};
 	}
+
+	public static Triangle operator *(TransformMatrix a, Triangle b)
+	{
+		for (var i = 0; i < b.Points.Length; i++)
+			b.Points[i].Vertex *= a;
+			
+		return b;
+	}
+
+	public static Triangle operator *(Triangle a, TransformMatrix b) => b * a;
 }

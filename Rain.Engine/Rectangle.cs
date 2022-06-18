@@ -43,4 +43,14 @@ public class Rectangle : IModel
 			new Point(new Vertex(location.X + width, location.Y + height, location.Z), color)
 		};
 	}
+
+	public static Rectangle operator *(TransformMatrix a, Rectangle b)
+	{
+		for (var i = 0; i < b.Points.Length; i++)
+			b.Points[i].Vertex *= a;
+			
+		return b;
+	}
+
+	public static Rectangle operator *(Rectangle a, TransformMatrix b) => b * a;
 }

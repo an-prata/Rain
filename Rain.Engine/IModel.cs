@@ -68,5 +68,13 @@ public interface IModel
 	/// <summary> An array representing the vertex data of the model. </summary>
 	float[] Array { get; }
 
-	// TODO: Define and Implement transform functions usingg Matrices.
+	public static IModel operator *(TransformMatrix a, IModel b)
+	{
+		for (var i = 0; i < b.Points.Length; i++)
+			b.Points[i].Vertex *= a;
+			
+		return b;
+	}
+
+	public static IModel operator *(IModel a, TransformMatrix b) => b * a;
 }
