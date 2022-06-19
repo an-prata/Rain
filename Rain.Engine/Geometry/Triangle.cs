@@ -2,27 +2,43 @@ namespace Rain.Engine.Geometry;
 
 public class Triangle : IModel
 {
-	public const int BufferSize = Point.BufferSize * 3;
+	public const int NumberOfVertices = 3;
+
+	public const int NumberOfElements = 3;
+
+	public const int BufferSize = Point.BufferSize * NumberOfElements;
 
 	public Vertex Location { get => Points[0].Vertex; }
 
 	public Point[] Points { get; }
 
-	public uint[] Elements { get => new uint[3] { 0, 1, 2 }; }
+	public uint[] Elements { get => new uint[NumberOfElements] { 0, 1, 2 }; }
 
 	public float[] Array 
 	{ 
-		get => new float[BufferSize]
+		get
 		{
-			Points[0].Vertex.X, Points[0].Vertex.Y, Points[0].Vertex.Z, Points[0].Vertex.W,
-			Points[0].Color.R, Points[0].Color.G, Points[0].Color.B, Points[0].Color.A,
+			var array = new float[BufferSize];
 
-			Points[1].Vertex.X, Points[1].Vertex.Y, Points[1].Vertex.Z, Points[0].Vertex.W,
-			Points[1].Color.R, Points[1].Color.G, Points[1].Color.B, Points[1].Color.A,
+			for (var point = 0; point < Points.Length; point++)
+			{
+				var i = point * (Vertex.BufferSize + Color.BufferSize);
 
-			Points[2].Vertex.X, Points[2].Vertex.Y, Points[2].Vertex.Z, Points[0].Vertex.W,
-			Points[2].Color.R, Points[2].Color.G, Points[2].Color.B, Points[2].Color.A
-		};
+				for (var coordinate = 0; coordinate < Vertex.BufferSize; coordinate++)
+				{
+					array[i] = Points[point].Vertex.Array[coordinate];
+					i++;
+				}
+
+				for (var component = 0; component < Color.BufferSize; component++)
+				{
+					array[i] = Points[point].Color.Array[component];
+					i++;
+				}
+			}
+
+			return array;
+		}
 	}
 
 	public Triangle(Vertex location, float width, float height, Color color)

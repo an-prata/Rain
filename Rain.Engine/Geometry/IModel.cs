@@ -8,8 +8,11 @@ public interface IModel
 	/// <summary> An array of points representing the object. </summary>
 	Point[] Points { get; }
 
-	/// <summary> An array of indices in groups of three, correlating to triangles to draw the model. </summary>
+	/// <summary> An array of indices in groups of three, correlating to triangles. </summary>
 	uint[] Elements { get; }
+
+	/// <summary> An array representing vertex data. </summary>
+	float[] Array { get; }
 
 	/// <summary> The length of the model along the X axis. </summary>
 	float Width
@@ -64,7 +67,4 @@ public interface IModel
 			return greatest - least;
 		}
 	}
-
-	/// <summary> An array representing the vertex data of the model. </summary>
-	float[] Array { get; }
 }
