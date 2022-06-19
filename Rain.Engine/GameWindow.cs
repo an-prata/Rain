@@ -17,17 +17,13 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	public Color ClearColor { get; }
 
-	private int vertexBuffer;
+	private Buffer vertexBuffer;
 
-	private int indexBuffer;
+	private Buffer elementBuffer;
 
 	private int vertexArray;
 
 	private int shaderProgram;
-
-	private IntPtr elementPointer;
-
-	private IntPtr vertexPointer;
 
 	public GameWindow(GameOptions options) : base(new GameWindowSettings
 	{
@@ -65,34 +61,13 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 		base.OnLoad();
 
-		vertexPointer = ActiveScene.GetVertexPointer();
-		elementPointer = ActiveScene.GetElementPointer();
-
-		vertexBuffer = GL.GenBuffer(); // OpenGL creates a vertex buffer and then returns a handle to it.
-		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
-
-		// Sends data to graphics card through buffer.
-		GL.BufferData(BufferTarget.ArrayBuffer,
-			ActiveScene.VertexMemorySpan.Length * sizeof(float),
-			vertexPointer,
-			BufferUsageHint.DynamicDraw);
-
-		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
-
-		indexBuffer = GL.GenBuffer();
-		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-
-		GL.BufferData(BufferTarget.ElementArrayBuffer,
-			ActiveScene.ElementMemorySpan.Length * sizeof(uint),
-			elementPointer,
-			BufferUsageHint.DynamicDraw);
-
-		GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0); // Binding to 0 unbinds.
+		vertexBuffer = new(BufferType.VertexBuffer, ActiveScene);
+		elementBuffer = new(BufferType.ElementBuffer, ActiveScene);
 
 		vertexArray = GL.GenVertexArray();
 		GL.BindVertexArray(vertexArray);
 
-		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
+		vertexBuffer.Bind();
 
 		// layout (location = 0)
 		// size is how many elements (vertices).
@@ -155,11 +130,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnUnload()
 	{
-		GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-		GL.DeleteBuffer(vertexBuffer);
-
-		GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-		GL.DeleteBuffer(indexBuffer);
+		vertexBuffer.Dispose();
+		elementBuffer.Dispose();
 
 		GL.UseProgram(0);
 		GL.DeleteProgram(shaderProgram);
@@ -176,20 +148,17 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	{
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 
-		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer); // Defines the buffer type.
-		GL.BufferData(BufferTarget.ArrayBuffer, ActiveScene.VertexMemorySpan.Length * sizeof(float), vertexPointer, BufferUsageHint.DynamicDraw);
-		GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Binding to 0 unbinds.
-
-		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-		GL.BufferData(BufferTarget.ElementArrayBuffer, ActiveScene.ElementMemorySpan.Length * sizeof(uint), elementPointer, BufferUsageHint.DynamicDraw);
-		GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0); // Binding to 0 unbinds.
+		vertexBuffer.BufferData();
+		elementBuffer.BufferData();
 
 		GL.BindVertexArray(vertexArray);
-		GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
+		vertexBuffer.Bind();
 
 		GL.UseProgram(shaderProgram);
 		GL.BindVertexArray(vertexArray);
-		GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
+		
+		elementBuffer.Bind();
+
 		GL.DrawElements(PrimitiveType.Triangles, ActiveScene.ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
 		
 		Context.SwapBuffers();
