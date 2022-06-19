@@ -12,7 +12,10 @@ namespace Rain.Engine;
 
 public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 {
+	/// <summary> The currently active <c>Scene</c> object for the <c>GameWindow</c>. </summary>
 	public Scene ActiveScene { get; set; }
+
+	public Color ClearColor { get; }
 
 	private int vertexBuffer;
 
@@ -26,20 +29,28 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	private IntPtr vertexPointer;
 
-	public GameWindow(Scene scene, string title, int width, int height) : base(GameWindowSettings.Default, new NativeWindowSettings
+	public GameWindow(GameOptions options) : base(new GameWindowSettings
 	{
-		Title = title,
-		Size = new(width, height),
-		WindowBorder = WindowBorder.Fixed,
-		StartVisible = false,
-		StartFocused = true,
-		API = ContextAPI.OpenGL,
-		Profile = ContextProfile.Core,
-		APIVersion = new Version(3, 3)
+		RenderFrequency = options.RenderFrequency ?? 0.0d,
+		UpdateFrequency = options.UpdateFrequency ?? 0.0d
+	}, 
+	new NativeWindowSettings
+	{
+		Size 			= new(options.Width, options.Height),
+		Title 			= options.WindowTitle ?? "Rain",
+		WindowBorder 	= options.WindowBorder ?? WindowBorder.Resizable,
+		StartVisible 	= options.StartVisible ?? true,
+		StartFocused 	= options.StartFocused ?? true,
+		API 			= ContextAPI.OpenGL,
+		Profile 		= ContextProfile.Core,
+		APIVersion 		= new Version(3, 3)
 	})
 	{
-		CenterWindow(new(width, height));
-		ActiveScene = scene;
+		if (options.CenterWindow ?? false)
+			CenterWindow(new(options.Width, options.Height));
+		
+		ActiveScene = new(Array.Empty<IModel>());
+		ClearColor = options.ClearColor ?? new(255, 255, 255);
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -50,8 +61,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnLoad()
 	{
-		IsVisible = true;
-		GL.ClearColor(new Color(255, 128, 128, 255).ToColor4()); 
+		GL.ClearColor(ClearColor.ToColor4()); 
 
 		base.OnLoad();
 

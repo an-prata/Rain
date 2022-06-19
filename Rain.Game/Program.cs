@@ -20,7 +20,14 @@ class Program
 
 		var models = new IModel[] { triangle };
 		var scene = new Scene(models);
-		using var game = new GameWindow(scene, "square is cool", 1280, 720);
+
+		using var game = new GameWindow(new GameOptions
+		{
+			Width = 1280,
+			Height = 720
+		});
+
+		game.ActiveScene = scene;
 		game.Run();
 	}
 }
