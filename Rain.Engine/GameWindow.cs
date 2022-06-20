@@ -21,9 +21,9 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	private Buffer elementBuffer;
 
-	private int vertexArray;
+	private BufferGroup bufferGroup;
 
-	private int shaderProgram;
+	private ShaderProgram shaderProgram;
 
 	public GameWindow(GameOptions options) : base(new GameWindowSettings
 	{
@@ -61,12 +61,11 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 		base.OnLoad();
 
+		bufferGroup = new();
 		vertexBuffer = new(BufferType.VertexBuffer, ActiveScene);
 		elementBuffer = new(BufferType.ElementBuffer, ActiveScene);
 
-		vertexArray = GL.GenVertexArray();
-		GL.BindVertexArray(vertexArray);
-
+		bufferGroup.Bind();
 		vertexBuffer.Bind();
 
 		// layout (location = 0)
@@ -91,50 +90,27 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 						 Vertex.BufferSize * sizeof(float));
 		GL.EnableVertexAttribArray(1);
 
-		GL.BindVertexArray(0);
-
-		var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-		GL.ShaderSource(vertexShader, File.ReadAllText("vertex_shader.glsl"));
-		GL.CompileShader(vertexShader);
-
-		var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-		GL.ShaderSource(fragmentShader, File.ReadAllText("fragment_shader.glsl"));
-		GL.CompileShader(fragmentShader);
-
-		var vertexShaderInfo = GL.GetShaderInfoLog(vertexShader);
-		
-		if (vertexShaderInfo != string.Empty)
+		//bufferGroup.Unbind();
+		var shaderComponents = new ShaderComponent[]
 		{
-			Console.WriteLine(vertexShaderInfo);
-		}
+			new ShaderComponent(ShaderCompenentType.VertexShader, "vertex_shader.glsl"),
+			new ShaderComponent(ShaderCompenentType.FragmentShader, "fragment_shader.glsl")
+		};
 
-		var fragmentShaderInfo = GL.GetShaderInfoLog(fragmentShader);
-		
-		if (fragmentShaderInfo != string.Empty)
-		{
-			Console.WriteLine(fragmentShaderInfo);
-		}
+		shaderProgram = new(shaderComponents);
 
-		shaderProgram = GL.CreateProgram();
-		GL.AttachShader(shaderProgram, vertexShader);
-		GL.AttachShader(shaderProgram, fragmentShader);
-
-		GL.LinkProgram(shaderProgram);
-
-		GL.DetachShader(shaderProgram, vertexShader);
-		GL.DetachShader(shaderProgram, fragmentShader);
-
-		GL.DeleteShader(vertexShader);
-		GL.DeleteShader(fragmentShader);
+		// 0 Disables vertical sync.
+		// 1 Enables vertical sync.
+		// -1 for adaptive vsync.
+		Context.SwapInterval = 0;
 	}
 
 	protected override void OnUnload()
 	{
 		vertexBuffer.Dispose();
 		elementBuffer.Dispose();
-
-		GL.UseProgram(0);
-		GL.DeleteProgram(shaderProgram);
+		bufferGroup.Dispose();
+		shaderProgram.Dispose();
 		
 		base.OnUnload();
 	}
@@ -146,23 +122,27 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnRenderFrame(FrameEventArgs args)
 	{
+		var stopwatch = new System.Diagnostics.Stopwatch();
+		stopwatch.Start();
+
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 
 		vertexBuffer.BufferData();
 		elementBuffer.BufferData();
 
-		GL.BindVertexArray(vertexArray);
+		//bufferGroup.Bind();
 		vertexBuffer.Bind();
-
-		GL.UseProgram(shaderProgram);
-		GL.BindVertexArray(vertexArray);
-		
 		elementBuffer.Bind();
+
+		shaderProgram.Use();
 
 		GL.DrawElements(PrimitiveType.Triangles, ActiveScene.ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
 		
 		Context.SwapBuffers();
 
 		base.OnRenderFrame(args);
+
+		stopwatch.Stop();
+		Console.WriteLine(stopwatch.ElapsedMilliseconds);
 	}
 }

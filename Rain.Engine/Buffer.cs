@@ -4,7 +4,7 @@ namespace Rain.Engine;
 
 public class Buffer : IDisposable
 {
-	public int BufferHandle { get; }
+	public int Handle { get; }
 
 	public BufferType Type { get; }
 
@@ -16,8 +16,8 @@ public class Buffer : IDisposable
 	{
 		Type = type;
 
-		BufferHandle = GL.GenBuffer();
-		GL.BindBuffer((BufferTarget)type, BufferHandle);
+		Handle = GL.GenBuffer();
+		GL.BindBuffer((BufferTarget)type, Handle);
 
 		if (type == BufferType.VertexBuffer)
 		{
@@ -31,9 +31,10 @@ public class Buffer : IDisposable
 		}
 
 		GL.BufferData((BufferTarget)Type, dataSize, dataPointer, BufferUsageHint.StreamDraw);
+		GL.BindBuffer((BufferTarget)Type, Handle);
 	}
 
-	public void Bind() => GL.BindBuffer((BufferTarget)Type, BufferHandle);
+	public void Bind() => GL.BindBuffer((BufferTarget)Type, Handle);
 
 	public void Unbind() => GL.BindBuffer((BufferTarget)Type, 0);
 
@@ -57,8 +58,8 @@ public class Buffer : IDisposable
 
 		if (disposing)
 		{
-			GL.BindBuffer((BufferTarget)Type, 0);
-			GL.DeleteBuffer(BufferHandle);
+			Unbind();
+			GL.DeleteBuffer(Handle);
 		}
 
 		disposed = true;
