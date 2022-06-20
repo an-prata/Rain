@@ -14,7 +14,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	/// <summary> The currently active <c>Scene</c> object for the <c>GameWindow</c>. </summary>
 	public Scene ActiveScene { get; set; }
 
-	public Color ClearColor { get; }
+	private Color clearColor;
 
 	private BufferGroup bufferGroup;
 
@@ -41,7 +41,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 			CenterWindow(new(options.Width, options.Height));
 		
 		ActiveScene = options.StartingScene;
-		ClearColor = options.ClearColor ?? new(255, 255, 255);
+		clearColor = options.ClearColor ?? new(255, 255, 255);
 		
 		var buffers = new Buffer[] 
 		{ 
@@ -68,7 +68,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnLoad()
 	{
-		GL.ClearColor(ClearColor.ToColor4()); 
+		GL.ClearColor(clearColor.ToColor4()); 
 
 		base.OnLoad();
 

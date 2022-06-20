@@ -8,7 +8,7 @@ class Program
 {
 	static void Main()
 	{
-		var triangle = new Triangle(new(-0.5f, -0.5f, 1.0f), 0.2f, 0.2f, new(255, 255, 255, 255));
+		var triangle = new Rectangle(new(-0.3f, -0.3f, 1.0f), 0.4f, 0.4f, new(255, 255, 255, 255));
 
 		triangle.Points[0].Color = new(255, 0, 0);
 		triangle.Points[1].Color = new(0, 255, 0);

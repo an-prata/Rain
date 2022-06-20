@@ -45,9 +45,9 @@ public class Triangle : IModel
 	{
 		Points = new Point[3]
 		{
-			new Point(location, color),
-			new Point(new(location.X + width, location.Y, location.Z), color),
-			new Point(new(location.X, location.Y + height, location.Z), color)
+			new Point(location, color, new(0.0f, 0.0f)),
+			new Point(new(location.X + width, location.Y, location.Z), color, new(1.0f, 0.0f)),
+			new Point(new(location.X, location.Y + height, location.Z), color, new(0.0f, 1.0f))
 		};
 	}
 

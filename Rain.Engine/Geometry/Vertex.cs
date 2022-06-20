@@ -6,21 +6,21 @@ public struct Vertex
 	/// <summary> The length of any array outputed by <c>Vertex.Array</c>. </summary>
 	public const int BufferSize = 4;
 
-	/// <summary> The Vertex's X cooridinate. </summary>
+	/// <summary> The Vertex's X coordinate. </summary>
 	public float X { get; set; }
 
-	/// <summary> The Vertex's Y cooridinate. </summary>
+	/// <summary> The Vertex's Y coordinate. </summary>
 	public float Y { get; set; }
 
-	/// <summary> The Vertex's Z cooridinate. </summary>
+	/// <summary> The Vertex's Z coordinate. </summary>
 	public float Z { get; set; }
 
-	/// <summary> The Vertex's W cooridinate. </summary>
+	/// <summary> The Vertex's W coordinate. </summary>
 	public float W { get; set; }
 
 	public float[] Array { get => new float[BufferSize] {X, Y, Z, W}; }
 
-	/// <summary> Creates a new Vertex from X, Y, and Z cooridinates. </summary>
+	/// <summary> Creates a new Vertex from X, Y, and Z coordinates. </summary>
 	/// <param name="x"> The X coordinate. </param>
 	/// <param name="y"> The Y coordinate. </param>
 	/// <param name="z"> The Z coordinate. </param>
@@ -32,7 +32,7 @@ public struct Vertex
 		W = 1.0f;
 	}
 
-	/// <summary> Creates a new Vertex from X, Y, Z, and W cooridinates. </summary>
+	/// <summary> Creates a new Vertex from X, Y, Z, and W coordinates. </summary>
 	/// <param name="x"> The X coordinate. </param>
 	/// <param name="y"> The Y coordinate. </param>
 	/// <param name="z"> The Z coordinate. </param>
@@ -64,7 +64,7 @@ public struct Vertex
 		if (obj == null)
 			return false;
 
-		if (obj.GetType() != typeof(TransformMatrix))
+		if (obj.GetType() != typeof(Vertex))
 			return false;
 
         return (Vertex)obj == this;

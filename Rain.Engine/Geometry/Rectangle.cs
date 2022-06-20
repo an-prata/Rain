@@ -6,7 +6,7 @@ public class Rectangle : IModel
 
 	public const int NumberOfElements = 6;
 
-	public const int BufferSize = Point.BufferSize * NumberOfElements;
+	public const int BufferSize = Point.BufferSize * NumberOfVertices;
 
 	public Vertex Location { get => Points[0].Vertex; }
 	
@@ -50,10 +50,10 @@ public class Rectangle : IModel
 	{
 		Points = new Point[4]
 		{
-			new Point(location, color),
-			new Point(new Vertex(location.X + width, location.Y, location.Z), color),
-			new Point(new Vertex(location.X, location.Y + height, location.Z), color),
-			new Point(new Vertex(location.X + width, location.Y + height, location.Z), color)
+			new Point(location, color, new(0.0f, 0.0f)),
+			new Point(new Vertex(location.X + width, location.Y, location.Z), color, new(1.0f, 0.0f)),
+			new Point(new Vertex(location.X, location.Y + height, location.Z), color, new(0.0f, 1.0f)),
+			new Point(new Vertex(location.X + width, location.Y + height, location.Z), color, new(1.0f, 1.0f))
 		};
 	}
 
