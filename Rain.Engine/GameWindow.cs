@@ -1,4 +1,3 @@
-using System.Numerics;
 using OpenTK.Windowing;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -16,10 +15,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	public Scene ActiveScene { get; set; }
 
 	public Color ClearColor { get; }
-
-	private Buffer vertexBuffer;
-
-	private Buffer elementBuffer;
 
 	private BufferGroup bufferGroup;
 
@@ -49,10 +44,14 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		
 		ActiveScene = options.StartingScene;
 		ClearColor = options.ClearColor ?? new(255, 255, 255);
+		
+		var buffers = new Buffer[] 
+		{ 
+			new (BufferType.VertexBuffer, ActiveScene), 
+			new (BufferType.ElementBuffer, ActiveScene) 
+		};
 
-		bufferGroup = new();
-		vertexBuffer = new(BufferType.VertexBuffer, ActiveScene);
-		elementBuffer = new(BufferType.ElementBuffer, ActiveScene);
+		bufferGroup = new(buffers);
 
 		var shaderComponents = new ShaderComponent[]
 		{
@@ -77,7 +76,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		base.OnLoad();
 
 		bufferGroup.Bind();
-		vertexBuffer.Bind();
 
 		// layout (location = 0)
 		// size is how many elements (vertices).
@@ -110,11 +108,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnUnload()
 	{
-		vertexBuffer.Dispose();
-		elementBuffer.Dispose();
 		bufferGroup.Dispose();
 		shaderProgram.Dispose();
-		
 		base.OnUnload();
 	}
 
@@ -127,12 +122,11 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	{
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 
-		vertexBuffer.BufferData();
-		elementBuffer.BufferData();
-
-		//bufferGroup.Bind();
-		vertexBuffer.Bind();
-		elementBuffer.Bind();
+		bufferGroup.BufferData(BufferType.VertexBuffer);
+		bufferGroup.BufferData(BufferType.ElementBuffer);
+		bufferGroup.Bind();
+		// vertexBuffer.Bind();
+		// elementBuffer.Bind();
 
 		shaderProgram.Use();
 

@@ -9,8 +9,27 @@ public class BufferGroup : IDisposable
 	/// <value> An integer representing the OpenGL Vertex Array Object. </value>
 	public int Handle { get; }
 
+	private readonly Dictionary<BufferType, Buffer> buffers;
+
 	/// <summary> Creates a new OpenGL Vertex Array Object. </summary>
-	public BufferGroup() => Handle = GL.GenVertexArray();
+	public BufferGroup(Buffer[] buffers)
+	{
+		Handle = GL.GenVertexArray();
+		this.buffers = new();
+		Bind();
+
+		for (var i = 0; i < buffers.Length; i++)
+		{
+			GL.BindBuffer((BufferTarget)buffers[i].Type, buffers[i].Handle);
+			this.buffers[buffers[i].Type] = buffers[i];
+		}
+		
+		Unbind();
+	}
+
+	/// <summary> Calls <c>Buffer.BufferData()</c> for the <c>Buffer</c> of the given <c>BufferType</c>. </summary>
+	/// <param name="buffer"> The <c>BufferType</c> used to specify the <c>BufferObject</c>. </param>
+	public void BufferData(BufferType buffer) => buffers[buffer].BufferData();
 
 	/// <summary> Binds this OpenGL Vertex Array Object. </summary>
 	public void Bind() => GL.BindVertexArray(Handle);
@@ -35,6 +54,9 @@ public class BufferGroup : IDisposable
 
 		if (disposing)
 		{
+			foreach (var buffer in buffers)
+				buffer.Value.Dispose();
+
 			Unbind();
 			GL.DeleteVertexArray(Handle);
 		}
