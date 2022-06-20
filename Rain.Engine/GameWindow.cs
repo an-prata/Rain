@@ -25,6 +25,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	private ShaderProgram shaderProgram;
 
+	private System.Diagnostics.Stopwatch stopwatch;
+
 	public GameWindow(GameOptions options) : base(new GameWindowSettings
 	{
 		RenderFrequency = options.RenderFrequency ?? 0.0d,
@@ -103,6 +105,9 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		// 1 Enables vertical sync.
 		// -1 for adaptive vsync.
 		Context.SwapInterval = 0;
+
+		stopwatch = new System.Diagnostics.Stopwatch();
+		stopwatch.Start();
 	}
 
 	protected override void OnUnload()
@@ -122,9 +127,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnRenderFrame(FrameEventArgs args)
 	{
-		var stopwatch = new System.Diagnostics.Stopwatch();
-		stopwatch.Start();
-
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 
 		vertexBuffer.BufferData();
@@ -142,7 +144,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 		base.OnRenderFrame(args);
 
-		stopwatch.Stop();
 		Console.WriteLine(stopwatch.ElapsedMilliseconds);
+		stopwatch.Reset();
 	}
 }

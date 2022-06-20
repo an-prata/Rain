@@ -2,10 +2,15 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Rain.Engine;
 
+/// <summary> A class for managing OpenGL Shader Programs. </summary>
 public class ShaderProgram : IDisposable
 {
+	/// <summary> The Shader Program's OpenGL handle for use with OpenGL functions. </summary>
+	/// <value> An integer representing the OpenGL Shader Program. </value>
 	public int Handle { get; }
 
+	/// <summary> Creates a new OpenGL Shader Program from <c>ShaderComponent</c>s. </summary>
+	/// <param name="components"> An array of <c>ShaderComponents</c> to create a ShaderProgram from. </param>
 	public ShaderProgram(ShaderComponent[] components)
 	{
 		Handle = GL.CreateProgram();
@@ -22,8 +27,10 @@ public class ShaderProgram : IDisposable
 		}
 	}
 
+	/// <summary> Tells OpenGL to use this Shader Program for rendering. </summary>
 	public void Use() => GL.UseProgram(Handle);
 
+	/// <summary> Tells OpenGL to stop using any Shader Program. </summary>
 	public void StopUsing() => GL.UseProgram(0);
 
 	#region IDisposable
