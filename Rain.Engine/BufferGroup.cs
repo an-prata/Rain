@@ -27,6 +27,13 @@ public class BufferGroup : IDisposable
 		Unbind();
 	}
 
+	/// <summary> Calls <c>Buffer.BufferData()</c> all <c>Buffer</c>s given during construction. </summary>
+	public void BufferData()
+	{
+		foreach (var buffer in buffers)
+			buffer.Value.BufferData();
+	}
+
 	/// <summary> Calls <c>Buffer.BufferData()</c> for the <c>Buffer</c> of the given <c>BufferType</c>. </summary>
 	/// <param name="buffer"> The <c>BufferType</c> used to specify the <c>BufferObject</c>. </param>
 	public void BufferData(BufferType buffer) => buffers[buffer].BufferData();

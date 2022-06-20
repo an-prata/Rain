@@ -118,11 +118,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	{
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 
-		bufferGroup.BufferData(BufferType.VertexBuffer);
-		bufferGroup.BufferData(BufferType.ElementBuffer);
+		bufferGroup.BufferData();
 		bufferGroup.Bind();
-		// vertexBuffer.Bind();
-		// elementBuffer.Bind();
 
 		shaderProgram.Use();
 
