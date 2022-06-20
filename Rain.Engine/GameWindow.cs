@@ -47,8 +47,21 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		if (options.CenterWindow ?? false)
 			CenterWindow(new(options.Width, options.Height));
 		
-		ActiveScene = new(Array.Empty<IModel>());
+		ActiveScene = options.StartingScene;
 		ClearColor = options.ClearColor ?? new(255, 255, 255);
+
+		bufferGroup = new();
+		vertexBuffer = new(BufferType.VertexBuffer, ActiveScene);
+		elementBuffer = new(BufferType.ElementBuffer, ActiveScene);
+
+		var shaderComponents = new ShaderComponent[]
+		{
+			new ShaderComponent(ShaderCompenentType.VertexShader, "vertex_shader.glsl"),
+			new ShaderComponent(ShaderCompenentType.FragmentShader, "fragment_shader.glsl")
+		};
+
+		shaderProgram = new(shaderComponents);
+		stopwatch = new System.Diagnostics.Stopwatch();
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -62,10 +75,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		GL.ClearColor(ClearColor.ToColor4()); 
 
 		base.OnLoad();
-
-		bufferGroup = new();
-		vertexBuffer = new(BufferType.VertexBuffer, ActiveScene);
-		elementBuffer = new(BufferType.ElementBuffer, ActiveScene);
 
 		bufferGroup.Bind();
 		vertexBuffer.Bind();
@@ -92,21 +101,10 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 						 Vertex.BufferSize * sizeof(float));
 		GL.EnableVertexAttribArray(1);
 
-		//bufferGroup.Unbind();
-		var shaderComponents = new ShaderComponent[]
-		{
-			new ShaderComponent(ShaderCompenentType.VertexShader, "vertex_shader.glsl"),
-			new ShaderComponent(ShaderCompenentType.FragmentShader, "fragment_shader.glsl")
-		};
-
-		shaderProgram = new(shaderComponents);
-
 		// 0 Disables vertical sync.
 		// 1 Enables vertical sync.
 		// -1 for adaptive vsync.
 		Context.SwapInterval = 0;
-
-		stopwatch = new System.Diagnostics.Stopwatch();
 		stopwatch.Start();
 	}
 

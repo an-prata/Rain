@@ -10,6 +10,9 @@ public struct GameOptions
 	/// <summary> Window height in pixels. </summary>
 	public int Height;
 
+	/// <summary> The first scene to become the <c>GameWindow</c>'s <c>ActiveScene</c>. </summary>
+	public Scene StartingScene;
+
 	/// <summary> The window title. </summary>
 	/// <remarks> Defaults to "Rain" in a <c>GameWindow</c>. </remarks>
 	public string? WindowTitle;

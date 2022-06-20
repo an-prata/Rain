@@ -24,7 +24,8 @@ class Program
 		using var game = new GameWindow(new GameOptions
 		{
 			Width = 1280,
-			Height = 720
+			Height = 720,
+			StartingScene = scene
 		});
 
 		game.ActiveScene = scene;
