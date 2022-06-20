@@ -20,7 +20,7 @@ public class Scene : IDisposable
 
 	public Span<float> VertexMemorySpan { get => vertexMemory.Span; }
 
-	public Span<float> ElementMemorySpan { get => vertexMemory.Span; }
+	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
 
 	public Scene(IModel[] models)
 	{
