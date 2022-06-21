@@ -1,9 +1,13 @@
 #version 330 core
+
 out vec4 color;
-  
-in vec4 fragmentColor; // the input variable from the vertex shader (same name and same type)  
+
+in vec4 fragmentColor;
+in vec2 textureCoordinate;
+
+uniform sampler2D texture0;
 
 void main()
 {
-    color = fragmentColor;
+    color = texture(texture0, textureCoordinate) * fragmentColor;
 } 

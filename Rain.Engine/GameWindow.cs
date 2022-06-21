@@ -4,8 +4,13 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 using Rain.Engine.Geometry;
 using Rain.Engine.Extensions;
+
+using Point = Rain.Engine.Geometry.Point;
 
 namespace Rain.Engine;
 
@@ -19,6 +24,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	private BufferGroup bufferGroup;
 
 	private ShaderProgram shaderProgram;
+
+	private Texture texture;
 
 	public GameWindow(GameOptions options) : base(new GameWindowSettings
 	{
@@ -80,26 +87,46 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		// normalize (false)
 		// size of vertex in bytes, (3 times element size)
 		// where to start in the array
-		GL.VertexAttribPointer(0,
+		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("vertexPosition"));
+		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("vertexPosition"),
 						 Vertex.BufferSize,
 						 VertexAttribPointerType.Float,
 						 false,
-						 (Vertex.BufferSize + Color.BufferSize) * sizeof(float),
+						 Point.BufferSize * sizeof(float),
 						 0);
-		GL.EnableVertexAttribArray(0);
 
-		GL.VertexAttribPointer(1,
+		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("color"));
+		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("color"),
 						 Color.BufferSize,
 						 VertexAttribPointerType.Float,
 						 false,
-						 (Vertex.BufferSize + Color.BufferSize) * sizeof(float),
+						 Point.BufferSize * sizeof(float),
 						 Vertex.BufferSize * sizeof(float));
-		GL.EnableVertexAttribArray(1);
+		
+		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("texturePosition"));
+		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("texturePosition"),
+						 TextureCoordinate.BufferSize,
+						 VertexAttribPointerType.Float,
+						 false,
+						 Point.BufferSize * sizeof(float),
+						 Vertex.BufferSize * sizeof(float) + Color.BufferSize * sizeof(float));
+
+		var textureOptions = new TextureOptions
+		{
+			ImagePath = "interesting.bmp",
+			GlslName = "texture0",
+			Unit = TextureUnit.Unit0,
+			WrapMode = TextureWrapMode.Clamp,
+			MagnificationFilter = TextureFilter.Linear,
+			MinimizationFilter = TextureFilter.NearestMipmapFiltered
+		};
+
+		texture = new(textureOptions, ref shaderProgram);
 
 		// 0 Disables vertical sync.
 		// 1 Enables vertical sync.
 		// -1 for adaptive vsync.
-		Context.SwapInterval = 0;
+		Context.SwapInterval = 1;
 	}
 
 	protected override void OnUnload()
@@ -122,13 +149,14 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		bufferGroup.Bind();
 
 		shaderProgram.Use();
+		texture.Bind();
+
 
 		GL.DrawElements(PrimitiveType.Triangles, ActiveScene.ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
 		
 		Context.SwapBuffers();
 
 		base.OnRenderFrame(args);
-
 		Console.WriteLine(args.Time);
 	}
 }
