@@ -22,18 +22,24 @@ public class Rectangle : IModel
 
 			for (var point = 0; point < Points.Length; point++)
 			{
-				var i = point * (Vertex.BufferSize + Color.BufferSize);
+				var pointIndex = point * (Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize);
 
 				for (var coordinate = 0; coordinate < Vertex.BufferSize; coordinate++)
 				{
-					array[i] = Points[point].Vertex.Array[coordinate];
-					i++;
+					array[pointIndex] = Points[point].Vertex.Array[coordinate];
+					pointIndex++;
 				}
 
 				for (var component = 0; component < Color.BufferSize; component++)
 				{
-					array[i] = Points[point].Color.Array[component];
-					i++;
+					array[pointIndex] = Points[point].Color.Array[component];
+					pointIndex++;
+				}
+
+				for (var coordinate = 0; coordinate < TextureCoordinate.BufferSize; coordinate++)
+				{
+					array[pointIndex] = Points[point].TextureCoordinate.Array[coordinate];
+					pointIndex++;
 				}
 			}
 
