@@ -1,16 +1,17 @@
 using OpenTK.Windowing;
+using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.PixelFormats;
+
 using Rain.Engine.Geometry;
+using Rain.Engine.Texturing;
 using Rain.Engine.Extensions;
 
 using Point = Rain.Engine.Geometry.Point;
+using TextureUnit = Rain.Engine.Texturing.TextureUnit;
+using TextureWrapMode = Rain.Engine.Texturing.TextureWrapMode;
 
 namespace Rain.Engine;
 

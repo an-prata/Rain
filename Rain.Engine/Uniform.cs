@@ -1,4 +1,7 @@
 using OpenTK.Graphics.OpenGL;
+using Rain.Engine.Texturing;
+
+using TextureUnit = Rain.Engine.Texturing.TextureUnit;
 
 namespace Rain.Engine;
 

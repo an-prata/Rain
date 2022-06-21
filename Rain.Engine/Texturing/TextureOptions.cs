@@ -1,4 +1,4 @@
-namespace Rain.Engine;
+namespace Rain.Engine.Texturing;
 
 public struct TextureOptions
 {

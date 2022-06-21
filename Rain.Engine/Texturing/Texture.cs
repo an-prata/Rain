@@ -2,7 +2,7 @@ using OpenTK.Graphics.OpenGL;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Texturing;
 
 /// <summary> A class for managing and creating OpenGL textures. </summary>
 public class Texture
