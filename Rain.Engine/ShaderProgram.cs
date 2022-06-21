@@ -27,6 +27,47 @@ public class ShaderProgram : IDisposable
 		}
 	}
 
+	/// <summary> Gets a specific GLSL/OpenGL uniform by name. </summary>
+	/// <param name="uniformName"> The Uniform's name in the GLSL shader. </param>
+	/// <returns> A <c>Uniform</c> instance representing the GLSL/OpenGL shader. </returns>
+	public Uniform GetUniformByName(string uniformName)
+	{
+		GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var uniforms);
+
+		for (var i = 0; i < uniforms; i++)
+		{
+			var name = GL.GetActiveUniform(Handle, i, out _, out _);
+			if (name != uniformName) continue;
+
+			var handle = GL.GetUniformLocation(Handle, name);
+			return new(name, handle);
+		}
+
+		throw new NullReferenceException("No uniform of name \"" + uniformName + "\" was found.");
+	}
+
+	/// <summary> Gets all active OpenGL Uniforms in the Shader and returns an Array of <c>Unifmorm</c> objects. </summary>
+	/// <returns> An Array of <c>Unifmorm</c> objects. </returns>
+	public Uniform[] GetUniforms()
+	{
+		GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var uniforms);
+		var uniformArray = new Uniform[uniforms];
+
+		for (var i = 0; i < uniforms; i++)
+		{
+			var name = GL.GetActiveUniform(Handle, i, out _, out _);
+			var handle = GL.GetUniformLocation(Handle, name);
+			uniformArray[i] = new(name, handle);
+		}
+
+		return uniformArray;
+	}
+
+	/// <summary> Gets an OpenGL Vertex Attribute by its name in the shader. </summary>
+	/// <param name="attributeName"> The name of the OpenGL Vertex Attribute. </param>
+	/// <returns> The OpenGL Vertex Attribute's handle. </returns>
+	public int GetAttributeHandleByName(string attributeName) => GL.GetAttribLocation(Handle, attributeName);
+
 	/// <summary> Tells OpenGL to use this Shader Program for rendering. </summary>
 	public void Use() => GL.UseProgram(Handle);
 
