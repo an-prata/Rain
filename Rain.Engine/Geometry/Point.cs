@@ -35,6 +35,39 @@ public struct Point
 		}
 	}
 
+	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c>. </summary>
+	/// <param name="vertex"> The <c>Vertex</c> to creates a <c>Point</c> from. </param>
+	public Point(Vertex vertex)
+	{
+		Vertex = vertex;
+		Color = new(180, 164, 240);
+		TextureCoordinate = new(0.0f, 0.0f);
+	}
+
+	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c> and <c>Color</c>. </summary>
+	/// <param name="vertex"> The new <c>Point</c>'s <c>Vertex</c>. </param>
+	/// <param name="color"> The new <c>Point</c>'s <c>Color</c>. </param>
+	public Point(Vertex vertex, Color color)
+	{
+		Vertex = vertex;
+		Color = color;
+		TextureCoordinate = new(0.0f, 0.0f);
+	}
+
+	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c> and <c>TextureCoordinate</c>. </summary>
+	/// <param name="vertex"> The new <c>Point</c>'s <c>Vertex</c>. </param>
+	/// <param name="textureCoordinate"> The new <c>Point</c>'s <c>TextureCoordinate</c>. </param>
+	public Point(Vertex vertex, TextureCoordinate textureCoordinate)
+	{
+		Vertex = vertex;
+		Color = new(180, 160, 240);
+		TextureCoordinate = textureCoordinate;
+	}
+
+	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c>, <c>Color</c>, and <c>TextureCoordinate</c>. </summary>
+	/// <param name="vertex"> The new <c>Point</c>'s <c>Vertex</c>. </param>
+	/// <param name="color"> The new <c>Point</c>'s <c>Color</c>. </param>
+	/// <param name="textureCoordinate"> The new <c>Point</c>'s <c>TextureCoordinate</c>. </param>
 	public Point(Vertex vertex, Color color, TextureCoordinate textureCoordinate)
 	{
 		Vertex = vertex;
