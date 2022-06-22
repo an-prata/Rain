@@ -51,7 +51,13 @@ public class Buffer : IDisposable
 	/// <summary> Buffers data from the <c>Scene</c> instance passed in during contruction. </summary>
 	/// <remarks> As this is done via a pointer, no data needs to be passed to this method. </remarks>
 	public void BufferData()
-		=> GL.BufferData((BufferTarget)Type, dataSize * sizeof(float), dataPointer, BufferUsageHint.StreamDraw);
+	{
+		if (Type == BufferType.VertexBuffer)
+			GL.BufferData((BufferTarget)Type, dataSize * sizeof(float), dataPointer, BufferUsageHint.StreamDraw);
+		else
+			GL.BufferData((BufferTarget)Type, dataSize * sizeof(uint), dataPointer, BufferUsageHint.StreamDraw);
+	} 
+		
 
 	#region IDisposable
 
