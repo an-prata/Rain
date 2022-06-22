@@ -11,9 +11,6 @@ public interface IModel
 	/// <summary> An array of indices in groups of three, correlating to triangles. </summary>
 	uint[] Elements { get; }
 
-	/// <summary> An array representing vertex data. </summary>
-	float[] GetBufferableArray();
-
 	/// <summary> The length of the model along the X axis. </summary>
 	float Width
 	{ 
@@ -67,4 +64,16 @@ public interface IModel
 			return greatest - least;
 		}
 	}
+
+	/// <summary> Gets array representing vertex data needed to render the IModel. </summary>
+	float[] GetBufferableArray();
+
+	/// <summary> Rotates the IModel about its center. </summary>
+	/// <param name="angle"> The angle of rotation. </param>
+	void Rotate(float angle, Axes axis);
+
+	/// <summary> Rotates the IModel about its center. </summary>
+	/// <param name="angle"> The angle of rotation. </param>
+	/// <param name="direction"> The direction to rotate in. </param>
+	void Rotate(float angle, Axes axis, RotationDirection direction);
 }
