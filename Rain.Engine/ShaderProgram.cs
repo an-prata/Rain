@@ -27,6 +27,12 @@ public class ShaderProgram : IDisposable
 		}
 	}
 
+
+	/// <summary> Gets an OpenGL Vertex Attribute by its name in the shader. </summary>
+	/// <param name="attributeName"> The name of the OpenGL Vertex Attribute. </param>
+	/// <returns> The OpenGL Vertex Attribute's handle. </returns>
+	public int GetAttributeHandleByName(string attributeName) => GL.GetAttribLocation(Handle, attributeName);
+	
 	/// <summary> Gets a specific GLSL/OpenGL uniform by name. </summary>
 	/// <param name="uniformName"> The Uniform's name in the GLSL shader. </param>
 	/// <returns> A <c>Uniform</c> instance representing the GLSL/OpenGL shader. </returns>
@@ -62,11 +68,6 @@ public class ShaderProgram : IDisposable
 
 		return uniformArray;
 	}
-
-	/// <summary> Gets an OpenGL Vertex Attribute by its name in the shader. </summary>
-	/// <param name="attributeName"> The name of the OpenGL Vertex Attribute. </param>
-	/// <returns> The OpenGL Vertex Attribute's handle. </returns>
-	public int GetAttributeHandleByName(string attributeName) => GL.GetAttribLocation(Handle, attributeName);
 
 	/// <summary> Tells OpenGL to use this Shader Program for rendering. </summary>
 	public void Use() => GL.UseProgram(Handle);
