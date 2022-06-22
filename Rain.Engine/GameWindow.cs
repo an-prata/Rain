@@ -66,6 +66,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		};
 
 		shaderProgram = new(shaderComponents);
+		texture = new(shaderProgram, TextureUnit.Unit0, "texture0");
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -112,17 +113,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 						 Point.BufferSize * sizeof(float),
 						 Vertex.BufferSize * sizeof(float) + Color.BufferSize * sizeof(float));
 
-		var textureOptions = new TextureOptions
-		{
-			ImagePath = "interesting.bmp",
-			GlslName = "texture0",
-			Unit = TextureUnit.Unit0,
-			WrapMode = TextureWrapMode.Clamp,
-			MagnificationFilter = TextureFilter.Linear,
-			MinimizationFilter = TextureFilter.NearestMipmapFiltered
-		};
-
-		texture = new(textureOptions, ref shaderProgram);
+		texture.LoadFromImage("interesting.bmp");
 
 		// 0 Disables vertical sync.
 		// 1 Enables vertical sync.
@@ -148,10 +139,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 		bufferGroup.BufferData();
 		bufferGroup.Bind();
-
 		shaderProgram.Use();
 		texture.Bind();
-
 
 		GL.DrawElements(PrimitiveType.Triangles, ActiveScene.ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
 		

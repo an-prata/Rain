@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rain.Engine.Texturing;
 
 /// <summary> A class for managing and creating OpenGL textures. </summary>
-public class Texture
+public class Texture : IDisposable
 {
 	/// <summary> The Texture's OpenGL handle for use with OpenGL functions. </summary>
 	/// <value> An integer representing the OpenGL Texture. </value>
@@ -15,10 +15,28 @@ public class Texture
 	/// <value> A <c>TextureUnit</c> enum value. </value>
 	public TextureUnit Unit { get; set; }
 
+	public Texture(ShaderProgram shaderProgram, TextureUnit unit, string glslName)
+	{
+		Unit = unit;
+
+		shaderProgram.Use();
+		Handle = GL.GenTexture();
+
+		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
+		GL.BindTexture(TextureTarget.Texture2D, Handle);
+
+		shaderProgram.GetUniformByName(glslName).SetToTexture(this);
+
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureFilter.NearestMipmapFiltered);
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureFilter.Linear);
+	}
+
 	/// <summary> Creates a new <c>Texture</c> object from a <c>TextureOptions</c> struct. </summary>
 	/// <param name="options"> The <c>TextureOptions</c> to be used in construction. </param>
 	/// <param name="shaderProgram"> The <c>ShaderProgram</c> that will use this <c>Texture</c>. </param>
-	public Texture(TextureOptions options, ref ShaderProgram shaderProgram)
+	public Texture(TextureOptions options, ShaderProgram shaderProgram)
 	{
 		Unit = options.Unit;
 
@@ -49,7 +67,31 @@ public class Texture
 		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)options.MinimizationFilter);
 		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)options.MagnificationFilter);
 
-		UploadTexture(pixelBytes, image.Width, image.Height);
+		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, image.Width, image.Height, 0, PixelFormat.Rgb,
+					  PixelType.UnsignedByte, pixelBytes);
+		GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+	}
+
+	public void LoadFromImage(string imagePath)
+	{
+		Bind();
+
+		var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+		image.Mutate(x => x.Flip(FlipMode.Vertical));
+		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
+
+		var pixelSpan = pixelMemory.Span;
+		var pixelBytes = new byte[image.Width * image.Height * 4];
+		
+		for (var i = 0; i < pixelSpan.Length; i++)
+		{
+			pixelBytes[i * 3] = pixelSpan[i].R;
+			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
+			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
+		}
+
+		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, image.Width, image.Height, 0, PixelFormat.Rgb,
+					  PixelType.UnsignedByte, pixelBytes);
 		GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 	}
 
@@ -60,7 +102,38 @@ public class Texture
 		GL.BindTexture(TextureTarget.Texture2D, Handle);
 	}
 
-	private static void UploadTexture(byte[] image, int width, int height)
-		=> GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, 
-		PixelFormat.Rgb, PixelType.UnsignedByte, image);
+	/// <summary> Unbinds any currently bound <c>Texture</c>. </summary>
+	public void Unbind()
+	{
+		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)TextureUnit.Unit0);
+		GL.BindTexture(TextureTarget.Texture2D, 0);
+	}
+
+	#region IDisposable
+
+	private bool disposed = false;
+
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposed) 
+			return;
+
+		if (disposing)
+		{
+			Unbind();
+			GL.DeleteTexture(Handle);
+		}
+
+		disposed = true;
+	}
+
+	~Texture() => Dispose(false);
+
+	#endregion
 }
