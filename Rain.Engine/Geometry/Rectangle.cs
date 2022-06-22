@@ -12,7 +12,7 @@ public class Rectangle : IModel
 	
 	public Point[] Points { get; }
 
-	public uint[] Elements { get => new uint[] {0, 1, 2, 2, 1, 3}; }
+	public uint[] Elements { get => new uint[] {0, 1, 2, 1, 3, 2}; }
 
 	public float[] GetBufferableArray() 
 	{ 
