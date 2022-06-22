@@ -6,7 +6,7 @@ public class Triangle : IModel
 
 	public const int NumberOfElements = 3;
 
-	public const int BufferSize = Point.BufferSize * NumberOfElements;
+	public const int BufferSize = Point.BufferSize * NumberOfVertices;
 
 	public Vertex Location { get => Points[0].Vertex; }
 
@@ -20,7 +20,7 @@ public class Triangle : IModel
 
 		for (var point = 0; point < Points.Length; point++)
 		{
-			var pointIndex = point * (Vertex.BufferSize + Color.BufferSize);
+			var pointIndex = point * (Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize);
 
 			for (var coordinate = 0; coordinate < Vertex.BufferSize; coordinate++)
 			{
@@ -34,9 +34,9 @@ public class Triangle : IModel
 				pointIndex++;
 			}
 
-			for (var component = 0; component < TextureCoordinate.BufferSize; component++)
+			for (var coordinate = 0; coordinate < TextureCoordinate.BufferSize; coordinate++)
 			{
-				array[pointIndex] = Points[point].TextureCoordinate.Array[component];
+				array[pointIndex] = Points[point].TextureCoordinate.Array[coordinate];
 				pointIndex++;
 			}
 		}
