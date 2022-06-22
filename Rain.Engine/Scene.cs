@@ -62,39 +62,31 @@ public class Scene : IDisposable
 	{
 		// Get vertex data.
 		var sceneBufferSize = 0;
+		int elements = 0;
 
+		var verticesAdded = 0;
+		var elementsAdded = 0;
+		
 		for (var i = 0; i < models.Length; i++)
 			sceneBufferSize += models[i].Points.Length * Point.BufferSize;
 
-		vertexData = new float[sceneBufferSize];
+		for (var i = 0; i < models.Length; i++)
+			elements += models[i].Elements.Length;
 
-		var verticesAdded = 0;
+		vertexData = new float[sceneBufferSize];
+		elementData = new uint[elements];
 
 		for (var model = 0; model < models.Length; model++)
 		{
 			var modelBufferArray = models[model].GetBufferableArray();
-			
+
 			for (var i = 0; i < modelBufferArray.Length; i++)
 				vertexData[verticesAdded + i] = modelBufferArray[i];
 
-			verticesAdded += modelBufferArray.Length;
-		}
-
-		// Get element data.
-		int elements = 0;
-		
-		for (var i = 0; i < models.Length; i++)
-			elements += models[i].Elements.Length;
-
-		elementData = new uint[elements];
-
-		var elementsAdded = 0;
-
-		for (var model = 0; model < models.Length; model++)
-		{
 			for (var i = 0; i < models[model].Elements.Length; i++)
-				elementData[elementsAdded + i] = models[model].Elements[i];
+				elementData[elementsAdded + i] = (uint)verticesAdded / Point.BufferSize + models[model].Elements[i];
 
+			verticesAdded += modelBufferArray.Length;
 			elementsAdded += models[model].Elements.Length;
 		}
 	}
