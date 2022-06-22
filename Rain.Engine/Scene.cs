@@ -72,10 +72,12 @@ public class Scene : IDisposable
 
 		for (var model = 0; model < models.Length; model++)
 		{
-			for (var i = 0; i < models[model].Array.Length; i++)
-				vertexData[verticesAdded + i] = models[model].Array[i];
+			var modelBufferArray = models[model].GetBufferableArray();
+			
+			for (var i = 0; i < modelBufferArray.Length; i++)
+				vertexData[verticesAdded + i] = modelBufferArray[i];
 
-			verticesAdded += models[model].Array.Length;
+			verticesAdded += modelBufferArray.Length;
 		}
 
 		// Get element data.

@@ -14,37 +14,34 @@ public class Rectangle : IModel
 
 	public uint[] Elements { get => new uint[] {0, 1, 2, 2, 1, 3}; }
 
-	public float[] Array 
+	public float[] GetBufferableArray() 
 	{ 
-		get
+		var array = new float[BufferSize];
+
+		for (var point = 0; point < Points.Length; point++)
 		{
-			var array = new float[BufferSize];
+			var pointIndex = point * (Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize);
 
-			for (var point = 0; point < Points.Length; point++)
+			for (var coordinate = 0; coordinate < Vertex.BufferSize; coordinate++)
 			{
-				var pointIndex = point * (Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize);
-
-				for (var coordinate = 0; coordinate < Vertex.BufferSize; coordinate++)
-				{
-					array[pointIndex] = Points[point].Vertex.Array[coordinate];
-					pointIndex++;
-				}
-
-				for (var component = 0; component < Color.BufferSize; component++)
-				{
-					array[pointIndex] = Points[point].Color.Array[component];
-					pointIndex++;
-				}
-
-				for (var coordinate = 0; coordinate < TextureCoordinate.BufferSize; coordinate++)
-				{
-					array[pointIndex] = Points[point].TextureCoordinate.Array[coordinate];
-					pointIndex++;
-				}
+				array[pointIndex] = Points[point].Vertex.Array[coordinate];
+				pointIndex++;
 			}
 
-			return array;
+			for (var component = 0; component < Color.BufferSize; component++)
+			{
+				array[pointIndex] = Points[point].Color.Array[component];
+				pointIndex++;
+			}
+
+			for (var coordinate = 0; coordinate < TextureCoordinate.BufferSize; coordinate++)
+			{
+				array[pointIndex] = Points[point].TextureCoordinate.Array[coordinate];
+				pointIndex++;
+			}
 		}
+
+		return array;
 	}
 
 	/// <summary> Creates a new Rectangle. </summary>

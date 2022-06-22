@@ -12,7 +12,7 @@ public interface IModel
 	uint[] Elements { get; }
 
 	/// <summary> An array representing vertex data. </summary>
-	float[] Array { get; }
+	float[] GetBufferableArray();
 
 	/// <summary> The length of the model along the X axis. </summary>
 	float Width

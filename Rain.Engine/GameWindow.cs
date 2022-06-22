@@ -11,7 +11,6 @@ using Rain.Engine.Extensions;
 
 using Point = Rain.Engine.Geometry.Point;
 using TextureUnit = Rain.Engine.Texturing.TextureUnit;
-using TextureWrapMode = Rain.Engine.Texturing.TextureWrapMode;
 
 namespace Rain.Engine;
 

@@ -14,37 +14,34 @@ public class Triangle : IModel
 
 	public uint[] Elements { get => new uint[NumberOfElements] { 0, 1, 2 }; }
 
-	public float[] Array 
+	public float[] GetBufferableArray() 
 	{ 
-		get
+		var array = new float[BufferSize];
+
+		for (var point = 0; point < Points.Length; point++)
 		{
-			var array = new float[BufferSize];
+			var pointIndex = point * (Vertex.BufferSize + Color.BufferSize);
 
-			for (var point = 0; point < Points.Length; point++)
+			for (var coordinate = 0; coordinate < Vertex.BufferSize; coordinate++)
 			{
-				var pointIndex = point * (Vertex.BufferSize + Color.BufferSize);
-
-				for (var coordinate = 0; coordinate < Vertex.BufferSize; coordinate++)
-				{
-					array[pointIndex] = Points[point].Vertex.Array[coordinate];
-					pointIndex++;
-				}
-
-				for (var component = 0; component < Color.BufferSize; component++)
-				{
-					array[pointIndex] = Points[point].Color.Array[component];
-					pointIndex++;
-				}
-
-				for (var component = 0; component < TextureCoordinate.BufferSize; component++)
-				{
-					array[pointIndex] = Points[point].TextureCoordinate.Array[component];
-					pointIndex++;
-				}
+				array[pointIndex] = Points[point].Vertex.Array[coordinate];
+				pointIndex++;
 			}
 
-			return array;
+			for (var component = 0; component < Color.BufferSize; component++)
+			{
+				array[pointIndex] = Points[point].Color.Array[component];
+				pointIndex++;
+			}
+
+			for (var component = 0; component < TextureCoordinate.BufferSize; component++)
+			{
+				array[pointIndex] = Points[point].TextureCoordinate.Array[component];
+				pointIndex++;
+			}
 		}
+
+		return array;
 	}
 
 	public Triangle(Vertex location, float width, float height, Color color)
