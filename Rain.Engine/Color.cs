@@ -1,3 +1,5 @@
+using OpenTK.Mathematics;
+
 namespace Rain.Engine;
 
 /// <summary>
@@ -86,6 +88,10 @@ public struct Color
 		this.b = (float)b / byte.MaxValue;
 		this.a = (float)a / byte.MaxValue;
 	}
+
+	/// <summary> Creates a new OpenTK Color4 instance from an already existing Color instance. </summary>
+	/// <returns> An equivilant OpenTK Color4 instance.</returns>
+	public Color4 ToColor4() => new(R, G, B, A);
 
 	public static Color operator +(Color a, Color b) => new(a.R + b.R, a.G + b.G, a.B + b.B, a.A + b.A);
 
