@@ -27,10 +27,17 @@ public class Texture : IDisposable
 
 		shaderProgram.GetUniformByName(glslName).SetToTexture(this);
 
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureFilter.NearestMipmapFiltered);
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureFilter.Linear);
+		GL.TexParameter(
+			TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+
+		GL.TexParameter(
+			TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
+
+		GL.TexParameter(
+			TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureFilter.NearestMipmapFiltered);
+			
+		GL.TexParameter(
+			TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureFilter.Linear);
 	}
 
 	/// <summary> Creates a new <c>Texture</c> object from a <c>TextureOptions</c> struct. </summary>
