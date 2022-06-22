@@ -1,3 +1,5 @@
+using OpenTK.Graphics.OpenGL;
+
 namespace Rain.Engine.Geometry;
 
 /// <summary> A colored point in 3D space that can be rendered by the GPU. </summary>
@@ -73,5 +75,27 @@ public struct Point
 		Vertex = vertex;
 		Color = color;
 		TextureCoordinate = textureCoordinate;
+	}
+
+	/// <summary> Tells OpenGL how to use the data sent through the Vertex Buffer. </summary>
+	public static void SetAttributes(ShaderProgram shaderProgram)
+	{
+		// This is only defined here for maintanability purposes, usually I would put it somewhere like the ShaderProgram
+		// class but it would be easier to make a hard to fix breaking change to the Point class that way. So this is left
+		// here in hopes that if the Point class is ever changed in a way that would change the way Vertex Atttributes
+		// are defined it would not be missed.
+		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("vertexPosition"));
+		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("vertexPosition"), Vertex.BufferSize, 
+							   VertexAttribPointerType.Float, false, BufferSize * sizeof(float), 0);
+
+		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("color"));
+		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("color"), Color.BufferSize,
+							   VertexAttribPointerType.Float, false, BufferSize * sizeof(float), 
+							   Vertex.BufferSize * sizeof(float));
+		
+		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("texturePosition"));
+		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("texturePosition"), TextureCoordinate.BufferSize,
+						 	   VertexAttribPointerType.Float, false, BufferSize * sizeof(float),
+							   Vertex.BufferSize * sizeof(float) + Color.BufferSize * sizeof(float));
 	}
 }

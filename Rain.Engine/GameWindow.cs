@@ -81,37 +81,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		base.OnLoad();
 
 		bufferGroup.Bind();
-
-		// layout (location = 0)
-		// size is how many elements (vertices).
-		// type of elements
-		// normalize (false)
-		// size of vertex in bytes, (3 times element size)
-		// where to start in the array
-		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("vertexPosition"));
-		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("vertexPosition"),
-						 Vertex.BufferSize,
-						 VertexAttribPointerType.Float,
-						 false,
-						 Point.BufferSize * sizeof(float),
-						 0);
-
-		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("color"));
-		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("color"),
-						 Color.BufferSize,
-						 VertexAttribPointerType.Float,
-						 false,
-						 Point.BufferSize * sizeof(float),
-						 Vertex.BufferSize * sizeof(float));
-		
-		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("texturePosition"));
-		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("texturePosition"),
-						 TextureCoordinate.BufferSize,
-						 VertexAttribPointerType.Float,
-						 false,
-						 Point.BufferSize * sizeof(float),
-						 Vertex.BufferSize * sizeof(float) + Color.BufferSize * sizeof(float));
-
+		Point.SetAttributes(shaderProgram);
 		texture.LoadFromImage("interesting.bmp");
 
 		// 0 Disables vertical sync.
