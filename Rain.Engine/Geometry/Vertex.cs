@@ -1,3 +1,5 @@
+using OpenTK.Mathematics;
+
 namespace Rain.Engine.Geometry;
 
 /// <summary> Represents the location of a point in 3D space. </summary>
@@ -54,6 +56,32 @@ public struct Vertex
 		Y = vertexArray[1];
 		Z = vertexArray[2];
 		W = vertexArray[3];
+	}
+
+	/// <summary> Creates a new Vertex instance from an OpenTK Vector3. </summary>
+	/// <param name="vector"> The Vector3 to create a Vertex from. </param>
+	public Vertex(Vector3 vector)
+	{
+		X = vector.X;
+		Y = vector.Y;
+		Z = vector.Z;
+		W = 1.0f;
+	}
+	
+	/// <summary> Produces an OpenTK Vector3 object from the Vertex. </summary>
+	/// <returns> An OpenTK Vector3. </returns>
+	public Vector3 ToVector3() => new(X, Y, Z);
+
+	/// <summary> Finds the distance between two Vertex<float> instances. </summary>
+	/// <returns> The distance between the two vertices. </returns>
+	public double DistanceBetween(Vertex b) => GetDistance(this, b);
+
+	/// <summary> Finds the distance between two Vertex<float> instances. </summary>
+	/// <returns> The distance between the two vertices. </returns>
+	public static double GetDistance(Vertex a, Vertex b)
+	{
+		var difference = a - b;
+		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
 	}
 
 	public override int GetHashCode()
