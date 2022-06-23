@@ -2,6 +2,8 @@ namespace Rain.Engine.Texturing;
 
 public enum TextureUnit
 {
+	None,
+
 	Unit0 = OpenTK.Graphics.OpenGL.TextureUnit.Texture0,
 
 	Unit1 = OpenTK.Graphics.OpenGL.TextureUnit.Texture1,
