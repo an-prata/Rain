@@ -6,6 +6,12 @@ namespace Rain.Engine;
 
 public class Scene : IDisposable
 {
+	/// <summary> A <c>Span</c> with this <c>Scene</c>'s vertex data. </summary>
+	public Span<float> VertexMemorySpan { get => vertexMemory.Span; }
+
+	/// <summary> A <c>Span</c> with this <c>Scene</c>'s element data. </summary>
+	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
+
 	private readonly IMemoryOwner<float> vertexOwner;
 
 	private readonly IMemoryOwner<uint> elementOwner;
@@ -17,10 +23,6 @@ public class Scene : IDisposable
 	private GCHandle vertexHandle;
 
 	private GCHandle elementHandle;
-
-	public Span<float> VertexMemorySpan { get => vertexMemory.Span; }
-
-	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
 
 	/// <summary> Creates a new <c>Scene</c> from an array of <c>IModel</c>. </summary>
 	/// <param name="models"> The array of <c>IModel</c>s tto render with this <c>Scene</c>. </param>
@@ -45,20 +47,19 @@ public class Scene : IDisposable
 	{
 		// If I am not mistaken, using ToArray() will copy the data, rather than reference it, effectively doubling the
 		// required memory. TODO: find a way to remove duplicates of vertex and element data as they could easily be very
-		// larg in size.
+		// large in size.
 		if (type == BufferType.VertexBuffer)
+		{
 			vertexHandle = GCHandle.Alloc(vertexMemory.ToArray(), GCHandleType.Pinned);
+			return vertexHandle.AddrOfPinnedObject();
+		}
 		else
-			elementHandle = GCHandle.Alloc(elementMemory.ToArray(), GCHandleType.Pinned);
+		{
+			elementHandle = GCHandle.Alloc(vertexMemory.ToArray(), GCHandleType.Pinned);
+			return elementHandle.AddrOfPinnedObject();
+		}
 		
-		return vertexHandle.AddrOfPinnedObject();
 	}
-
-	/// <summary> Frees the memory used to store vertices to the Garbage Collector. </summary>
-	public void FreeVertexHandleToGC() => vertexHandle.Free();
-
-	/// <summary> Frees the memory used to store elements to the Garbage Collector. </summary>
-	public void FreeElementHandleToGC() => elementHandle.Free();
 
 	private static void GetModelData(IModel[] models, out float[] vertexData, out uint[] elementData)
 	{
