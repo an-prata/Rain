@@ -1,6 +1,6 @@
 namespace Rain.Engine.Geometry;
 
-public abstract class Model : IModel
+public abstract class ModelBase : IModel
 {
 	public abstract int NumberOfPoints { get; }
 
@@ -65,7 +65,7 @@ public abstract class Model : IModel
 		}
 	}
 
-	public Model(Point[] points)
+	public ModelBase(Point[] points)
 	{
 		if (points.Length != NumberOfPoints)
 			throw new Exception($"Parameter {nameof(points)} was not of length {NumberOfPoints}");
@@ -161,7 +161,7 @@ public abstract class Model : IModel
 			Rotate(-angle, axis);
 	}
 
-	public static Model operator *(TransformMatrix a, Model b)
+	public static ModelBase operator *(TransformMatrix a, ModelBase b)
 	{
 		for (var i = 0; i < b.Points.Length; i++)
 			b.Points[i].Vertex *= a;
@@ -169,5 +169,5 @@ public abstract class Model : IModel
 		return b;
 	}
 
-	public static Model operator *(Model a, TransformMatrix b) => b * a;
+	public static ModelBase operator *(ModelBase a, TransformMatrix b) => b * a;
 }

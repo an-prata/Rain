@@ -1,6 +1,6 @@
 namespace Rain.Engine.Geometry;
 
-public class Rectangle : Model, IModel
+public class Rectangle : ModelBase, IModel
 {
 	public override int NumberOfPoints { get => 4; }
 
