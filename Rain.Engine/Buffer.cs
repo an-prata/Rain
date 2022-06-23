@@ -27,16 +27,12 @@ public class Buffer : IDisposable
 		Handle = GL.GenBuffer();
 		GL.BindBuffer((BufferTarget)type, Handle);
 
+		dataPointer = scene.GetPointer(type);
+
 		if (type == BufferType.VertexBuffer)
-		{
-			dataPointer = scene.GetVertexPointer();
-			dataSize = scene.VertexMemorySpan.Length * sizeof(float);
-		}
+			dataSize = scene.ElementMemorySpan.Length * sizeof(float);
 		else
-		{
-			dataPointer = scene.GetElementPointer();
 			dataSize = scene.ElementMemorySpan.Length * sizeof(uint);
-		}
 
 		GL.BufferData((BufferTarget)Type, dataSize, dataPointer, BufferUsageHint.StreamDraw);
 		GL.BindBuffer((BufferTarget)Type, Handle);
