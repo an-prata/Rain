@@ -14,6 +14,16 @@ public class Triangle : IModel
 
 	public uint[] Elements { get => new uint[NumberOfElements] { 0, 1, 2 }; }
 
+	public Triangle(Vertex location, float width, float height, Color color)
+	{
+		Points = new Point[3]
+		{
+			new Point(location, color, new(0.0f, 0.0f)),
+			new Point(new(location.X + width, location.Y, location.Z), color, new(1.0f, 0.0f)),
+			new Point(new(location.X, location.Y + height, location.Z), color, new(0.0f, 1.0f))
+		};
+	}
+
 	public float[] GetBufferableArray() 
 	{ 
 		var array = new float[BufferSize];
@@ -44,20 +54,30 @@ public class Triangle : IModel
 		return array;
 	}
 
-	public Triangle(Vertex location, float width, float height, Color color)
-	{
-		Points = new Point[3]
-		{
-			new Point(location, color, new(0.0f, 0.0f)),
-			new Point(new(location.X + width, location.Y, location.Z), color, new(1.0f, 0.0f)),
-			new Point(new(location.X, location.Y + height, location.Z), color, new(0.0f, 1.0f))
-		};
-	}
-
 	public void Rotate(float angle, Axes axis)
 	{
+		var center = GetCenterVertex();
 		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+		var translationMatrix = TransformMatrix.CreateTranslationMatrix(-center.X, -center.Y, -center.Z);
+		var inverseTranslationMatrix = TransformMatrix.CreateTranslationMatrix(center.X, center.Y, center.Z);
 
+		var triangle = this * translationMatrix;
+		triangle *= rotationMatrix;
+		triangle *= inverseTranslationMatrix;
+
+		Points = triangle.Points;
+	}
+
+	public void Rotate(float angle, Axes axis, RotationDirection direction)
+	{
+		if (direction == RotationDirection.CounterClockwise)
+			Rotate(angle, axis);
+		else
+			Rotate(-angle, axis);
+	}
+
+	public Vertex GetCenterVertex()
+	{
 		var greatestPointX = 0.0f;
 		var leastPointX = 0.0f;
 		var greatestPointY = 0.0f;
@@ -87,22 +107,7 @@ public class Triangle : IModel
 		var midPointY = (greatestPointY + leastPointY) / 2;
 		var midPointZ = (greatestPointZ + leastPointZ) / 2;
 
-		var translationMatrix = TransformMatrix.CreateTranslationMatrix(-midPointX, -midPointY, -midPointZ);
-		var inverseTranslationMatrix = TransformMatrix.CreateTranslationMatrix(midPointX, midPointY, midPointZ);
-
-		var Triangle = this * translationMatrix;
-		Triangle *= rotationMatrix;
-		Triangle *= inverseTranslationMatrix;
-
-		Points = Triangle.Points;
-	}
-
-	public void Rotate(float angle, Axes axis, RotationDirection direction)
-	{
-		if (direction == RotationDirection.CounterClockwise)
-			Rotate(angle, axis);
-		else
-			Rotate(-angle, axis);
+		return new Vertex(midPointX, midPointY, midPointZ);
 	}
 
 	public static Triangle operator *(TransformMatrix a, Triangle b)

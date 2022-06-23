@@ -12,7 +12,7 @@ public class Rectangle : IModel
 	
 	public Point[] Points { get; private set; }
 
-	public uint[] Elements { get => new uint[] {0, 1, 2, 1, 3, 2}; }
+	public uint[] Elements { get => new uint[NumberOfElements] {0, 1, 2, 1, 3, 2}; }
 
 	public float[] GetBufferableArray() 
 	{ 
@@ -62,12 +62,34 @@ public class Rectangle : IModel
 
 	public void Rotate(float angle, Axes axis)
 	{
+		var center = GetCenterVertex();
 		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+		var translationMatrix = TransformMatrix.CreateTranslationMatrix(-center.X, -center.Y, -center.Z);
+		var inverseTranslationMatrix = TransformMatrix.CreateTranslationMatrix(center.X, center.Y, center.Z);
 
+		var rectangle = this * translationMatrix;
+		rectangle *= rotationMatrix;
+		rectangle *= inverseTranslationMatrix;
+
+		Points = rectangle.Points;
+	}
+
+	public void Rotate(float angle, Axes axis, RotationDirection direction)
+	{
+		if (direction == RotationDirection.CounterClockwise)
+			Rotate(angle, axis);
+		else
+			Rotate(-angle, axis);
+	}
+
+	public Vertex GetCenterVertex()
+	{
 		var greatestPointX = 0.0f;
 		var leastPointX = 0.0f;
+		
 		var greatestPointY = 0.0f;
 		var leastPointY = 0.0f;
+
 		var greatestPointZ = 0.0f;
 		var leastPointZ = 0.0f;
 
@@ -93,22 +115,7 @@ public class Rectangle : IModel
 		var midPointY = (greatestPointY + leastPointY) / 2;
 		var midPointZ = (greatestPointZ + leastPointZ) / 2;
 
-		var translationMatrix = TransformMatrix.CreateTranslationMatrix(-midPointX, -midPointY, -midPointZ);
-		var inverseTranslationMatrix = TransformMatrix.CreateTranslationMatrix(midPointX, midPointY, midPointZ);
-
-		var rectangle = this * translationMatrix;
-		rectangle *= rotationMatrix;
-		rectangle *= inverseTranslationMatrix;
-
-		Points = rectangle.Points;
-	}
-
-	public void Rotate(float angle, Axes axis, RotationDirection direction)
-	{
-		if (direction == RotationDirection.CounterClockwise)
-			Rotate(angle, axis);
-		else
-			Rotate(-angle, axis);
+		return new Vertex(midPointX, midPointY, midPointZ);
 	}
 
 	public static Rectangle operator *(TransformMatrix a, Rectangle b)
