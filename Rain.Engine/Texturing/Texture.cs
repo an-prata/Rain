@@ -99,7 +99,7 @@ public class Texture : IDisposable
 	public static Texture Empty() => new();
 
 	/// <summary>
-	/// Reserves a Texture handle with OpenGL, can only be used with a <c>Texture</c> returned by <c>Texture.Empty</c>.
+	/// Reserves a Texture handle with OpenGL, can only be used with a <c>Texture</c> returned by <c>Texture.Empty()</c>.
 	/// </summary>
 	public void ReserveHandle()
 	{
