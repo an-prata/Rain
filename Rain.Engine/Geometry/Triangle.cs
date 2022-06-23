@@ -14,6 +14,57 @@ public class Triangle : IModel
 
 	public uint[] Elements { get => new uint[NumberOfElements] { 0, 1, 2 }; }
 
+	public float LengthX
+	{ 
+		get
+		{
+			var greatest = Points[0].Vertex.X;
+			var least = Points[0].Vertex.X;
+
+			foreach (var point in Points)
+			{
+				if (point.Vertex.X > greatest) greatest = point.Vertex.X;
+				if (point.Vertex.X < least) least = point.Vertex.X;
+			}
+
+			return greatest - least;
+		}
+	}
+
+	public float LengthY
+	{ 
+		get
+		{
+			var greatest = Points[0].Vertex.Y;
+			var least = Points[0].Vertex.Y;
+
+			foreach (var point in Points)
+			{
+				if (point.Vertex.Y > greatest) greatest = point.Vertex.Y;
+				if (point.Vertex.Y < least) least = point.Vertex.Y;
+			}
+
+			return greatest - least;
+		}
+	}
+
+	public float LengthZ
+	{ 
+		get
+		{
+			var greatest = Points[0].Vertex.Z;
+			var least = Points[0].Vertex.Z;
+
+			foreach (var point in Points)
+			{
+				if (point.Vertex.Z > greatest) greatest = point.Vertex.Z;
+				if (point.Vertex.Z < least) least = point.Vertex.Z;
+			}
+
+			return greatest - least;
+		}
+	}
+
 	public Triangle(Vertex location, float width, float height, Color color)
 	{
 		Points = new Point[3]

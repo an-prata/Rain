@@ -11,59 +11,14 @@ public interface IModel
 	/// <summary> An array of indices in groups of three, correlating to triangles. </summary>
 	uint[] Elements { get; }
 
-	/// <summary> The length of the model along the X axis. </summary>
-	float Width
-	{ 
-		get
-		{
-			var greatest = Points[0].Vertex.X;
-			var least = Points[0].Vertex.X;
+	/// <summary> The length of the <c>IModel</c> along the X axis. </summary>
+	float LengthX { get; }
 
-			foreach (var point in Points)
-			{
-				if (point.Vertex.X > greatest) greatest = point.Vertex.X;
-				if (point.Vertex.X < least) least = point.Vertex.X;
-			}
+	/// <summary> The length of the <c>IModel</c> along the Y axis. </summary>
+	float LengthY { get; }
 
-			return greatest - least;
-		}
-	}
-
-	/// <summary> The length of the model along the Y axis. </summary>
-	float Height
-	{ 
-		get
-		{
-			var greatest = Points[0].Vertex.Y;
-			var least = Points[0].Vertex.Y;
-
-			foreach (var point in Points)
-			{
-				if (point.Vertex.Y > greatest) greatest = point.Vertex.Y;
-				if (point.Vertex.Y < least) least = point.Vertex.Y;
-			}
-
-			return greatest - least;
-		}
-	}
-
-	/// <summary> The length of the model along the Z axis. </summary>
-	float Length
-	{ 
-		get
-		{
-			var greatest = Points[0].Vertex.Z;
-			var least = Points[0].Vertex.Z;
-
-			foreach (var point in Points)
-			{
-				if (point.Vertex.Z > greatest) greatest = point.Vertex.Z;
-				if (point.Vertex.Z < least) least = point.Vertex.Z;
-			}
-
-			return greatest - least;
-		}
-	}
+	/// <summary> The length of the <c>IModel</c> along the Z axis. </summary>
+	float LengthZ { get; }
 
 	/// <summary> Gets array representing vertex data needed to render the <c>IModel</c>. </summary>
 	float[] GetBufferableArray();
