@@ -8,8 +8,8 @@ on:
 
 jobs:
   build:
-    name: Build ${{matrix.os}}
-    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.os.prettyname }}
+    runs-on: ${{ matrix.os.fullname }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
@@ -26,24 +26,5 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
       
-  test:
-    name: Test ${{matrix.os}}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 7.0.100-preview.4.22252.9
-
-    - name: Install dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    
     - name: Test
       run: dotnet test --no-restore --verbosity normal
