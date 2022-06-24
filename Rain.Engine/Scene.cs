@@ -12,10 +12,6 @@ public class Scene : IDisposable
 	/// <summary> A <c>Span</c> with this <c>Scene</c>'s element data. </summary>
 	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
 
-	private readonly IMemoryOwner<float> vertexOwner;
-
-	private readonly IMemoryOwner<uint> elementOwner;
-
 	private readonly Memory<float> vertexMemory;
 
 	private readonly Memory<uint> elementMemory;
@@ -30,14 +26,11 @@ public class Scene : IDisposable
 	{
 		GetModelData(models, out var vertexData, out var elementData);
 
-		vertexOwner = MemoryPool<float>.Shared.Rent(vertexData.Length);
-		vertexMemory = vertexOwner.Memory;
+		vertexHandle = GCHandle.Alloc(vertexData, GCHandleType.Pinned);
+		elementHandle = GCHandle.Alloc(elementData, GCHandleType.Pinned);
 
-		elementOwner = MemoryPool<uint>.Shared.Rent(elementData.Length);
-		elementMemory = elementOwner.Memory;
-
-		vertexData.CopyTo(vertexMemory);
-		elementData.CopyTo(elementMemory);
+		vertexMemory = new(vertexData);
+		elementMemory = new(elementData);
 	}
 
 	/// <summary>  Gets a pointer to the data for a buffer of <c>type</c>. </summary>
@@ -45,20 +38,10 @@ public class Scene : IDisposable
 	/// <returns> An <c>IntPtr</c> object. </returns>
 	public IntPtr GetPointer(BufferType type)
 	{
-		// If I am not mistaken, using ToArray() will copy the data, rather than reference it, effectively doubling the
-		// required memory. TODO: find a way to remove duplicates of vertex and element data as they could easily be very
-		// large in size.
 		if (type == BufferType.VertexBuffer)
-		{
-			vertexHandle = GCHandle.Alloc(vertexMemory.ToArray(), GCHandleType.Pinned);
 			return vertexHandle.AddrOfPinnedObject();
-		}
 		else
-		{
-			elementHandle = GCHandle.Alloc(vertexMemory.ToArray(), GCHandleType.Pinned);
 			return elementHandle.AddrOfPinnedObject();
-		}
-		
 	}
 
 	private static void GetModelData(IModel[] models, out float[] vertexData, out uint[] elementData)
@@ -113,8 +96,6 @@ public class Scene : IDisposable
 		{
 			vertexHandle.Free();
 			elementHandle.Free();
-			vertexOwner.Dispose();
-			elementOwner.Dispose();
 		}
 
 		disposed = true;
