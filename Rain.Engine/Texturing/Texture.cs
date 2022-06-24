@@ -114,7 +114,7 @@ public class Texture : IDisposable
 	/// <param name="imagePath"> The path to the image file. </param>
 	public void LoadFromImage(string imagePath)
 	{
-		Bind();
+		Bind(bindEmpty: true);
 
 		var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
 		image.Mutate(x => x.Flip(FlipMode.Vertical));
@@ -143,6 +143,16 @@ public class Texture : IDisposable
 		if (IsEmpty)
 			throw new Exception("Cannot bind empty Texture.");
 
+		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
+		GL.BindTexture(TextureTarget.Texture2D, Handle);
+	}
+
+	/// <summary>
+	/// Performs the same action as <c>Bind()</c> but skips the <c>IsEmpty</c> which could lead to unwanted behavior,
+	/// for calls inside this class only.
+	/// </summary>
+	private void Bind(bool bindEmpty)
+	{
 		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
 		GL.BindTexture(TextureTarget.Texture2D, Handle);
 	}
