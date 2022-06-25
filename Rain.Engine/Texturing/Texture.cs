@@ -7,6 +7,9 @@ namespace Rain.Engine.Texturing;
 /// <summary> A class for managing and creating OpenGL textures. </summary>
 public class Texture : IDisposable
 {
+	/// <summary> The maximum number of bound textures that Rain can gaurantee support. </summary>
+	public const int MaximumBoundTextures = 16;
+
 	/// <summary> The Texture's OpenGL handle for use with OpenGL functions. </summary>
 	/// <value> An integer representing the OpenGL Texture. </value>
 	public int Handle { get; private set; }
