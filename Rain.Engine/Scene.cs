@@ -24,11 +24,48 @@ public class Scene : IDisposable
 
 	private GCHandle elementHandle;
 
+	private int[] modelVertexIndices;
+
+	private int[] modelElementIndices;
+
 	/// <summary> Creates a new <c>Scene</c> from an array of <c>IModel</c>. </summary>
 	/// <param name="models"> The array of <c>IModel</c>s tto render with this <c>Scene</c>. </param>
 	public Scene(IModel[] models)
 	{
-		GetModelData(models, out var vertexData, out var elementData);
+		modelVertexIndices = new int[models.Length];
+		modelElementIndices = new int[models.Length];
+
+		var sceneBufferSize = 0;
+		int elements = 0;
+
+		var verticesAdded = 0;
+		var elementsAdded = 0;
+		
+		for (var i = 0; i < models.Length; i++)
+		{
+			sceneBufferSize += models[i].Points.Length * Point.BufferSize;
+			elements += models[i].Elements.Length;
+		}
+
+		var vertexData = new float[sceneBufferSize];
+		var elementData = new uint[elements];
+
+		for (var model = 0; model < models.Length; model++)
+		{
+			modelVertexIndices[model] = verticesAdded;
+			modelElementIndices[model] = elementsAdded;
+
+			var modelBufferArray = models[model].GetBufferableArray();
+
+			for (var i = 0; i < modelBufferArray.Length; i++)
+				vertexData[verticesAdded + i] = modelBufferArray[i];
+
+			for (var i = 0; i < models[model].Elements.Length; i++)
+				elementData[elementsAdded + i] = (uint)verticesAdded / Point.BufferSize + models[model].Elements[i];
+
+			verticesAdded += modelBufferArray.Length;
+			elementsAdded += models[model].Elements.Length;
+		}
 
 		vertexOwner = MemoryPool<float>.Shared.Rent(vertexData.Length);
 		vertexMemory = vertexOwner.Memory;
@@ -57,41 +94,7 @@ public class Scene : IDisposable
 		{
 			elementHandle = GCHandle.Alloc(vertexMemory.ToArray(), GCHandleType.Pinned);
 			return elementHandle.AddrOfPinnedObject();
-		}
-		
-	}
-
-	private static void GetModelData(IModel[] models, out float[] vertexData, out uint[] elementData)
-	{
-		// Get vertex data.
-		var sceneBufferSize = 0;
-		int elements = 0;
-
-		var verticesAdded = 0;
-		var elementsAdded = 0;
-		
-		for (var i = 0; i < models.Length; i++)
-			sceneBufferSize += models[i].Points.Length * Point.BufferSize;
-
-		for (var i = 0; i < models.Length; i++)
-			elements += models[i].Elements.Length;
-
-		vertexData = new float[sceneBufferSize];
-		elementData = new uint[elements];
-
-		for (var model = 0; model < models.Length; model++)
-		{
-			var modelBufferArray = models[model].GetBufferableArray();
-
-			for (var i = 0; i < modelBufferArray.Length; i++)
-				vertexData[verticesAdded + i] = modelBufferArray[i];
-
-			for (var i = 0; i < models[model].Elements.Length; i++)
-				elementData[elementsAdded + i] = (uint)verticesAdded / Point.BufferSize + models[model].Elements[i];
-
-			verticesAdded += modelBufferArray.Length;
-			elementsAdded += models[model].Elements.Length;
-		}
+		}	
 	}
 
 	#region IDisposable
