@@ -53,7 +53,40 @@ public class Buffer : IDisposable
 		else
 			GL.BufferData((BufferTarget)Type, dataSize * sizeof(uint), dataPointer, BufferUsageHint.StreamDraw);
 	} 
+	
+	/// <summary> Upload an array through the current <c>Buffer</c> to the graphics card. </summary>
+	/// <param name="bufferData"> The data to buffer. </param>
+	/// <param name="start"> The index to start buffering at. </param>
+	/// <param name="size"> The number of elements to buffer. </param>
+	public void BufferData(Span<float> bufferData, int start, int size)
+	{
+		var bufferArray = new float[size];
+
+		for (var i = 0; i < size; i++)
+			bufferArray[i] = bufferData[start + i];
+
+		if (Type != BufferType.VertexBuffer)
+			throw new Exception($"Cannot buffer {typeof(float)} through a {typeof(Buffer)} of type {Type}");
+
+		GL.BufferData((BufferTarget)Type, bufferData.Length * sizeof(float), bufferArray, BufferUsageHint.StreamDraw);
+	}
+
+	/// <summary> Upload an array through the current <c>Buffer</c> to the graphics card. </summary>
+	/// <param name="bufferData"> The data to buffer. </param>
+	/// <param name="start"> The index to start buffering at. </param>
+	/// <param name="size"> The number of elements to buffer. </param>
+	public void BufferData(Span<uint> bufferData, int start, int size)
+	{
+		var bufferArray = new float[size];
+
+		for (var i = 0; i < size; i++)
+			bufferArray[i] = bufferData[start + i];
+
+		if (Type != BufferType.ElementBuffer)
+			throw new Exception($"Cannot buffer {typeof(uint)} through a {typeof(Buffer)} of type {Type}");
 		
+		GL.BufferData((BufferTarget)Type, bufferData.Length * sizeof(float), bufferArray, BufferUsageHint.StreamDraw);
+	}
 
 	#region IDisposable
 
