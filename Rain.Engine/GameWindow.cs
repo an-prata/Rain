@@ -25,7 +25,13 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	private ShaderProgram shaderProgram;
 
-	private Texture texture;
+	private Texture texture0;
+
+	private Texture texture1;
+
+	private Texture texture2;
+
+	private Texture texture3;
 
 	public GameWindow(GameOptions options) : base(new GameWindowSettings
 	{
@@ -65,7 +71,12 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		};
 
 		shaderProgram = new(shaderComponents);
-		texture = new(shaderProgram, TextureUnit.Unit0, "texture0");
+		texture0 = new(shaderProgram, TextureUnit.Unit0, "texture0");
+		texture1 = new(shaderProgram, TextureUnit.Unit0, "texture0");
+		texture2 = new(shaderProgram, TextureUnit.Unit0, "texture0");
+		texture3 = new(shaderProgram, TextureUnit.Unit0, "texture0");
+
+		ActiveScene.Textures = new Texture[] { texture0, texture1, texture2, texture3 };
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -82,7 +93,10 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 		bufferGroup.Bind();
 		Point.SetAttributes(shaderProgram);
-		texture.LoadFromImage("interesting.bmp");
+		texture0.LoadFromImage("interesting.bmp");
+		texture1.LoadFromImage("suprise.bmp");
+		texture2.LoadFromImage("greg.bmp");
+		texture3.LoadFromImage("garfield.bmp");
 
 		// 0 Disables vertical sync.
 		// 1 Enables vertical sync.
@@ -105,13 +119,9 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	protected override void OnRenderFrame(FrameEventArgs args)
 	{
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
-
-		bufferGroup.BufferData();
-		bufferGroup.Bind();
 		shaderProgram.Use();
-		texture.Bind();
 
-		GL.DrawElements(PrimitiveType.Triangles, ActiveScene.ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
+		ActiveScene.Draw(bufferGroup);
 		
 		Context.SwapBuffers();
 
