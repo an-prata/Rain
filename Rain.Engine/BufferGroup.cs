@@ -38,6 +38,11 @@ public class BufferGroup : IDisposable
 	/// <param name="buffer"> The <c>BufferType</c> used to specify the <c>BufferObject</c>. </param>
 	public void BufferData(BufferType buffer) => buffers[buffer].BufferData();
 
+	/// <summary> Calls <c>Buffer.BufferData()</c> for the <c>Buffer</c> of the given <c>BufferType</c>. </summary>
+	/// <param name="buffer"> The <c>BufferType</c> used to specify the <c>BufferObject</c>. </param>
+	/// <param name="data"> The data to buffer. </param>
+	public void BufferData(BufferType buffer, Array data) => buffers[buffer].BufferData(data);
+
 	/// <summary> Binds this OpenGL Vertex Array Object. </summary>
 	public void Bind() => GL.BindVertexArray(Handle);
 

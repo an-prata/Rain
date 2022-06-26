@@ -30,7 +30,7 @@ public class Buffer : IDisposable
 		dataPointer = scene.GetPointer(type);
 
 		if (type == BufferType.VertexBuffer)
-			dataSize = scene.ElementMemorySpan.Length * sizeof(float);
+			dataSize = scene.VertexMemorySpan.Length * sizeof(float);
 		else
 			dataSize = scene.ElementMemorySpan.Length * sizeof(uint);
 
@@ -52,9 +52,20 @@ public class Buffer : IDisposable
 			GL.BufferData((BufferTarget)Type, dataSize * sizeof(float), dataPointer, BufferUsageHint.StreamDraw);
 		else
 			GL.BufferData((BufferTarget)Type, dataSize * sizeof(uint), dataPointer, BufferUsageHint.StreamDraw);
-	} 
-		
+	}
 
+	/// <summary> Buffers given data. </summary>
+	/// <param name="data"> Data to buffer. </param>
+	public void BufferData(Array data)
+	{
+		if (data.GetType() == typeof(float[]) && Type == BufferType.VertexBuffer)
+			GL.BufferData((BufferTarget)Type, data.Length * sizeof(float), (float[])data, BufferUsageHint.StreamDraw);
+		else if (data.GetType() == typeof(uint[]) && Type == BufferType.ElementBuffer)
+			GL.BufferData((BufferTarget)Type, data.Length * sizeof(uint), (uint[])data, BufferUsageHint.StreamDraw);
+		else
+			throw new Exception($"Cannot buffer data not of type {typeof(uint)} with a buffer of type {Type}.");
+	}
+	
 	#region IDisposable
 
 	private bool disposed = false;
