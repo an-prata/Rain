@@ -30,7 +30,7 @@ public class Buffer : IDisposable
 		dataPointer = scene.GetPointer(type);
 
 		if (type == BufferType.VertexBuffer)
-			dataSize = scene.ElementMemorySpan.Length * sizeof(float);
+			dataSize = scene.VertexMemorySpan.Length * sizeof(float);
 		else
 			dataSize = scene.ElementMemorySpan.Length * sizeof(uint);
 
