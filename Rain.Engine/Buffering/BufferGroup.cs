@@ -1,6 +1,6 @@
 using OpenTK.Graphics.OpenGL;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Buffering;
 
 /// <summary> A class for managing OpenGL Vertex Array Objects. </summary>
 public class BufferGroup : IDisposable

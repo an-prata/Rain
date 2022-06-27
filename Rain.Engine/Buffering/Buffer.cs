@@ -1,6 +1,6 @@
 using OpenTK.Graphics.OpenGL;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Buffering;
 
 /// <summary> A class for managing supported OpenGL Buffer Objects. </summary>
 public class Buffer : IDisposable
