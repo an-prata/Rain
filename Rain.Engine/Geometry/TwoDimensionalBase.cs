@@ -103,16 +103,22 @@ public abstract class TwoDimensionalBase : ITwoDimensional
 		return new Vertex(midPointX, midPointY, midPointZ);
 	}
 
+	public void Translate(float x, float y, float z)
+		=> Points = (this * TransformMatrix.CreateTranslationMatrix(x, y, z)).Points;
+
+	public void Translate(Vertex vertex) => Translate(vertex.X, vertex.Y, vertex.Z);
+
+	public void Scale(float x, float y)
+		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
+
 	public void Rotate(float angle, Axes axis)
 	{
 		var center = GetCenterVertex();
 		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
-		var translationMatrix = TransformMatrix.CreateTranslationMatrix(-center.X, -center.Y, -center.Z);
-		var inverseTranslationMatrix = TransformMatrix.CreateTranslationMatrix(center.X, center.Y, center.Z);
 
-		var model = this * translationMatrix;
-		model *= rotationMatrix;
-		model *= inverseTranslationMatrix;
+		Translate(-center.X, -center.Y, -center.Z);
+		Points = (this * rotationMatrix).Points;
+		Translate(center.X, center.Y, center.Z);
 
 		switch(axis)
 		{
@@ -128,8 +134,6 @@ public abstract class TwoDimensionalBase : ITwoDimensional
 				RotationZ += angle; 
 				break;
 		}
-
-		Points = model.Points;
 	}
 
 	public void Rotate(float angle, Axes axis, RotationDirection direction)

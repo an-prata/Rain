@@ -52,6 +52,45 @@ public interface ITwoDimensional
 	Vertex GetCenterVertex();
 
 	/// <summary>
+	/// Translate the <c>ITwoDimensional</c> through three dimensional space.
+	/// </summary>
+	/// 
+	/// <param name="x">
+	/// The amount to translate on the X axis.
+	/// </param>
+	/// 
+	/// <param name="y">
+	/// The amount to translate on the Y axis.
+	/// </param>
+	/// 
+	/// <param name="z">
+	/// The amount to translate on the Z axis.
+	/// </param>
+	public void Translate(float x, float y, float z);
+
+	/// <summary>
+	/// Translate the <c>ITwoDimensional</c> through three dimensional space.
+	/// </summary>
+	/// 
+	/// <param name="vertex">
+	/// A <c>Vertex</c> who's X, Y, and Z values will be used to translate the <c>ITwoDimensional</c>. 
+	/// </param>
+	public void Translate(Vertex vertex);
+
+	/// <summary>
+	/// Scale the <c>ITwoDimensional</c> by factors of <c>x</c> and <c>y</c>.
+	/// </summary>
+	/// 
+	/// <param name="x">
+	/// Scale factor along the <c>ITwoDimensional</c>'s width.
+	/// </param>
+	/// 
+	/// <param name="y">
+	/// Scale factor along the <c>ITwoDimensional</c>'s height.
+	/// </param>
+	public void Scale(float x, float y);
+
+	/// <summary>
 	/// Rotates the <c>ITwoDimensional</c> about its center.
 	/// </summary>
 	/// 
