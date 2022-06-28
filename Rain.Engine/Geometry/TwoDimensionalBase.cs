@@ -1,6 +1,6 @@
 namespace Rain.Engine.Geometry;
 
-public abstract class ModelBase : IModel
+public abstract class TwoDimensionalBase : ITwoDimensional
 {
 	public abstract int NumberOfPoints { get; }
 
@@ -14,66 +14,30 @@ public abstract class ModelBase : IModel
 
 	public Vertex Location { get => Points[0].Vertex; }
 
-	public float LengthX
-	{ 
-		get
-		{
-			var greatest = Points[0].Vertex.X;
-			var least = Points[0].Vertex.X;
+	public float Width { get; private set; }
 
-			foreach (var point in Points)
-			{
-				if (point.Vertex.X > greatest) greatest = point.Vertex.X;
-				if (point.Vertex.X < least) least = point.Vertex.X;
-			}
+	public float Height { get; private set; }
 
-			return greatest - least;
-		}
-	}
+	public float RotationX { get; private set; }
 
-	public float LengthY
-	{ 
-		get
-		{
-			var greatest = Points[0].Vertex.Y;
-			var least = Points[0].Vertex.Y;
+	public float RotationY { get; private set; }
 
-			foreach (var point in Points)
-			{
-				if (point.Vertex.Y > greatest) greatest = point.Vertex.Y;
-				if (point.Vertex.Y < least) least = point.Vertex.Y;
-			}
+	public float RotationZ { get; private set; }
 
-			return greatest - least;
-		}
-	}
-
-	public float LengthZ
-	{ 
-		get
-		{
-			var greatest = Points[0].Vertex.Z;
-			var least = Points[0].Vertex.Z;
-
-			foreach (var point in Points)
-			{
-				if (point.Vertex.Z > greatest) greatest = point.Vertex.Z;
-				if (point.Vertex.Z < least) least = point.Vertex.Z;
-			}
-
-			return greatest - least;
-		}
-	}
-
-	public ModelBase(Point[] points)
+	public TwoDimensionalBase(Point[] points)
 	{
 		if (points.Length != NumberOfPoints)
 			throw new Exception($"Parameter {nameof(points)} was not of length {NumberOfPoints}");
 
 		Points = points;
+
+		RotationX = 0;
+		RotationY = 0;
+		RotationZ = 0;
 	}
 
-	public float[] GetBufferableArray()
+	// Saving for later.
+	/* public float[] GetBufferableArray()
 	{ 
 		var array = new float[BufferSize];
 
@@ -101,7 +65,7 @@ public abstract class ModelBase : IModel
 		}
 
 		return array;
-	}
+	} */
 
 	public Vertex GetCenterVertex()
 	{
@@ -150,6 +114,21 @@ public abstract class ModelBase : IModel
 		model *= rotationMatrix;
 		model *= inverseTranslationMatrix;
 
+		switch(axis)
+		{
+			case Axes.X: 
+				RotationX += angle; 
+				break;
+			
+			case Axes.Y: 
+				RotationY += angle; 
+				break;
+			
+			case Axes.Z: 
+				RotationZ += angle; 
+				break;
+		}
+
 		Points = model.Points;
 	}
 
@@ -161,13 +140,13 @@ public abstract class ModelBase : IModel
 			Rotate(-angle, axis);
 	}
 
-	public static ModelBase operator *(TransformMatrix a, ModelBase b)
+	public static TwoDimensionalBase operator *(TwoDimensionalBase a, TransformMatrix b) => b * a;
+
+	public static TwoDimensionalBase operator *(TransformMatrix a, TwoDimensionalBase b)
 	{
 		for (var i = 0; i < b.Points.Length; i++)
 			b.Points[i].Vertex *= a;
 			
 		return b;
 	}
-
-	public static ModelBase operator *(ModelBase a, TransformMatrix b) => b * a;
 }
