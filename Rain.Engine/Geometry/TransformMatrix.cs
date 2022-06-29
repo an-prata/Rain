@@ -31,7 +31,7 @@ public struct TransformMatrix
 	{
 		if (matrix.Length != Size * Size)
 			throw new Exception("2-Dimensional array " + nameof(matrix) + " was not correct size.");
-		
+
 		Matrix = matrix;
 		TransformType = transformType;
 	}
@@ -123,7 +123,7 @@ public struct TransformMatrix
         return (TransformMatrix)obj == this;
 	}
 
-	public static TransformMatrix operator *(TransformMatrix a, TransformMatrix b) 
+	public static TransformMatrix operator *(TransformMatrix a, TransformMatrix b)
 	{
 		var matrix = new float[4,4];
 		matrix.Initialize();
@@ -143,7 +143,7 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Complex);
 	}
 
-	public static Vertex operator *(TransformMatrix a, Vertex b) 
+	public static Vertex operator *(TransformMatrix a, Vertex b)
 	{
 		var vertexArray = new float[Vertex.BufferSize];
 		vertexArray.Initialize();
@@ -154,11 +154,21 @@ public struct TransformMatrix
 		for (var row = 0; row < Size; row++)
 			for (var collum = 0; collum < b.Array.Length; collum++)
 				vertexArray[row] += a.Matrix[row, collum] * b.Array[collum];
-		
+
 		return new Vertex(vertexArray);
 	}
 
 	public static Vertex operator *(Vertex a, TransformMatrix b) => b * a;
+
+	public static ITwoDimensional operator *(ITwoDimensional a, TransformMatrix b) => b * a;
+
+	public static ITwoDimensional operator *(TransformMatrix a, ITwoDimensional b)
+	{
+		for (var i = 0; i < b.Points.Length; i++)
+			b.Points[i].Vertex *= a;
+
+		return b;
+	}
 
 	public static bool operator ==(TransformMatrix a, TransformMatrix b)
 	{
@@ -166,17 +176,9 @@ public struct TransformMatrix
 			for (var collum = 0; collum < Size; collum++)
 				if (a.Matrix[row, collum] != b.Matrix[row, collum])
 					return false;
-	
+
 		return true;
 	}
 
-	public static bool operator !=(TransformMatrix a, TransformMatrix b)
-	{
-		for (var row = 0; row < Size; row++)
-			for (var collum = 0; collum < Size; collum++)
-				if (a.Matrix[row, collum] != b.Matrix[row, collum])
-					return !false;
-	
-		return !true;
-	}
+	public static bool operator !=(TransformMatrix a, TransformMatrix b) => !(a == b);
 }
