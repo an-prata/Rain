@@ -13,7 +13,7 @@ public interface ITwoDimensional
 	/// <summary>
 	/// An array of points representing the object.
 	/// </summary>
-	Point[] Points { get; set; }
+	Point[] Points { get; }
 
 	/// <summary>
 	/// The location of the <c>ITwoDimensional</c> in 3D space.
@@ -52,41 +52,7 @@ public interface ITwoDimensional
 	/// <returns>
 	/// A <c>Vertex</c> positioned at the center of the <c>ITwoDimensional</c>.
 	/// </returns>
-	public Vertex GetCenterVertex()
-	{
-		var greatestPointX = 0.0f;
-		var leastPointX = 0.0f;
-		
-		var greatestPointY = 0.0f;
-		var leastPointY = 0.0f;
-
-		var greatestPointZ = 0.0f;
-		var leastPointZ = 0.0f;
-
-		for (var point = 0; point < Points.Length; point++)
-		{
-			if (Points[point].Vertex.X > greatestPointX)
-				greatestPointX = Points[point].Vertex.X;
-			else if (Points[point].Vertex.X < leastPointX)
-				leastPointX = Points[point].Vertex.X;
-			
-			if (Points[point].Vertex.Y > greatestPointY)
-				greatestPointY = Points[point].Vertex.Y;
-			else if (Points[point].Vertex.Y < leastPointY)
-				leastPointY = Points[point].Vertex.Y;
-
-			if (Points[point].Vertex.Z > greatestPointZ)
-				greatestPointZ = Points[point].Vertex.Z;
-			else if (Points[point].Vertex.Z < leastPointZ)
-				leastPointZ = Points[point].Vertex.Z;
-		}
-
-		var midPointX = (greatestPointX + leastPointX) / 2;
-		var midPointY = (greatestPointY + leastPointY) / 2;
-		var midPointZ = (greatestPointZ + leastPointZ) / 2;
-
-		return new Vertex(midPointX, midPointY, midPointZ);
-	}
+	public Vertex GetCenterVertex();
 
 	/// <summary>
 	/// Translate the <c>ITwoDimensional</c> through three dimensional space.
@@ -103,8 +69,7 @@ public interface ITwoDimensional
 	/// <param name="z">
 	/// The amount to translate on the Z axis.
 	/// </param>
-	public void Translate(float x, float y, float z)
-		=> Points = (this * TransformMatrix.CreateTranslationMatrix(x, y, z)).Points;
+	public void Translate(float x, float y, float z);
 
 	/// <summary>
 	/// Translate the <c>ITwoDimensional</c> through three dimensional space.
@@ -126,8 +91,8 @@ public interface ITwoDimensional
 	/// <param name="y">
 	/// Scale factor along the <c>ITwoDimensional</c>'s height.
 	/// </param>
-	public void Scale(float x, float y)
-		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
+	public void Scale(float x, float y);
+
 	/// <summary>
 	/// Rotates the <c>ITwoDimensional</c> about its center.
 	/// </summary>
@@ -143,30 +108,7 @@ public interface ITwoDimensional
 	/// <param name="axis">
 	/// The axis to rotate on.
 	/// </param>
-	public void Rotate(float angle, Axes axis)
-	{
-		var center = GetCenterVertex();
-		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
-
-		Translate(-center.X, -center.Y, -center.Z);
-		Points = (this * rotationMatrix).Points;
-		Translate(center.X, center.Y, center.Z);
-
-		switch(axis)
-		{
-			case Axes.X: 
-				RotationX += angle; 
-				break;
-			
-			case Axes.Y: 
-				RotationY += angle; 
-				break;
-			
-			case Axes.Z: 
-				RotationZ += angle; 
-				break;
-		}
-	}
+	public void Rotate(float angle, Axes axis);
 
 	/// <summary>
 	/// Rotates the <c>ITwoDimensional</c> about its center.
@@ -187,11 +129,5 @@ public interface ITwoDimensional
 	/// <param name="direction">
 	/// The direction to rotate in.
 	/// </param>
-	public void Rotate(float angle, Axes axis, RotationDirection direction)
-	{
-		if (direction == RotationDirection.CounterClockwise)
-			Rotate(angle, axis);
-		else
-			Rotate(-angle, axis);
-	}
+	public void Rotate(float angle, Axes axis, RotationDirection direction);
 }

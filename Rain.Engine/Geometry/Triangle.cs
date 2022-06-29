@@ -1,28 +1,160 @@
 namespace Rain.Engine.Geometry;
 
-public class Triangle : TwoDimensionalBase, IModel
+public class Triangle : ITwoDimensional
 {
-	public override int NumberOfPoints { get => 3; }
+	private Vertex location;
 
-	public override int NumberOfElements { get => 3;}
+	private float width;
 
-	public override uint[] Elements { get => new uint[] { 0, 1, 2 }; }
+	private float height;
 
-	/// <summary> Creates a new <c>Triangle</c> from an array of <c>Point</c>s. </summary>
-	/// <param name="points"> An array of <c>Point</c> objects of length <c>Triangle.BufferSize</c>. </param>
-	public Triangle(Point[] points) : base(points) { }
+	private float rotationX = 0;
 
-	/// <summary> Creates a new <c>Triangle</c>. </summary>
-	/// <param name="location"> 
-	/// The location of the <c>Triangle</c> and the point with the smallest X, Y, and Z values. 
-	/// </param>
-	/// <param name="lengthX"> The <c>Triangle</c>'s length along the X axis. </param>
-	/// <param name="lengthY"> The <c>Triangle</c>'s length along the Y axis.</param>
-	/// <param name="color"> The color of the <c>Triangle</c>. </param>
-	public Triangle(Vertex location, float lengthX, float lengthY, Color color) : base(new Point[]
+	private float rotationY = 0;
+
+	private float rotationZ = 0;
+
+	public uint[] Elements => new uint[] { 0, 1, 2 };
+
+	public Point[] Points { get; private set; }
+
+	public Vertex Location
 	{
-		new Point(location, color, new(0.0f, 0.0f)),
-		new Point(new(location.X + lengthX, location.Y, location.Z), color, new(1.0f, 0.0f)),
-		new Point(new(location.X, location.Y + lengthY, location.Z), color, new(0.0f, 1.0f))
-	}) { }
+		get => location;
+		set => Translate(value.X - location.X, value.Y - location.Y, value.Z - location.Z);
+	}
+
+	public float Width
+	{
+		get => width;
+		set => Scale(value / width, 1);
+	}
+
+	public float Height 
+	{ 
+		get => height;
+		set => Scale(1, value / height); 
+	}
+
+	public float RotationX 
+	{ 
+		get => rotationX; 
+		set => Rotate(value / rotationX, Axes.X); 
+	}
+
+	public float RotationY
+	{ 
+		get => rotationY; 
+		set => Rotate(value / rotationY, Axes.Y); 
+	}
+
+	public float RotationZ 
+	{ 
+		get => rotationZ; 
+		set => Rotate(value / rotationZ, Axes.Z); 
+	}
+
+	public Triangle(Vertex location, float width, float height)
+	{
+		Points = new Point[]
+		{
+			new(location, new(255, 255, 255), new(0.0f, 0.0f)),
+			new(new(location.X + width, location.Y, location.Z), new(255, 255, 255), new(1.0f, 0.0f)),
+			new(new(location.X, location.Y + height, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
+		};
+
+		Width = width;
+		Height = height;
+	}
+
+	public Triangle(Vertex location, float width, float height, Color color)
+	{
+		Points = new Point[]
+		{
+			new(location, color, new(0.0f, 0.0f)),
+			new(new(location.X + width, location.Y, location.Z), color, new(1.0f, 0.0f)),
+			new(new(location.X, location.Y + height, location.Z), color, new(0.0f, 1.0f)),
+		};
+
+		Width = width;
+		Height = height;
+	}
+
+	public Vertex GetCenterVertex()
+	{
+		var greatestPointX = 0.0f;
+		var leastPointX = 0.0f;
+
+		var greatestPointY = 0.0f;
+		var leastPointY = 0.0f;
+
+		var greatestPointZ = 0.0f;
+		var leastPointZ = 0.0f;
+
+		for (var point = 0; point < Points.Length; point++)
+		{
+			if (Points[point].Vertex.X > greatestPointX)
+				greatestPointX = Points[point].Vertex.X;
+			else if (Points[point].Vertex.X < leastPointX)
+				leastPointX = Points[point].Vertex.X;
+
+			if (Points[point].Vertex.Y > greatestPointY)
+				greatestPointY = Points[point].Vertex.Y;
+			else if (Points[point].Vertex.Y < leastPointY)
+				leastPointY = Points[point].Vertex.Y;
+
+			if (Points[point].Vertex.Z > greatestPointZ)
+				greatestPointZ = Points[point].Vertex.Z;
+			else if (Points[point].Vertex.Z < leastPointZ)
+				leastPointZ = Points[point].Vertex.Z;
+		}
+
+		var midPointX = (greatestPointX + leastPointX) / 2;
+		var midPointY = (greatestPointY + leastPointY) / 2;
+		var midPointZ = (greatestPointZ + leastPointZ) / 2;
+
+		return new Vertex(midPointX, midPointY, midPointZ);
+	}
+
+	public void Translate(float x, float y, float z)
+		=> Points = (this * TransformMatrix.CreateTranslationMatrix(x, y, z)).Points;
+
+	public void Translate(Vertex vertex)
+		=> Translate(vertex.X, vertex.Y, vertex.Z);
+
+	public void Scale(float x, float y)
+		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
+
+	public void Rotate(float angle, Axes axis)
+	{
+		var center = GetCenterVertex();
+		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+
+		Translate(-center.X, -center.Y, -center.Z);
+		Points = (this * rotationMatrix).Points;
+		Translate(center.X, center.Y, center.Z);
+
+		switch(axis)
+		{
+			case Axes.X:
+				RotationX += angle;
+				break;
+
+			case Axes.Y:
+				RotationY += angle;
+				break;
+
+			case Axes.Z:
+				RotationZ += angle;
+				break;
+		}
+	}
+
+	public void Rotate(float angle, Axes axis, RotationDirection direction)
+	{
+		if (direction == RotationDirection.CounterClockwise)
+			Rotate(angle, axis);
+		else
+			Rotate(-angle, axis);
+	}
 }
