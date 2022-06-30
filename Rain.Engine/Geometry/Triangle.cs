@@ -157,4 +157,38 @@ public class Triangle : ITwoDimensional
 		else
 			Rotate(-angle, axis);
 	}
+
+	public void Rotate(float angle, Axes axis, Vertex vertex)
+	{
+		var center = GetCenterVertex();
+		var distance = vertex - center;
+		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+
+		Translate(-(center.X + distance.X), -(center.Y + distance.Y), -(center.Z + distance.Z));
+		Points = (this * rotationMatrix).Points;
+		Translate(center.X + distance.X, center.Y + distance.Y, center.Z + distance.Z);
+
+		switch(axis)
+		{
+			case Axes.X:
+				RotationX += angle;
+				break;
+
+			case Axes.Y:
+				RotationY += angle;
+				break;
+
+			case Axes.Z:
+				RotationZ += angle;
+				break;
+		}
+	}
+
+	public void Rotate(float angle, Axes axis, RotationDirection direction, Vertex vertex)
+	{
+		if (direction == RotationDirection.CounterClockwise)
+			Rotate(angle, axis, vertex);
+		else
+			Rotate(-angle, axis, vertex);
+	}
 }
