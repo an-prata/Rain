@@ -3,6 +3,8 @@ using OpenTK.Graphics.OpenGL;
 
 using Rain.Engine.Geometry;
 using Rain.Engine.Texturing;
+using Rain.Engine.Buffering;
+using Rain.Engine.Rendering;
 
 namespace Rain.Engine;
 
@@ -28,11 +30,11 @@ public class Scene : IDisposable
 
 	private int[] modelElementIndices;
 
-	private IModel[] models;
+	private IRenderable[] models;
 
-	/// <summary> Creates a new <c>Scene</c> from an array of <c>IModel</c>. </summary>
-	/// <param name="models"> The array of <c>IModel</c>s to render with this <c>Scene</c>. </param>
-	public Scene(IModel[] models)
+	/// <summary> Creates a new <c>Scene</c> from an array of <c>IRenderable</c>. </summary>
+	/// <param name="models"> The array of <c>IRenderable</c>s to render with this <c>Scene</c>. </param>
+	public Scene(IRenderable[] models)
 	{
 		this.models = models;
 		Textures = new Texture[models.Length];
@@ -63,7 +65,7 @@ public class Scene : IDisposable
 			modelVertexIndices[model] = verticesAdded;
 			modelElementIndices[model] = elementsAdded;
 
-			var modelBufferArray = models[model].GetBufferableArray();
+			var modelBufferArray = (float[])models[model].GetBufferableArray(BufferType.VertexBuffer);
 
 			for (var i = 0; i < modelBufferArray.Length; i++)
 				vertexData[verticesAdded + i] = modelBufferArray[i];
@@ -85,7 +87,7 @@ public class Scene : IDisposable
 	/// <summary> Creates a new <c>Scene</c> from an array of <c>IModel</c>. </summary>
 	/// <param name="models"> The array of <c>IModel</c>s to render with this <c>Scene</c>. </param>
 	/// <param name="textures"> An array of <c>Texture</c>s with indices coorelating to <c>models</c>'s. </param>
-	public Scene(IModel[] models, Texture[] textures)
+	public Scene(IRenderable[] models, Texture[] textures)
 	{
 		this.models = models;
 		if (models.Length != textures.Length)
@@ -116,7 +118,7 @@ public class Scene : IDisposable
 			modelVertexIndices[model] = verticesAdded;
 			modelElementIndices[model] = elementsAdded;
 
-			var modelBufferArray = models[model].GetBufferableArray();
+			var modelBufferArray = (float[])models[model].GetBufferableArray(BufferType.VertexBuffer);
 
 			for (var i = 0; i < modelBufferArray.Length; i++)
 				vertexData[verticesAdded + i] = modelBufferArray[i];
@@ -148,11 +150,9 @@ public class Scene : IDisposable
 
 	public void Draw(BufferGroup bufferGroup)
 	{
-		bufferGroup.Bind();
-
 		for (var model = 0; model < modelVertexIndices.Length; model++)
 		{
-			bufferGroup.BufferData(BufferType.VertexBuffer, models[model].GetBufferableArray());
+			bufferGroup.BufferData(BufferType.VertexBuffer, models[model].GetBufferableArray(BufferType.VertexBuffer));
 			bufferGroup.BufferData(BufferType.ElementBuffer, models[model].Elements);
 			
 			if (!Textures[model].IsEmpty)
