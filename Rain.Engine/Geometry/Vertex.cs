@@ -3,7 +3,7 @@ using OpenTK.Mathematics;
 namespace Rain.Engine.Geometry;
 
 /// <summary> Represents the location of a point in 3D space. </summary>
-public struct Vertex
+public struct Vertex : IEquatable<Vertex>
 {
 	/// <summary> The length of any array outputed by <c>Vertex.Array</c>. </summary>
 	public const int BufferSize = 4;
@@ -87,6 +87,15 @@ public struct Vertex
 	public override int GetHashCode()
 		=> Array.GetHashCode();
 
+	public bool Equals(Vertex vertex)
+	{
+		for (var i = 0; i < BufferSize; i++)
+			if (Array[i] != vertex.Array[i])
+				return false;
+	
+		return true;
+	}
+
 	public override bool Equals(object? obj)
 	{
 		if (obj == null)
@@ -95,7 +104,7 @@ public struct Vertex
 		if (obj.GetType() != typeof(Vertex))
 			return false;
 
-        return (Vertex)obj == this;
+        return Equals(obj);
 	}
 
 	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
@@ -106,21 +115,7 @@ public struct Vertex
 
 	public static Vertex operator /(Vertex a, Vertex b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
 
-	public static bool operator ==(Vertex a, Vertex b)
-	{
-		for (var i = 0; i < BufferSize; i++)
-			if (a.Array[i] != b.Array[i])
-				return false;
-	
-		return true;
-	}
+	public static bool operator ==(Vertex a, Vertex b) => a.Equals(b);
 
-	public static bool operator !=(Vertex a, Vertex b)
-	{
-		for (var i = 0; i < BufferSize; i++)
-			if (a.Array[i] != b.Array[i])
-				return !false;
-	
-		return !true;
-	}
+	public static bool operator !=(Vertex a, Vertex b) => !a.Equals(b);
 } 
