@@ -2,16 +2,16 @@ namespace Rain.Engine.Geometry;
 
 public interface IModel
 {
-	/// <summary> 
-	/// An array of indices in groups of three, correlating to triangles. 
+	/// <summary>
+	/// An array of indices in groups of three, correlating to triangles.
 	/// </summary>
 	uint[] Elements { get; }
 
-	/// <summary> 
-	/// An array of points representing the object. 
+	/// <summary>
+	/// An array of points representing the object.
 	/// </summary>
 	Point[] Points { get; }
-
+	
 	/// <summary> 
 	/// The location of the IModel in 3D space. 
 	/// </summary>
@@ -32,6 +32,21 @@ public interface IModel
 	/// </summary>
 	float LengthZ { get; }
 
+	/// <summary>
+	/// The <c>IModel</c>'s counter-clockwise rotation on the X axis.
+	/// </summary>
+	float RotationX { get; set; }
+
+	/// <summary>
+	/// The <c>IModel</c>'s counter-clockwise rotation on the Y axis.
+	/// </summary>
+	float RotationY { get; set; }
+
+	/// <summary>
+	/// The <c>IModel</c>'s counter-clockwise rotation on the Z axis.
+	/// </summary>
+	float RotationZ { get; set; }
+
 	/// <summary> 
 	/// Gets the <c>IModel</c>'s center point. 
 	/// </summary>
@@ -40,26 +55,4 @@ public interface IModel
 	/// A <c>Vertex</c> positioned at the center of the <c>IModel</c>. 
 	/// </returns>
 	Vertex GetCenterVertex();
-
-	/// <summary> 
-	/// Rotates the <c>IModel</c> about its center. 
-	/// </summary>
-	/// 
-	/// <param name="angle"> 
-	/// The angle of rotation. 
-	/// </param>
-	void Rotate(float angle, Axes axis);
-
-	/// <summary> 
-	/// Rotates the <c>IModel</c> about its center. 
-	/// </summary>
-	/// 
-	/// <param name="angle"> 
-	/// The angle of rotation. 
-	/// </param>
-	/// 
-	/// <param name="direction"> 
-	/// The direction to rotate in. 
-	/// </param>
-	void Rotate(float angle, Axes axis, RotationDirection direction);
 }

@@ -53,7 +53,7 @@ public interface ITwoDimensional
 	/// A <c>Vertex</c> positioned at the center of the <c>ITwoDimensional</c>.
 	/// </returns>
 	public Vertex GetCenterVertex();
-
+	
 	/// <summary>
 	/// Translate the <c>ITwoDimensional</c> through three dimensional space.
 	/// </summary>
