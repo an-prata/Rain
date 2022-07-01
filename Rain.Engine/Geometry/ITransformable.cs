@@ -108,7 +108,7 @@ public interface ITransformable
 	public void Rotate(float angle, Axes axis, Vertex vertex);
 
 	/// <summary>
-	/// Rotates the <c>ITransformable</c> about its center.
+	/// Rotates the <c>ITransformable</c> about the specified <c>Vertex</c>.
 	/// </summary>
 	///
 	/// <remarks>
