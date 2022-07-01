@@ -130,29 +130,7 @@ public class Triangle : ITwoDimensional
 		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
 
 	public void Rotate(float angle, Axes axis)
-	{
-		var center = GetCenterVertex();
-		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
-
-		Translate(-center.X, -center.Y, -center.Z);
-		Points = (this * rotationMatrix).Points;
-		Translate(center.X, center.Y, center.Z);
-
-		switch(axis)
-		{
-			case Axes.X:
-				RotationX += angle;
-				break;
-
-			case Axes.Y:
-				RotationY += angle;
-				break;
-
-			case Axes.Z:
-				RotationZ += angle;
-				break;
-		}
-	}
+		=> Rotate(angle, axis, GetCenterVertex());
 
 	public void Rotate(float angle, Axes axis, RotationDirection direction)
 	{
@@ -175,15 +153,15 @@ public class Triangle : ITwoDimensional
 		switch(axis)
 		{
 			case Axes.X:
-				RotationX += angle;
+				rotationX += angle;
 				break;
 
 			case Axes.Y:
-				RotationY += angle;
+				rotationY += angle;
 				break;
 
 			case Axes.Z:
-				RotationZ += angle;
+				rotationZ += angle;
 				break;
 		}
 	}
