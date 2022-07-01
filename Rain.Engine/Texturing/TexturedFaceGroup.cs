@@ -4,9 +4,28 @@ namespace Rain.Engine.Texturing;
 
 public struct TexturedFaceGroup
 {
+	public TexturedFace this[int index]
+	{
+		get => new()
+		{ 
+			Face = Faces[index], 
+			Texture = Textures[index] 
+		};
+
+		set
+		{
+			Faces[index] = value.Face;
+			textures[index] = value.Texture;
+		}
+	}
+
+	private EfficientTextureGroup textures;
+
+	public int Length { get => Faces.Length; }
+
 	public ITwoDimensional[] Faces { get; }
 
-	public EfficientTextureGroup Textures { get; }
+	public EfficientTextureGroup Textures { get => textures; }
 
 	public TexturedFaceGroup(TexturedFace[] texturedFaces)
 	{
@@ -20,6 +39,6 @@ public struct TexturedFaceGroup
 		}
 
 		Faces = faces.ToArray();
-		Textures = new(textures.ToArray());
+		this.textures = new(textures.ToArray());
 	}
 }
