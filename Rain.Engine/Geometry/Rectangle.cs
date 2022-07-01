@@ -2,8 +2,6 @@ namespace Rain.Engine.Geometry;
 
 public class Rectangle : ITwoDimensional
 {
-	private Vertex location;
-
 	private float width;
 
 	private float height;
@@ -20,13 +18,13 @@ public class Rectangle : ITwoDimensional
 
 	public Vertex Location
 	{
-		get => location;
-		set => Translate(value.X - location.X, value.Y - location.Y, value.Z - location.Z);
+		get => GetCenterVertex();
+		set => Translate(value.X - Location.X, value.Y - Location.Y, value.Z - Location.Z);
 	}
 
 	public float Width
 	{
-		get => width;
+		get => (float)Points[0].GetDistanceBetween(Points[1]);
 		set => Scale(value / width, 1);
 	}
 
@@ -64,8 +62,8 @@ public class Rectangle : ITwoDimensional
 			new(new(location.X + width, location.Y + height, location.Z), new(255, 255, 255), new(1.0f, 1.0f))
 		};
 
-		Width = width;
-		Height = height;
+		this.width = width;
+		this.height = height;
 	}
 
 	public Rectangle(Vertex location, float width, float height, Color color)
@@ -78,8 +76,8 @@ public class Rectangle : ITwoDimensional
 			new(new(location.X + width, location.Y + height, location.Z), color, new(1.0f, 1.0f))
 		};
 
-		Width = width;
-		Height = height;
+		this.width = width;
+		this.height = height;
 	}
 
 	public Vertex GetCenterVertex()
@@ -116,6 +114,12 @@ public class Rectangle : ITwoDimensional
 		var midPointZ = (greatestPointZ + leastPointZ) / 2;
 
 		return new Vertex(midPointX, midPointY, midPointZ);
+	}
+
+	public double GetDistanceBetween(ISpacial other)
+	{
+		var difference = Location - other.Location;
+		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
 	}
 
 	public void Translate(float x, float y, float z)

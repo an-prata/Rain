@@ -3,7 +3,7 @@ namespace Rain.Engine.Geometry;
 /// <summary>
 /// Represents a two dimensional object in three dimensional space.
 /// </summary>
-public interface ITwoDimensional
+public interface ITwoDimensional : ISpacial
 {
 	/// <summary>
 	/// An array of indices in groups of three, correlating to triangles.
@@ -14,11 +14,6 @@ public interface ITwoDimensional
 	/// An array of points representing the object.
 	/// </summary>
 	Point[] Points { get; }
-
-	/// <summary>
-	/// The location of the <c>ITwoDimensional</c> in 3D space.
-	/// </summary>
-	Vertex Location { get; set; }
 
 	/// <summary>
 	/// The <c>ITwoDimensional</c>'s width.

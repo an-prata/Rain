@@ -2,8 +2,6 @@ namespace Rain.Engine.Geometry;
 
 public class Triangle : ITwoDimensional
 {
-	private Vertex location;
-
 	private float width;
 
 	private float height;
@@ -20,8 +18,8 @@ public class Triangle : ITwoDimensional
 
 	public Vertex Location
 	{
-		get => location;
-		set => Translate(value.X - location.X, value.Y - location.Y, value.Z - location.Z);
+		get => GetCenterVertex();
+		set => Translate(value.X - Location.X, value.Y - Location.Y, value.Z - Location.Z);
 	}
 
 	public float Width
@@ -63,8 +61,8 @@ public class Triangle : ITwoDimensional
 			new(new(location.X, location.Y + height, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
 		};
 
-		Width = width;
-		Height = height;
+		this.width = width;
+		this.height = height;
 	}
 
 	public Triangle(Vertex location, float width, float height, Color color)
@@ -76,8 +74,8 @@ public class Triangle : ITwoDimensional
 			new(new(location.X, location.Y + height, location.Z), color, new(0.0f, 1.0f)),
 		};
 
-		Width = width;
-		Height = height;
+		this.width = width;
+		this.height = height;
 	}
 
 	public Vertex GetCenterVertex()
@@ -114,6 +112,12 @@ public class Triangle : ITwoDimensional
 		var midPointZ = (greatestPointZ + leastPointZ) / 2;
 
 		return new Vertex(midPointX, midPointY, midPointZ);
+	}
+
+	public double GetDistanceBetween(ISpacial other)
+	{
+		var difference = Location - other.Location;
+		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
 	}
 
 	public void Translate(float x, float y, float z)

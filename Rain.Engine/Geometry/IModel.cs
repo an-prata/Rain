@@ -1,6 +1,6 @@
 namespace Rain.Engine.Geometry;
 
-public interface IModel
+public interface IModel : ISpacial
 {
 	/// <summary>
 	/// An array of indices in groups of three, correlating to triangles.
@@ -11,11 +11,6 @@ public interface IModel
 	/// An array of points representing the object.
 	/// </summary>
 	Point[] Points { get; }
-	
-	/// <summary> 
-	/// The location of the IModel in 3D space. 
-	/// </summary>
-	Vertex Location { get; }
 
 	/// <summary> 
 	/// The length of the <c>IModel</c> along the X axis. 

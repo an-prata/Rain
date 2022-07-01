@@ -3,10 +3,12 @@ using OpenTK.Mathematics;
 namespace Rain.Engine.Geometry;
 
 /// <summary> Represents the location of a point in 3D space. </summary>
-public struct Vertex : IEquatable<Vertex>
+public struct Vertex : ISpacial, IEquatable<Vertex>
 {
 	/// <summary> The length of any array outputed by <c>Vertex.Array</c>. </summary>
 	public const int BufferSize = 4;
+
+	public Vertex Location { get => this; }
 
 	/// <summary> The Vertex's X coordinate. </summary>
 	public float X { get; set; }
@@ -67,22 +69,16 @@ public struct Vertex : IEquatable<Vertex>
 		Z = vector.Z;
 		W = 1.0f;
 	}
+
+	public double GetDistanceBetween(ISpacial other)
+	{
+		var difference = Location - other.Location;
+		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
+	}
 	
 	/// <summary> Produces an OpenTK Vector3 object from the Vertex. </summary>
 	/// <returns> An OpenTK Vector3. </returns>
 	public Vector3 ToVector3() => new(X, Y, Z);
-
-	/// <summary> Finds the distance between two Vertex<float> instances. </summary>
-	/// <returns> The distance between the two vertices. </returns>
-	public double DistanceBetween(Vertex b) => GetDistance(this, b);
-
-	/// <summary> Finds the distance between two Vertex<float> instances. </summary>
-	/// <returns> The distance between the two vertices. </returns>
-	public static double GetDistance(Vertex a, Vertex b)
-	{
-		var difference = a - b;
-		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
-	}
 
 	public override int GetHashCode()
 		=> Array.GetHashCode();

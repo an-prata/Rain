@@ -6,9 +6,11 @@ namespace Rain.Engine.Geometry;
 /// <summary> 
 /// A colored point in 3D space that can be rendered by the GPU. 
 /// </summary>
-public class Point : IBufferable
+public class Point : IBufferable, ISpacial
 {
 	public const int BufferSize = Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize;
+
+	public Vertex Location { get => Vertex; }
 
 	/// <summary> 
 	/// The location of the point in 3D space. 
@@ -95,6 +97,12 @@ public class Point : IBufferable
 		Vertex = vertex;
 		Color = color;
 		TextureCoordinate = textureCoordinate;
+	}
+
+	public double GetDistanceBetween(ISpacial other)
+	{
+		var difference = Location - other.Location;
+		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
 	}
 
 	public int GetBufferSize(BufferType bufferType)

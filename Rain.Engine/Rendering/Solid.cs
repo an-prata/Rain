@@ -7,8 +7,6 @@ public class Solid : IRenderable
 {
 	private ITwoDimensional[] faces;
 
-	private Vertex location;
-
 	private float lengthX;
 
 	private float lengthY;
@@ -52,8 +50,8 @@ public class Solid : IRenderable
 
 	public Vertex Location
 	{
-		get => location;
-		set => Translate(value.X - location.X, value.Y - location.Y, value.Z - location.Z);
+		get => GetCenterVertex();
+		set => Translate(value.X - Location.X, value.Y - Location.Y, value.Z - Location.Z);
 	}
 
 	public float LengthX
@@ -92,8 +90,13 @@ public class Solid : IRenderable
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
-	private Solid(ITwoDimensional[] faces)
-		=> this.faces = faces;
+	private Solid(ITwoDimensional[] faces, float lengthX, float lengthY, float lengthZ)
+	{
+		this.lengthX = lengthX;
+		this.lengthY = lengthY;
+		this.lengthZ = lengthZ;
+		this.faces = faces;
+	}
 
 	public Vertex GetCenterVertex()
 	{
@@ -129,6 +132,12 @@ public class Solid : IRenderable
 		var midPointZ = (greatestPointZ + leastPointZ) / 2;
 
 		return new Vertex(midPointX, midPointY, midPointZ);
+	}
+
+	public double GetDistanceBetween(ISpacial other)
+	{
+		var difference = Location - other.Location;
+		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
 	}
 
 	public Array GetBufferableArray(BufferType bufferType)
@@ -184,39 +193,22 @@ public class Solid : IRenderable
 		=> Translate(vertex.X, vertex.Y, vertex.Z);
 
 	public void Scale(float x, float y, float z)
-		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, z)).Points;
+	{
+		Points = (this * TransformMatrix.CreateScaleMatrix(x, y, z)).Points;
+		lengthX *= x;
+		lengthY *= y;
+		lengthZ *= z;
+	}
 
 	public void Rotate(float angle, Axes axis)
-	{
-		var center = GetCenterVertex();
-		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
-
-		Translate(-center.X, -center.Y, -center.Z);
-		Points = (this * rotationMatrix).Points;
-		Translate(center.X, center.Y, center.Z);
-
-		switch(axis)
-		{
-			case Axes.X:
-				RotationX += angle;
-				break;
-
-			case Axes.Y:
-				RotationY += angle;
-				break;
-
-			case Axes.Z:
-				RotationZ += angle;
-				break;
-		}
-	}
+		=> Rotate(angle, axis, GetCenterVertex());
 
 	public void Rotate(float angle, Axes axis, RotationDirection direction)
 	{
 		if (direction == RotationDirection.CounterClockwise)
-			Rotate(angle, axis);
+			Rotate(angle, axis, GetCenterVertex());
 		else
-			Rotate(-angle, axis);
+			Rotate(-angle, axis, GetCenterVertex());
 	}
 
 	public void Rotate(float angle, Axes axis, Vertex vertex)
@@ -232,15 +224,15 @@ public class Solid : IRenderable
 		switch(axis)
 		{
 			case Axes.X:
-				RotationX += angle;
+				rotationX += angle;
 				break;
 
 			case Axes.Y:
-				RotationY += angle;
+				rotationY += angle;
 				break;
 
 			case Axes.Z:
-				RotationZ += angle;
+				rotationZ += angle;
 				break;
 		}
 	}
