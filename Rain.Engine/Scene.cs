@@ -16,8 +16,6 @@ public class Scene : IDisposable
 	/// <summary> A <c>Span</c> with this <c>Scene</c>'s element data. </summary>
 	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
 
-	public Texture[] Textures { get; set; }
-
 	private readonly Memory<float> vertexMemory;
 
 	private readonly Memory<uint> elementMemory;
@@ -37,11 +35,6 @@ public class Scene : IDisposable
 	public Scene(IRenderable[] models)
 	{
 		this.models = models;
-		Textures = new Texture[models.Length];
-		
-		for (var texture = 0; texture < Textures.Length; texture++)
-			Textures[texture] = Texture.Empty();
-
 		var sceneBufferSize = 0;
 		int elements = 0;
 
@@ -92,8 +85,6 @@ public class Scene : IDisposable
 		this.models = models;
 		if (models.Length != textures.Length)
 			throw new Exception($"{nameof(textures)} must be same length as {nameof(models)}.");
-
-		this.Textures = textures;
 
 		var sceneBufferSize = 0;
 		int elements = 0;
@@ -152,13 +143,18 @@ public class Scene : IDisposable
 	{
 		for (var model = 0; model < modelVertexIndices.Length; model++)
 		{
-			bufferGroup.BufferData(BufferType.VertexBuffer, models[model].GetBufferableArray(BufferType.VertexBuffer));
-			bufferGroup.BufferData(BufferType.ElementBuffer, models[model].Elements);
+			for (var face = 0; face < models[model].Faces.Length; face++)
+			{
+				bufferGroup.BufferData(BufferType.VertexBuffer, 
+									   models[model].Faces[face].GetBufferableArray(BufferType.VertexBuffer));
+				bufferGroup.BufferData(BufferType.ElementBuffer, models[model].Faces[face].Face.Elements);
+				
+				if (!models[model].Faces[face].Texture.IsEmpty)
+					models[model].Faces[face].Texture.Bind();
+				
+				GL.DrawElements(PrimitiveType.Triangles, ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
+			}
 			
-			if (!Textures[model].IsEmpty)
-				Textures[model].Bind();
-			
-			GL.DrawElements(PrimitiveType.Triangles, ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
 		}
 	}
 
