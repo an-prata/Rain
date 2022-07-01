@@ -1,12 +1,11 @@
 using Rain.Engine.Buffering;
 using Rain.Engine.Geometry;
+using Rain.Engine.Texturing;
 
 namespace Rain.Engine.Rendering;
 
 public class Solid : IRenderable, IEquatable<Solid>
 {
-	private ITwoDimensional[] faces;
-
 	private float lengthX;
 
 	private float lengthY;
@@ -19,6 +18,8 @@ public class Solid : IRenderable, IEquatable<Solid>
 
 	private float rotationZ = 0;
 
+	public TexturedFaceGroup Faces { get; private set; }
+
 	public uint[] Elements => (uint[])GetBufferableArray(BufferType.ElementBuffer);
 
 	public Point[] Points
@@ -27,9 +28,9 @@ public class Solid : IRenderable, IEquatable<Solid>
 		{
 			var points = new List<Point>();
 
-			for (var face = 0; face < faces.Length; face++)
-				for (var point = 0; point < faces[face].Points.Length; point++)
-					points.Add(faces[face].Points[point]);
+			for (var face = 0; face < Faces.Length; face++)
+				for (var point = 0; point < Faces[face].Face.Points.Length; point++)
+					points.Add(Faces[face].Face.Points[point]);
 			
 			return points.ToArray();
 		}
@@ -38,12 +39,12 @@ public class Solid : IRenderable, IEquatable<Solid>
 		{
 			var pointsWritten = 0;
 
-			for (var face = 0; face < faces.Length; face++)
+			for (var face = 0; face < Faces.Length; face++)
 			{
-				for (var point = 0; point < faces[face].Points.Length; point++)
-					faces[face].Points[point] = value[pointsWritten + point];
+				for (var point = 0; point < Faces[face].Face.Points.Length; point++)
+					Faces[face].Face.Points[point] = value[pointsWritten + point];
 
-				pointsWritten += faces[face].Points.Length;
+				pointsWritten += Faces[face].Face.Points.Length;
 			}
 		}
 	}
@@ -90,12 +91,17 @@ public class Solid : IRenderable, IEquatable<Solid>
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
-	private Solid(ITwoDimensional[] faces, float lengthX, float lengthY, float lengthZ)
+	private Solid(TexturedFaceGroup faces, SolidOptions options)
 	{
-		this.lengthX = lengthX;
-		this.lengthY = lengthY;
-		this.lengthZ = lengthZ;
-		this.faces = faces;
+		lengthX = options.LengthX;
+		lengthY = options.LengthY;
+		lengthZ = options.LengthZ;
+
+		rotationX = options.RotationX;
+		rotationY = options.RotationY;
+		rotationZ = options.RotationZ;
+
+		Faces = faces;
 	}
 
 	public Vertex GetCenterVertex()
@@ -160,12 +166,12 @@ public class Solid : IRenderable, IEquatable<Solid>
 		var points = 0;
 		var elementData = new List<uint>();
 
-		for (var face = 0; face < faces.Length; face++)
+		for (var face = 0; face < Faces.Length; face++)
 		{
-			for (var element = 0; element < faces[face].Elements.Length; element++)
-				elementData.Add((uint)points + faces[face].Elements[element]);
+			for (var element = 0; element < Faces[face].Face.Elements.Length; element++)
+				elementData.Add((uint)points + Faces[face].Face.Elements[element]);
 			
-			points += faces[face].Points.Length;
+			points += Faces[face].Face.Points.Length;
 		}
 
 		return elementData.ToArray();
@@ -176,12 +182,12 @@ public class Solid : IRenderable, IEquatable<Solid>
 		var bufferSize = 0;
 
 		if (bufferType == BufferType.VertexBuffer)
-			for (var face = 0; face < faces.Length; face++)
-				bufferSize += faces[face].Points.Length * Point.BufferSize;
+			for (var face = 0; face < Faces.Length; face++)
+				bufferSize += Faces[face].Face.Points.Length * Point.BufferSize;
 		
 		else
-			for (var face = 0; face < faces.Length; face++)
-				bufferSize += faces[face].Elements.Length;
+			for (var face = 0; face < Faces.Length; face++)
+				bufferSize += Faces[face].Face.Elements.Length;
 
 		return bufferSize;
 	}
@@ -243,6 +249,25 @@ public class Solid : IRenderable, IEquatable<Solid>
 			Rotate(angle, axis, vertex);
 		else
 			Rotate(-angle, axis, vertex);
+	}
+
+	public static Solid SolidFromITwoDimensional(ITwoDimensional twoDimensional, Texture texture)
+	{
+		return new(new(new TexturedFace[] {
+			new TexturedFace 
+			{ 
+				Face = twoDimensional, 
+				Texture = texture 
+			}
+		}), new SolidOptions 
+		{
+			LengthX = twoDimensional.Width,
+			LengthY = twoDimensional.Height,
+			LengthZ = 0,
+			RotationX = twoDimensional.RotationX,
+			RotationY = twoDimensional.RotationY,
+			RotationZ = twoDimensional.RotationZ
+		});
 	}
 
 	public override int GetHashCode()
