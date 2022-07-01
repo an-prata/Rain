@@ -3,7 +3,7 @@ using Rain.Engine.Geometry;
 
 namespace Rain.Engine.Rendering;
 
-public class Solid : IRenderable
+public class Solid : IRenderable, IEquatable<Solid>
 {
 	private ITwoDimensional[] faces;
 
@@ -245,6 +245,38 @@ public class Solid : IRenderable
 			Rotate(-angle, axis, vertex);
 	}
 
+	public override int GetHashCode()
+		=> GetBufferableArray(BufferType.VertexBuffer).GetHashCode();
+
+	public bool Equals(Solid? other)
+	{
+		if (other is null)
+			return false;
+		
+		var thisBufferableArray = (float[])GetBufferableArray(BufferType.VertexBuffer);
+		var otherBufferableArray = (float[])other.GetBufferableArray(BufferType.VertexBuffer);
+
+		if (thisBufferableArray.Length != otherBufferableArray.Length)
+			return false;
+
+		for (var i = 0; i < thisBufferableArray.Length; i++)
+			if (thisBufferableArray[i] != otherBufferableArray[i])
+				return false;
+	
+		return true;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		if (obj == null)
+			return false;
+
+		if (obj.GetType() != typeof(Vertex))
+			return false;
+
+        return Equals(obj);
+	}
+
 	public static Solid operator *(Solid a, TransformMatrix b) => b * a;
 
 	public static Solid operator *(TransformMatrix a, Solid b)
@@ -254,4 +286,8 @@ public class Solid : IRenderable
 
 		return b;
 	}
+
+	public static bool operator ==(Solid a, Solid b) => a.Equals(b);
+
+	public static bool operator !=(Solid a, Solid b) => !a.Equals(b);
 }
