@@ -7,9 +7,11 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 using Rain.Engine.Geometry;
 using Rain.Engine.Texturing;
+using Rain.Engine.Buffering;
 using Rain.Engine.Extensions;
 
 using Point = Rain.Engine.Geometry.Point;
+using Buffer = Rain.Engine.Buffering.Buffer;
 using TextureUnit = Rain.Engine.Texturing.TextureUnit;
 
 namespace Rain.Engine;
@@ -24,14 +26,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	private BufferGroup bufferGroup;
 
 	private ShaderProgram shaderProgram;
-
-	private Texture texture0;
-
-	private Texture texture1;
-
-	private Texture texture2;
-
-	private Texture texture3;
 
 	public GameWindow(GameOptions options) : base(new GameWindowSettings
 	{
@@ -58,8 +52,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		
 		var buffers = new Buffer[] 
 		{ 
-			new (BufferType.VertexBuffer, ActiveScene), 
-			new (BufferType.ElementBuffer, ActiveScene) 
+			new(BufferType.VertexBuffer), 
+			new(BufferType.ElementBuffer) 
 		};
 
 		bufferGroup = new(buffers);
@@ -71,12 +65,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		};
 
 		shaderProgram = new(shaderComponents);
-		texture0 = new(shaderProgram, TextureUnit.Unit0, "texture0");
-		texture1 = new(shaderProgram, TextureUnit.Unit0, "texture0");
-		texture2 = new(shaderProgram, TextureUnit.Unit0, "texture0");
-		texture3 = new(shaderProgram, TextureUnit.Unit0, "texture0");
-
-		ActiveScene.Textures = new Texture[] { texture0, texture1, texture2, texture3 };
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -87,21 +75,16 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnLoad()
 	{
-		GL.ClearColor(clearColor.ToColor4()); 
+		GL.ClearColor(clearColor.ToColor4());
 
 		base.OnLoad();
 
-		bufferGroup.Bind();
 		Point.SetAttributes(shaderProgram);
-		texture0.LoadFromImage("interesting.bmp");
-		texture1.LoadFromImage("suprise.bmp");
-		texture2.LoadFromImage("greg.bmp");
-		texture3.LoadFromImage("garfield.bmp");
 
 		// 0 Disables vertical sync.
 		// 1 Enables vertical sync.
 		// -1 for adaptive vsync.
-		Context.SwapInterval = 1;
+		Context.SwapInterval = 0;
 	}
 
 	protected override void OnUnload()
@@ -121,7 +104,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 		shaderProgram.Use();
 
-		ActiveScene.Draw(bufferGroup);
+		ActiveScene.Draw(bufferGroup, shaderProgram);
 		
 		Context.SwapBuffers();
 
