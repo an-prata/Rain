@@ -37,7 +37,7 @@ public class Buffer : IDisposable
 		Type = type;
 
 		Handle = GL.GenBuffer();
-		GL.BindBuffer((BufferTarget)type, Handle);
+		GL.BindBuffer((BufferTarget)Type, Handle);
 	}
 
 	/// <summary>
@@ -57,8 +57,6 @@ public class Buffer : IDisposable
 			GL.BufferData((BufferTarget)Type, data.Length * sizeof(uint), (uint[])data, BufferUsageHint.StreamDraw);
 		else
 			throw new Exception($"Cannot buffer data not of type {typeof(uint)} with a buffer of type {Type}.");
-
-		GL.BindBuffer((BufferTarget)Type, 0);
 	}
 
 	/// <summary>

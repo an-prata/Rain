@@ -32,8 +32,6 @@ public class BufferGroup : IDisposable
 			GL.BindBuffer((BufferTarget)buffers[buffer].Type, buffers[buffer].Handle);
 			this.buffers[buffers[buffer].Type] = buffers[buffer];
 		}
-
-		GL.BindVertexArray(0);
 	}
 
 	/// <summary>
@@ -49,8 +47,6 @@ public class BufferGroup : IDisposable
 
 		foreach (var bufferData in data)
 			buffers[bufferData.Key].BufferData(bufferData.Value);
-
-		GL.BindVertexArray(0);
 	}
 
 	/// <summary>
@@ -68,7 +64,6 @@ public class BufferGroup : IDisposable
 	{
 		GL.BindVertexArray(Handle);
 		buffers[buffer].BufferData(data);
-		GL.BindVertexArray(0);
 	}
 
 	#region IDisposable
