@@ -6,6 +6,8 @@ using Rain.Engine.Texturing;
 using Rain.Engine.Buffering;
 using Rain.Engine.Rendering;
 
+using TextureUnit = Rain.Engine.Texturing.TextureUnit;
+
 namespace Rain.Engine;
 
 public class Scene : IDisposable
@@ -139,7 +141,7 @@ public class Scene : IDisposable
 			return elementHandle.AddrOfPinnedObject();
 	}
 
-	public void Draw(BufferGroup bufferGroup)
+	public void Draw(BufferGroup bufferGroup, ShaderProgram program)
 	{
 		for (var model = 0; model < Models.Length; model++)
 		{
@@ -154,6 +156,7 @@ public class Scene : IDisposable
 				if (!Models[model].Faces[face].Texture.IsEmpty)
 				{
 					Models[model].Faces[face].Texture.Bind();
+					Models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, program.GetUniformByName("texture0"));
 				}
 				
 				GL.DrawElements(PrimitiveType.Triangles, 
