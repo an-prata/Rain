@@ -105,7 +105,7 @@ public class Texture : IDisposable
 		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
-		
+
 		options = new TextureOptions
 		{
 			WrapMode = TextureWrapMode.Clamp,
@@ -154,17 +154,6 @@ public class Texture : IDisposable
 	}
 
 	/// <summary>
-	/// Reserves a Texture handle with OpenGL.
-	/// </summary>
-	public void ReserveHandle()
-	{
-		if (Handle != -1)
-			throw new Exception("Texture has already reserved a handle.");
-
-		Handle = GL.GenTexture();
-	}
-
-	/// <summary>
 	/// Uploads this <c>Texture</c> to the GPU.
 	/// </summary>
 	///
@@ -186,6 +175,7 @@ public class Texture : IDisposable
 			return;
 
 		Unit = unit;
+		Handle = GL.GenTexture();
 		Bind(bindEmpty: true);
 		uniform.SetToTexture(this);
 
@@ -235,6 +225,17 @@ public class Texture : IDisposable
 
 		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)TextureUnit.Unit0);
 		GL.BindTexture(TextureTarget.Texture2D, 0);
+	}
+
+	/// <summary>
+	/// Reserves a Texture handle with OpenGL.
+	/// </summary>
+	public void ReserveHandle()
+	{
+		if (Handle != -1)
+			throw new Exception("Texture has already reserved a handle.");
+
+		Handle = GL.GenTexture();
 	}
 
 	#region IDisposable
