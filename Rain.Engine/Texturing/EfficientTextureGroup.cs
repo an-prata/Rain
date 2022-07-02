@@ -88,7 +88,7 @@ public struct EfficientTextureGroup
 				{
 					indices[texture] = duplicateCheck;
 					this.textures[texture].Dispose();
-					this.textures[texture] = Texture.Empty();
+					this.textures[texture] = new();
 				}
 				else
 					indices[texture] = texture;
