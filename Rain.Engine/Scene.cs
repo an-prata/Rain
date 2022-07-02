@@ -3,6 +3,10 @@ using OpenTK.Graphics.OpenGL;
 
 using Rain.Engine.Geometry;
 using Rain.Engine.Texturing;
+using Rain.Engine.Buffering;
+using Rain.Engine.Rendering;
+
+using TextureUnit = Rain.Engine.Texturing.TextureUnit;
 
 namespace Rain.Engine;
 
@@ -13,8 +17,6 @@ public class Scene : IDisposable
 
 	/// <summary> A <c>Span</c> with this <c>Scene</c>'s element data. </summary>
 	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
-
-	public Texture[] Textures { get; set; }
 
 	private readonly Memory<float> vertexMemory;
 
@@ -28,18 +30,13 @@ public class Scene : IDisposable
 
 	private int[] modelElementIndices;
 
-	private IModel[] models;
+	public IRenderable[] Models { get; private set; }
 
-	/// <summary> Creates a new <c>Scene</c> from an array of <c>IModel</c>. </summary>
-	/// <param name="models"> The array of <c>IModel</c>s to render with this <c>Scene</c>. </param>
-	public Scene(IModel[] models)
+	/// <summary> Creates a new <c>Scene</c> from an array of <c>IRenderable</c>. </summary>
+	/// <param name="models"> The array of <c>IRenderable</c>s to render with this <c>Scene</c>. </param>
+	public Scene(IRenderable[] models)
 	{
-		this.models = models;
-		Textures = new Texture[models.Length];
-		
-		for (var texture = 0; texture < Textures.Length; texture++)
-			Textures[texture] = Texture.Empty();
-
+		this.Models = models;
 		var sceneBufferSize = 0;
 		int elements = 0;
 
@@ -63,7 +60,7 @@ public class Scene : IDisposable
 			modelVertexIndices[model] = verticesAdded;
 			modelElementIndices[model] = elementsAdded;
 
-			var modelBufferArray = models[model].GetBufferableArray();
+			var modelBufferArray = (float[])models[model].GetBufferableArray(BufferType.VertexBuffer);
 
 			for (var i = 0; i < modelBufferArray.Length; i++)
 				vertexData[verticesAdded + i] = modelBufferArray[i];
@@ -85,13 +82,11 @@ public class Scene : IDisposable
 	/// <summary> Creates a new <c>Scene</c> from an array of <c>IModel</c>. </summary>
 	/// <param name="models"> The array of <c>IModel</c>s to render with this <c>Scene</c>. </param>
 	/// <param name="textures"> An array of <c>Texture</c>s with indices coorelating to <c>models</c>'s. </param>
-	public Scene(IModel[] models, Texture[] textures)
+	public Scene(IRenderable[] models, Texture[] textures)
 	{
-		this.models = models;
+		Models = models;
 		if (models.Length != textures.Length)
 			throw new Exception($"{nameof(textures)} must be same length as {nameof(models)}.");
-
-		this.Textures = textures;
 
 		var sceneBufferSize = 0;
 		int elements = 0;
@@ -116,7 +111,7 @@ public class Scene : IDisposable
 			modelVertexIndices[model] = verticesAdded;
 			modelElementIndices[model] = elementsAdded;
 
-			var modelBufferArray = models[model].GetBufferableArray();
+			var modelBufferArray = (float[])models[model].GetBufferableArray(BufferType.VertexBuffer);
 
 			for (var i = 0; i < modelBufferArray.Length; i++)
 				vertexData[verticesAdded + i] = modelBufferArray[i];
@@ -146,19 +141,29 @@ public class Scene : IDisposable
 			return elementHandle.AddrOfPinnedObject();
 	}
 
-	public void Draw(BufferGroup bufferGroup)
+	public void Draw(BufferGroup bufferGroup, ShaderProgram program)
 	{
-		bufferGroup.Bind();
-
-		for (var model = 0; model < modelVertexIndices.Length; model++)
+		for (var model = 0; model < Models.Length; model++)
 		{
-			bufferGroup.BufferData(BufferType.VertexBuffer, models[model].GetBufferableArray());
-			bufferGroup.BufferData(BufferType.ElementBuffer, models[model].Elements);
+			for (var face = 0; face < Models[model].Faces.Length; face++)
+			{
+				bufferGroup.BufferData(BufferType.VertexBuffer, 
+									   Models[model].Faces[face].GetBufferableArray(BufferType.VertexBuffer));
+
+				bufferGroup.BufferData(BufferType.ElementBuffer, 
+									   Models[model].Faces[face].GetBufferableArray(BufferType.ElementBuffer));
+				
+				if (!Models[model].Faces[face].Texture.IsEmpty)
+				{
+					Models[model].Faces[face].Texture.Bind();
+					Models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, program.GetUniformByName("texture0"));
+				}
+				
+				GL.DrawElements(PrimitiveType.Triangles, 
+								Models[model].Faces[face].Face.Elements.Length, 
+								DrawElementsType.UnsignedInt, 0);
+			}
 			
-			if (!Textures[model].IsEmpty)
-				Textures[model].Bind();
-			
-			GL.DrawElements(PrimitiveType.Triangles, ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
 		}
 	}
 

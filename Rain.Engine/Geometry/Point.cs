@@ -1,44 +1,39 @@
 using OpenTK.Graphics.OpenGL;
+using Rain.Engine.Buffering;
 
 namespace Rain.Engine.Geometry;
 
-/// <summary> A colored point in 3D space that can be rendered by the GPU. </summary>
-public struct Point
+/// <summary> 
+/// A colored point in 3D space that can be rendered by the GPU. 
+/// </summary>
+public class Point : IBufferable, ISpacial
 {
-	/// <summary> The length of any array outputed by <c>Point<T>.Array</c>. </summary>
-	public const int BufferSize = Color.BufferSize + Vertex.BufferSize + TextureCoordinate.BufferSize;
+	public const int BufferSize = Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize;
 
-	/// <summary> The location of the point in 3D space. </summary>
+	public Vertex Location { get => Vertex; }
+
+	/// <summary> 
+	/// The location of the point in 3D space. 
+	/// </summary>
 	public Vertex Vertex { get; set; }
 
-	/// <summary> The color of the point. </summary>
+	/// <summary> 
+	/// The color of the point. 
+	/// </summary>
 	public Color Color { get; set; }
 
-	/// <summary> The point's texture position. </summary>
+	/// <summary> 
+	/// The point's texture position. 
+	/// </summary>
 	public TextureCoordinate TextureCoordinate { get; set; }
 
-	/// <summary> An array representing the Vertex and Color data of this point. </summary>
-	public float[] Array 
-	{ 
-		get 
-		{
-			var vertexData = new float[BufferSize];
-
-			for (var i = 0; i < Vertex.Array.Length; i++)
-				vertexData[i] = Vertex.Array[i];
-
-			for (var i = 0; i < Color.Array.Length; i++)
-				vertexData[i + Vertex.BufferSize] = Color.Array[i];
-
-			for (var i = 0; i < TextureCoordinate.Array.Length; i++)
-				vertexData[i + Vertex.BufferSize + Color.BufferSize] = TextureCoordinate.Array[i];
-
-			return vertexData;
-		}
-	}
-
-	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c>. </summary>
-	/// <param name="vertex"> The <c>Vertex</c> to creates a <c>Point</c> from. </param>
+	/// <summary> 
+	/// Creates a new <c>Point</c> from a <c>Vertex</c>. 
+	/// </summary>
+	/// 
+	/// <param name="vertex"> 
+	/// The <c>Vertex</c> to creates a <c>Point</c> from. 
+	/// </param>
 	public Point(Vertex vertex)
 	{
 		Vertex = vertex;
@@ -46,9 +41,17 @@ public struct Point
 		TextureCoordinate = new(0.0f, 0.0f);
 	}
 
-	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c> and <c>Color</c>. </summary>
-	/// <param name="vertex"> The new <c>Point</c>'s <c>Vertex</c>. </param>
-	/// <param name="color"> The new <c>Point</c>'s <c>Color</c>. </param>
+	/// <summary> 
+	/// Creates a new <c>Point</c> from a <c>Vertex</c> and <c>Color</c>. 
+	/// </summary>
+	/// 
+	/// <param name="vertex">
+	/// The new <c>Point</c>'s <c>Vertex</c>. 
+	/// </param>
+	/// 
+	/// <param name="color"> 
+	/// The new <c>Point</c>'s <c>Color</c>. 
+	/// </param>
 	public Point(Vertex vertex, Color color)
 	{
 		Vertex = vertex;
@@ -56,9 +59,17 @@ public struct Point
 		TextureCoordinate = new(0.0f, 0.0f);
 	}
 
-	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c> and <c>TextureCoordinate</c>. </summary>
-	/// <param name="vertex"> The new <c>Point</c>'s <c>Vertex</c>. </param>
-	/// <param name="textureCoordinate"> The new <c>Point</c>'s <c>TextureCoordinate</c>. </param>
+	/// <summary> 
+	/// Creates a new <c>Point</c> from a <c>Vertex</c> and <c>TextureCoordinate</c>. 
+	/// </summary>
+	/// 
+	/// <param name="vertex"> 
+	/// The new <c>Point</c>'s <c>Vertex</c>. 
+	/// </param>
+	/// 
+	/// <param name="textureCoordinate"> 
+	/// The new <c>Point</c>'s <c>TextureCoordinate</c>. 
+	/// </param>
 	public Point(Vertex vertex, TextureCoordinate textureCoordinate)
 	{
 		Vertex = vertex;
@@ -66,10 +77,21 @@ public struct Point
 		TextureCoordinate = textureCoordinate;
 	}
 
-	/// <summary> Creates a new <c>Point</c> from a <c>Vertex</c>, <c>Color</c>, and <c>TextureCoordinate</c>. </summary>
-	/// <param name="vertex"> The new <c>Point</c>'s <c>Vertex</c>. </param>
-	/// <param name="color"> The new <c>Point</c>'s <c>Color</c>. </param>
-	/// <param name="textureCoordinate"> The new <c>Point</c>'s <c>TextureCoordinate</c>. </param>
+	/// <summary> 
+	/// Creates a new <c>Point</c> from a <c>Vertex</c>, <c>Color</c>, and <c>TextureCoordinate</c>. 
+	/// </summary>
+	/// 
+	/// <param name="vertex"> 
+	/// The new <c>Point</c>'s <c>Vertex</c>. 
+	/// </param>
+	/// 
+	/// <param name="color"> 
+	/// The new <c>Point</c>'s <c>Color</c>. 
+	/// </param>
+	/// 
+	/// <param name="textureCoordinate"> 
+	/// The new <c>Point</c>'s <c>TextureCoordinate</c>. 
+	/// </param>
 	public Point(Vertex vertex, Color color, TextureCoordinate textureCoordinate)
 	{
 		Vertex = vertex;
@@ -77,7 +99,42 @@ public struct Point
 		TextureCoordinate = textureCoordinate;
 	}
 
-	/// <summary> Tells OpenGL how to use the data sent through the Vertex Buffer. </summary>
+	public double GetDistanceBetween(ISpacial other)
+	{
+		var difference = Location - other.Location;
+		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
+	}
+
+	public int GetBufferSize(BufferType bufferType)
+	{
+		if (bufferType == BufferType.VertexBuffer)
+			return BufferSize;
+		else
+			return 1;
+	}
+
+	public Array GetBufferableArray(BufferType bufferType) 
+	{
+		if (bufferType != BufferType.VertexBuffer)
+			return new uint[] { 0 };
+
+		var vertexData = new float[GetBufferSize(bufferType)];
+
+		for (var i = 0; i < Vertex.Array.Length; i++)
+			vertexData[i] = Vertex.Array[i];
+
+		for (var i = 0; i < Color.Array.Length; i++)
+			vertexData[i + Vertex.BufferSize] = Color.Array[i];
+
+		for (var i = 0; i < TextureCoordinate.Array.Length; i++)
+			vertexData[i + Vertex.BufferSize + Color.BufferSize] = TextureCoordinate.Array[i];
+
+		return vertexData;
+	}
+
+	/// <summary> 
+	/// Tells OpenGL how to use the data sent through the Vertex Buffer. 
+	/// </summary>
 	public static void SetAttributes(ShaderProgram shaderProgram)
 	{
 		// This is only defined here for maintanability purposes, usually I would put it somewhere like the ShaderProgram
@@ -90,12 +147,14 @@ public struct Point
 
 		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("color"));
 		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("color"), Color.BufferSize,
-							   VertexAttribPointerType.Float, false, BufferSize * sizeof(float), 
+							   VertexAttribPointerType.Float, false, 
+							   BufferSize * sizeof(float), 
 							   Vertex.BufferSize * sizeof(float));
 		
 		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("texturePosition"));
 		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("texturePosition"), TextureCoordinate.BufferSize,
-						 	   VertexAttribPointerType.Float, false, BufferSize * sizeof(float),
+						 	   VertexAttribPointerType.Float, false, 
+							   BufferSize * sizeof(float),
 							   Vertex.BufferSize * sizeof(float) + Color.BufferSize * sizeof(float));
 	}
 }

@@ -4,33 +4,122 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rain.Engine.Texturing;
 
-/// <summary> A class for managing and creating OpenGL textures. </summary>
+/// <summary> 
+/// A class for managing and creating textures. 
+/// </summary>
 public class Texture : IDisposable
 {
-	/// <summary> The Texture's OpenGL handle for use with OpenGL functions. </summary>
-	/// <value> An integer representing the OpenGL Texture. </value>
+	/// <summary>
+	/// The Texture's OpenGL handle for use with OpenGL functions.
+	/// </summary>
+	///
+	/// <value>
+	/// An integer representing the OpenGL Texture.
+	/// </value>
 	public int Handle { get; private set; }
 
-	/// <summary> The texture unit of 16 possible units that this <c>Texture</c> occupies. </summary>
-	/// <value> A <c>TextureUnit</c> enum value. </value>
+	/// <summary>
+	/// The texture unit of 16 possible units that this <c>Texture</c> occupies.
+	/// </summary>
+	///
+	/// <value>
+	/// A <c>TextureUnit</c> enum value.
+	/// </value>
 	public TextureUnit Unit { get; set; }
 
-	/// <summary> Whether or not image data has been attatched to this <c>Texture</c>. </summary>
+	/// <summary>
+	/// A byte array representing the image.
+	/// </summary>
+	public byte[] Image { get; }
+
+	/// <summary>
+	/// The image's width.
+	/// </summary>
+	public int Width { get; }
+
+	/// <summary>
+	/// The images height.
+	/// </summary>
+	public int Height { get; }
+
+	/// <summary>
+	/// Whether or not image data has been attatched to this <c>Texture</c>.
+	/// </summary>
 	public bool IsEmpty { get; private set; }
 
-	public Texture(ShaderProgram shaderProgram, TextureUnit unit, string glslName)
+	/// <summary>
+	/// Creates an Empty <c>Texture</c>.
+	/// </summary>
+	public Texture()
 	{
-		if (unit == TextureUnit.None)
-			throw new Exception("Cannot create a Texture for TextureUnit.None.");
-		
-		Unit = unit;
-		shaderProgram.Use();
+		Handle = -1;
+		Unit = TextureUnit.None;
+		IsEmpty = true;
+
+		Image = Array.Empty<byte>();
+		Width = 0;
+		Height = 0;
+	}
+
+	/// <summary>
+	/// Creates a new <c>Texture</c>.
+	/// </summary>
+	/// 
+	/// <param name="imagePath">
+	/// The image to make the new <c>Texture</c> from.
+	/// </param>
+	public Texture(string imagePath)
+	{
+		Handle = -1;
+		Unit = TextureUnit.None;
+		IsEmpty = false;
+
+		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+
+		image.Mutate(x => x.Flip(FlipMode.Vertical));
+		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
+
+		var pixelSpan = pixelMemory.Span;
+		var pixelBytes = new byte[image.Width * image.Height * 4];
+
+		for (var i = 0; i < pixelSpan.Length; i++)
+		{
+			pixelBytes[i * 3] = pixelSpan[i].R;
+			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
+			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
+		}
+
+		Image = pixelBytes;
+		Width = image.Width;
+		Height = image.Height;
+	}
+
+	/// <summary>
+	/// Reserves a Texture handle with OpenGL.
+	/// </summary>
+	public void ReserveHandle()
+	{
+		if (Handle != -1)
+			throw new Exception("Texture has already reserved a handle.");
+
 		Handle = GL.GenTexture();
+	}
 
-		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
-		GL.BindTexture(TextureTarget.Texture2D, Handle);
-
-		shaderProgram.GetUniformByName(glslName).SetToTexture(this);
+	/// <summary>
+	/// Uploads this <c>Texture</c> to the GPU.
+	/// </summary>
+	///
+	/// <param name="unit">
+	/// The <c>TextureUnit</c> to occupy.
+	/// </param>
+	///
+	/// <param name="uniform">
+	/// The <c>Uniform</c> to upload the <c>Texture</c> to.
+	/// </param>
+	public void Upload(TextureUnit unit, Uniform uniform)
+	{
+		Unit = unit;
+		Bind(bindEmpty: true);
 
 		GL.TexParameter(
 			TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
@@ -40,107 +129,29 @@ public class Texture : IDisposable
 
 		GL.TexParameter(
 			TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureFilter.NearestMipmapFiltered);
-			
+
 		GL.TexParameter(
 			TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureFilter.Linear);
 
-		IsEmpty = true;
-	}
+		uniform.SetToTexture(this);
 
-	/// <summary> Creates a new <c>Texture</c> object from a <c>TextureOptions</c> struct. </summary>
-	/// <param name="options"> The <c>TextureOptions</c> to be used in construction. </param>
-	/// <param name="shaderProgram"> The <c>ShaderProgram</c> that will use this <c>Texture</c>. </param>
-	public Texture(TextureOptions options, ShaderProgram shaderProgram)
-	{
-		Unit = options.Unit;
-
-		shaderProgram.Use();
-		Handle = GL.GenTexture();
-
-		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
-		GL.BindTexture(TextureTarget.Texture2D, Handle);
-
-		var image = SixLabors.ImageSharp.Image.Load<Rgb24>(options.ImagePath);
-		image.Mutate(x => x.Flip(FlipMode.Vertical));
-		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
-
-		var pixelSpan = pixelMemory.Span;
-		var pixelBytes = new byte[image.Width * image.Height * 4];
-		
-		for (var i = 0; i < pixelSpan.Length; i++)
-		{
-			pixelBytes[i * 3] = pixelSpan[i].R;
-			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
-			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
-		}
-
-		shaderProgram.GetUniformByName(options.GlslName).SetToTexture(this);
-
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)options.WrapMode);
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)options.WrapMode);
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)options.MinimizationFilter);
-		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)options.MagnificationFilter);
-
-		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, image.Width, image.Height, 0, PixelFormat.Rgb,
-					  PixelType.UnsignedByte, pixelBytes);
+		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, Width, Height, 0, PixelFormat.Rgb,
+					  PixelType.UnsignedByte, Image);
 		GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
 		IsEmpty = false;
 	}
-
-	private Texture()
-	{
-		// This should be an invalid handle as far as OpenGL is concerned.
-		Handle = -1; 
-		Unit = TextureUnit.None;
-	}
-
-	/// <summary> Returns an empty <c>Texture</c>. </summary>
-	public static Texture Empty() => new();
 
 	/// <summary>
-	/// Reserves a Texture handle with OpenGL, can only be used with a <c>Texture</c> returned by <c>Texture.Empty()</c>.
+	/// Binds the <c>Texture</c> to its current <c>Texture.Unit</c>.
 	/// </summary>
-	public void ReserveHandle()
+	///
+	/// <param name="bindEmpty">
+	/// Whether or not to allow binding an empty <c>Textture</c>.
+	/// </param>
+	public void Bind(bool bindEmpty = false)
 	{
-		if (Handle != -1)
-			throw new Exception("Texture has already reserved a handle.");
-		
-		Handle = GL.GenTexture();
-	}
-
-	/// <summary> Loads image data to the <c>Texture</c>. </summary>
-	/// <remarks> Works best with square bitmap images at standard resolutions. </remarks>
-	/// <param name="imagePath"> The path to the image file. </param>
-	public void LoadFromImage(string imagePath)
-	{
-		Bind(bindEmpty: true);
-
-		var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
-		image.Mutate(x => x.Flip(FlipMode.Vertical));
-		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
-
-		var pixelSpan = pixelMemory.Span;
-		var pixelBytes = new byte[image.Width * image.Height * 4];
-		
-		for (var i = 0; i < pixelSpan.Length; i++)
-		{
-			pixelBytes[i * 3] = pixelSpan[i].R;
-			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
-			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
-		}
-
-		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, image.Width, image.Height, 0, PixelFormat.Rgb,
-					  PixelType.UnsignedByte, pixelBytes);
-		GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-		IsEmpty = false;
-	}
-
-	/// <summary> Binds the <c>Texture</c> to its current <c>Texture.Unit</c>. </summary>
-	public void Bind()
-	{
-		if (IsEmpty)
+		if (!bindEmpty && IsEmpty)
 			throw new Exception("Cannot bind empty Texture.");
 
 		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
@@ -148,19 +159,15 @@ public class Texture : IDisposable
 	}
 
 	/// <summary>
-	/// Performs the same action as <c>Bind()</c> but skips the <c>IsEmpty</c> which could lead to unwanted behavior,
-	/// for calls inside this class only.
+	/// Unbinds any currently bound <c>Texture</c>.
 	/// </summary>
-	private void Bind(bool bindEmpty)
+	/// 
+	/// <param name="bindEmpty">
+	/// Whether or not to allow unbinding an from an empty <c>Textture</c>.
+	/// </param>
+	public void Unbind(bool unbindEmpty = false)
 	{
-		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
-		GL.BindTexture(TextureTarget.Texture2D, Handle);
-	}
-
-	/// <summary> Unbinds any currently bound <c>Texture</c>. </summary>
-	public void Unbind()
-	{
-		if (IsEmpty)
+		if (!unbindEmpty && IsEmpty)
 			throw new Exception("Cannot unbind from empty Texture.");
 
 		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)TextureUnit.Unit0);
@@ -179,7 +186,7 @@ public class Texture : IDisposable
 
 	protected virtual void Dispose(bool disposing)
 	{
-		if (disposed) 
+		if (disposed)
 			return;
 
 		if (disposing)

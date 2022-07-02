@@ -1,6 +1,6 @@
 using OpenTK.Graphics.OpenGL;
 
-namespace Rain.Engine;
+namespace Rain.Engine.Buffering;
 
 public enum BufferType
 {
