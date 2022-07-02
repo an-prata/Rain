@@ -2,9 +2,9 @@ namespace Rain.Engine.Geometry;
 
 public class Rectangle : ITwoDimensional
 {
-	private float width;
+/* 	private float width;
 
-	private float height;
+	private float height; */
 
 	private float rotationX = 0;
 
@@ -25,13 +25,13 @@ public class Rectangle : ITwoDimensional
 	public float Width
 	{
 		get => (float)Points[0].GetDistanceBetween(Points[1]);
-		set => Scale(value / width, 1);
+		set => Scale(value / Width, 1);
 	}
 
 	public float Height 
 	{ 
-		get => height;
-		set => Scale(1, value / height); 
+		get => (float)Points[0].GetDistanceBetween(Points[2]);
+		set => Scale(1, value / Height); 
 	}
 
 	public float RotationX 
@@ -54,30 +54,36 @@ public class Rectangle : ITwoDimensional
 
 	public Rectangle(Vertex location, float width, float height)
 	{
+		var halfWidth = width / 2;
+		var halfHeight = height / 2;
+
 		Points = new Point[]
 		{
-			new(location, new(255, 255, 255), new(0.0f, 0.0f)),
-			new(new(location.X + width, location.Y, location.Z), new(255, 255, 255), new(1.0f, 0.0f)),
-			new(new(location.X, location.Y + height, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
-			new(new(location.X + width, location.Y + height, location.Z), new(255, 255, 255), new(1.0f, 1.0f))
+			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(0.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(1.0f, 0.0f)),
+			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
+			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(1.0f, 1.0f))
 		};
 
-		this.width = width;
-		this.height = height;
+		/* this.width = width;
+		this.height = height; */
 	}
 
 	public Rectangle(Vertex location, float width, float height, Color color)
 	{
+		var halfWidth = width / 2;
+		var halfHeight = height / 2;
+
 		Points = new Point[]
 		{
-			new(location, color, new(0.0f, 0.0f)),
-			new(new(location.X + width, location.Y, location.Z), color, new(1.0f, 0.0f)),
-			new(new(location.X, location.Y + height, location.Z), color, new(0.0f, 1.0f)),
-			new(new(location.X + width, location.Y + height, location.Z), color, new(1.0f, 1.0f))
+			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), color, new(0.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z), color, new(1.0f, 0.0f)),
+			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), color, new(0.0f, 1.0f)),
+			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), color, new(1.0f, 1.0f))
 		};
 
-		this.width = width;
-		this.height = height;
+		/* this.width = width;
+		this.height = height; */
 	}
 
 	public Vertex GetCenterVertex()
