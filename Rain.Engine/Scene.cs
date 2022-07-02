@@ -28,13 +28,13 @@ public class Scene : IDisposable
 
 	private int[] modelElementIndices;
 
-	private IRenderable[] models;
+	public IRenderable[] Models { get; private set; }
 
 	/// <summary> Creates a new <c>Scene</c> from an array of <c>IRenderable</c>. </summary>
 	/// <param name="models"> The array of <c>IRenderable</c>s to render with this <c>Scene</c>. </param>
 	public Scene(IRenderable[] models)
 	{
-		this.models = models;
+		this.Models = models;
 		var sceneBufferSize = 0;
 		int elements = 0;
 
@@ -82,7 +82,7 @@ public class Scene : IDisposable
 	/// <param name="textures"> An array of <c>Texture</c>s with indices coorelating to <c>models</c>'s. </param>
 	public Scene(IRenderable[] models, Texture[] textures)
 	{
-		this.models = models;
+		Models = models;
 		if (models.Length != textures.Length)
 			throw new Exception($"{nameof(textures)} must be same length as {nameof(models)}.");
 
@@ -141,18 +141,24 @@ public class Scene : IDisposable
 
 	public void Draw(BufferGroup bufferGroup)
 	{
-		for (var model = 0; model < modelVertexIndices.Length; model++)
+		for (var model = 0; model < Models.Length; model++)
 		{
-			for (var face = 0; face < models[model].Faces.Length; face++)
+			for (var face = 0; face < Models[model].Faces.Length; face++)
 			{
 				bufferGroup.BufferData(BufferType.VertexBuffer, 
-									   models[model].Faces[face].GetBufferableArray(BufferType.VertexBuffer));
-				bufferGroup.BufferData(BufferType.ElementBuffer, models[model].Faces[face].Face.Elements);
+									   Models[model].Faces[face].GetBufferableArray(BufferType.VertexBuffer));
+
+				bufferGroup.BufferData(BufferType.ElementBuffer, 
+									   Models[model].Faces[face].GetBufferableArray(BufferType.ElementBuffer));
 				
-				if (!models[model].Faces[face].Texture.IsEmpty)
-					models[model].Faces[face].Texture.Bind();
+				if (!Models[model].Faces[face].Texture.IsEmpty)
+				{
+					Models[model].Faces[face].Texture.Bind();
+				}
 				
-				GL.DrawElements(PrimitiveType.Triangles, ElementMemorySpan.Length, DrawElementsType.UnsignedInt, 0);
+				GL.DrawElements(PrimitiveType.Triangles, 
+								Models[model].Faces[face].Face.Elements.Length, 
+								DrawElementsType.UnsignedInt, 0);
 			}
 			
 		}
