@@ -149,22 +149,22 @@ public class Scene : IDisposable
 		{
 			for (var face = 0; face < Models[model].Faces.Length; face++)
 			{
-				bufferGroup.BufferData(BufferType.VertexBuffer, 
-									   Models[model].Faces[face].GetBufferableArray(BufferType.VertexBuffer));
+				var vertexArray = Models[model].Faces[face].GetBufferableArray(BufferType.VertexBuffer);
+				var elementArray = Models[model].Faces[face].GetBufferableArray(BufferType.ElementBuffer);
 
-				bufferGroup.BufferData(BufferType.ElementBuffer, 
-									   Models[model].Faces[face].GetBufferableArray(BufferType.ElementBuffer));
+				bufferGroup.BufferData(BufferType.VertexBuffer, vertexArray);
+				bufferGroup.BufferData(BufferType.ElementBuffer, elementArray);
 				
 				if (!Models[model].Faces[face].Texture.IsEmpty && Models[model].Faces[face].Texture != currentlyBoundTexture)
 				{
+					if (!Models[model].Faces[face].Texture.IsUploaded)
+						Models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, program.GetUniformByName("texture0"));
+					
 					Models[model].Faces[face].Texture.Bind();
-					Models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, program.GetUniformByName("texture0"));
 					currentlyBoundTexture = Models[model].Faces[face].Texture;
 				}
 				
-				GL.DrawElements(PrimitiveType.Triangles, 
-								Models[model].Faces[face].Face.Elements.Length, 
-								DrawElementsType.UnsignedInt, 0);
+				GL.DrawElements(PrimitiveType.Triangles, elementArray.Length, DrawElementsType.UnsignedInt, 0);
 			}
 			
 		}
