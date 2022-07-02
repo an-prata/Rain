@@ -143,6 +143,8 @@ public class Scene : IDisposable
 
 	public void Draw(BufferGroup bufferGroup, ShaderProgram program)
 	{
+		var currentlyBoundTexture = new Texture();
+
 		for (var model = 0; model < Models.Length; model++)
 		{
 			for (var face = 0; face < Models[model].Faces.Length; face++)
@@ -153,10 +155,11 @@ public class Scene : IDisposable
 				bufferGroup.BufferData(BufferType.ElementBuffer, 
 									   Models[model].Faces[face].GetBufferableArray(BufferType.ElementBuffer));
 				
-				if (!Models[model].Faces[face].Texture.IsEmpty)
+				if (!Models[model].Faces[face].Texture.IsEmpty && Models[model].Faces[face].Texture != currentlyBoundTexture)
 				{
 					Models[model].Faces[face].Texture.Bind();
 					Models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, program.GetUniformByName("texture0"));
+					currentlyBoundTexture = Models[model].Faces[face].Texture;
 				}
 				
 				GL.DrawElements(PrimitiveType.Triangles, 
