@@ -148,13 +148,13 @@ public class Point : IBufferable, ISpacial
 		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("color"));
 		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("color"), Color.BufferSize,
 							   VertexAttribPointerType.Float, false, 
-							   BufferSize * sizeof(float) * sizeof(float), 
+							   BufferSize * sizeof(float), 
 							   Vertex.BufferSize * sizeof(float));
 		
 		GL.EnableVertexAttribArray(shaderProgram.GetAttributeHandleByName("texturePosition"));
 		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("texturePosition"), TextureCoordinate.BufferSize,
 						 	   VertexAttribPointerType.Float, false, 
-							   BufferSize * sizeof(float) * sizeof(float),
+							   BufferSize * sizeof(float),
 							   Vertex.BufferSize * sizeof(float) + Color.BufferSize * sizeof(float));
 	}
 }
