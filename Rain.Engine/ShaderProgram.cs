@@ -1,23 +1,40 @@
 using OpenTK.Graphics.OpenGL;
+using Rain.Engine.Rendering;
+using Rain.Engine.Texturing;
+
+using TextureUnit = Rain.Engine.Texturing.TextureUnit;
+using TextureWrapMode = Rain.Engine.Texturing.TextureWrapMode;
 
 namespace Rain.Engine;
 
-/// <summary> A class for managing OpenGL Shader Programs. </summary>
+/// <summary>
+/// A class for managing OpenGL Shader Programs.
+/// </summary>
 public class ShaderProgram : IDisposable
 {
-	/// <summary> The Shader Program's OpenGL handle for use with OpenGL functions. </summary>
-	/// <value> An integer representing the OpenGL Shader Program. </value>
+	/// <summary>
+	/// The Shader Program's OpenGL handle for use with OpenGL functions.
+	/// </summary>
+	///
+	/// <value>
+	/// An integer representing the OpenGL Shader Program.
+	/// </value>
 	public int Handle { get; }
 
-	/// <summary> Creates a new OpenGL Shader Program from <c>ShaderComponent</c>s. </summary>
-	/// <param name="components"> An array of <c>ShaderComponents</c> to create a ShaderProgram from. </param>
+	/// <summary>
+	/// Creates a new OpenGL Shader Program from <c>ShaderComponent</c>s.
+	/// </summary>
+	///
+	/// <param name="components">
+	/// An array of <c>ShaderComponents</c> to create a ShaderProgram from.
+	/// </param>
 	public ShaderProgram(ShaderComponent[] components)
 	{
 		Handle = GL.CreateProgram();
 
 		for (var i = 0; i < components.Length; i++)
 			GL.AttachShader(Handle, components[i].Handle);
-		
+
 		GL.LinkProgram(Handle);
 
 		for (var i = 0; i < components.Length; i++)
@@ -27,15 +44,37 @@ public class ShaderProgram : IDisposable
 		}
 	}
 
+	public void UploadModelTextures(IRenderable[] models)
+	{
+		for (var model = 0; model < models.Length; model++)
+				for (var face = 0; face < models[model].Faces.Length; face++)
+					models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, GetUniformByName("texture0"));
+	}
 
-	/// <summary> Gets an OpenGL Vertex Attribute by its name in the shader. </summary>
-	/// <param name="attributeName"> The name of the OpenGL Vertex Attribute. </param>
-	/// <returns> The OpenGL Vertex Attribute's handle. </returns>
+	/// <summary>
+	/// Gets an OpenGL Vertex Attribute by its name in the shader.
+	/// </summary>
+	///
+	/// <param name="attributeName">
+	/// The name of the OpenGL Vertex Attribute.
+	/// </param>
+	///
+	/// <returns>
+	/// The OpenGL Vertex Attribute's handle.
+	/// </returns>
 	public int GetAttributeHandleByName(string attributeName) => GL.GetAttribLocation(Handle, attributeName);
-	
-	/// <summary> Gets a specific GLSL/OpenGL uniform by name. </summary>
-	/// <param name="uniformName"> The Uniform's name in the GLSL shader. </param>
-	/// <returns> A <c>Uniform</c> instance representing the GLSL/OpenGL shader. </returns>
+
+	/// <summary>
+	/// Gets a specific GLSL/OpenGL uniform by name.
+	/// </summary>
+	///
+	/// <param name="uniformName">
+	/// The Uniform's name in the GLSL shader.
+	/// </param>
+	///
+	/// <returns>
+	/// A <c>Uniform</c> instance representing the GLSL/OpenGL shader.
+	/// </returns>
 	public Uniform GetUniformByName(string uniformName)
 	{
 		GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var uniforms);
@@ -52,8 +91,13 @@ public class ShaderProgram : IDisposable
 		throw new NullReferenceException("No uniform of name \"" + uniformName + "\" was found.");
 	}
 
-	/// <summary> Gets all active OpenGL Uniforms in the Shader and returns an Array of <c>Unifmorm</c> objects. </summary>
-	/// <returns> An Array of <c>Unifmorm</c> objects. </returns>
+	/// <summary>
+	/// Gets all active OpenGL Uniforms in the Shader and returns an Array of <c>Unifmorm</c> objects.
+	/// </summary>
+	///
+	/// <returns>
+	/// An Array of <c>Unifmorm</c> objects.
+	/// </returns>
 	public Uniform[] GetUniforms()
 	{
 		GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var uniforms);
@@ -69,10 +113,14 @@ public class ShaderProgram : IDisposable
 		return uniformArray;
 	}
 
-	/// <summary> Tells OpenGL to use this Shader Program for rendering. </summary>
+	/// <summary>
+	/// Tells OpenGL to use this Shader Program for rendering.
+	/// </summary>
 	public void Use() => GL.UseProgram(Handle);
 
-	/// <summary> Tells OpenGL to stop using any Shader Program. </summary>
+	/// <summary>
+	/// Tells OpenGL to stop using any Shader Program.
+	/// </summary>
 	public void StopUsing() => GL.UseProgram(0);
 
 	#region IDisposable
@@ -87,7 +135,7 @@ public class ShaderProgram : IDisposable
 
 	protected virtual void Dispose(bool disposing)
 	{
-		if (disposed) 
+		if (disposed)
 			return;
 
 		if (disposing)
