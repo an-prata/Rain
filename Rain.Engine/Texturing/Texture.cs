@@ -4,8 +4,8 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rain.Engine.Texturing;
 
-/// <summary> 
-/// A class for managing and creating textures. 
+/// <summary>
+/// A class for managing and creating textures.
 /// </summary>
 public class Texture : IDisposable
 {
@@ -30,7 +30,7 @@ public class Texture : IDisposable
 	/// <summary>
 	/// A byte array representing the image.
 	/// </summary>
-	public byte[] Image { get; }
+	public byte[] Image { get; private set; }
 
 	/// <summary>
 	/// The image's width.
@@ -48,6 +48,17 @@ public class Texture : IDisposable
 	public bool IsEmpty { get; private set; }
 
 	/// <summary>
+	/// Whether or not the <c>Texture</c>'s image data has been uploaded to the GPU.
+	/// </summary>
+	///
+	/// <remarks>
+	/// While <c>IsUploaded</c> is true, <c>Image</c> will always be an empty array.
+	/// </remarks>
+	public bool IsUploaded { get; private set; }
+
+	private TextureOptions options;
+
+	/// <summary>
 	/// Creates an Empty <c>Texture</c>.
 	/// </summary>
 	public Texture()
@@ -55,6 +66,7 @@ public class Texture : IDisposable
 		Handle = -1;
 		Unit = TextureUnit.None;
 		IsEmpty = true;
+		IsUploaded = false;
 
 		Image = Array.Empty<byte>();
 		Width = 0;
@@ -64,7 +76,7 @@ public class Texture : IDisposable
 	/// <summary>
 	/// Creates a new <c>Texture</c>.
 	/// </summary>
-	/// 
+	///
 	/// <param name="imagePath">
 	/// The image to make the new <c>Texture</c> from.
 	/// </param>
@@ -73,6 +85,7 @@ public class Texture : IDisposable
 		Handle = -1;
 		Unit = TextureUnit.None;
 		IsEmpty = false;
+		IsUploaded = false;
 
 		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
 
@@ -92,6 +105,52 @@ public class Texture : IDisposable
 		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
+		
+		options = new TextureOptions
+		{
+			WrapMode = TextureWrapMode.Clamp,
+			MagnificationFilter = TextureFilter.Linear,
+			MinimizationFilter = TextureFilter.Linear
+		};
+	}
+
+	/// <summary>
+	/// Creates a new <c>Texture</c>.
+	/// </summary>
+	///
+	/// <param name="imagePath">
+	/// The image to make the new <c>Texture</c> from.
+	/// </param>
+	/// 
+	/// <param name="options">
+	/// The settings to use when minimizing, magnifying, and wrapping the <c>Texture</c>.
+	/// </param>
+	public Texture(string imagePath, TextureOptions options)
+	{
+		Handle = -1;
+		Unit = TextureUnit.None;
+		IsEmpty = false;
+		IsUploaded = false;
+
+		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+
+		image.Mutate(x => x.Flip(FlipMode.Vertical));
+		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
+
+		var pixelSpan = pixelMemory.Span;
+		var pixelBytes = new byte[image.Width * image.Height * 4];
+
+		for (var i = 0; i < pixelSpan.Length; i++)
+		{
+			pixelBytes[i * 3] = pixelSpan[i].R;
+			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
+			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
+		}
+
+		Image = pixelBytes;
+		Width = image.Width;
+		Height = image.Height;
+		this.options = options;
 	}
 
 	/// <summary>
@@ -109,6 +168,11 @@ public class Texture : IDisposable
 	/// Uploads this <c>Texture</c> to the GPU.
 	/// </summary>
 	///
+	/// <remarks>
+	/// <c>Upload()</c> may be called more than once on the same <c>Texture</c> without throwing any exceptions, however it
+	/// will simply return if <c>IsUploaded</c> is true, and not upload any data to the GPU.
+	/// </remarks>
+	///
 	/// <param name="unit">
 	/// The <c>TextureUnit</c> to occupy.
 	/// </param>
@@ -118,28 +182,27 @@ public class Texture : IDisposable
 	/// </param>
 	public void Upload(TextureUnit unit, Uniform uniform)
 	{
+		if (IsUploaded)
+			return;
+
 		Unit = unit;
 		Bind(bindEmpty: true);
-
-		GL.TexParameter(
-			TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-
-		GL.TexParameter(
-			TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
-
-		GL.TexParameter(
-			TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureFilter.NearestMipmapFiltered);
-
-		GL.TexParameter(
-			TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureFilter.Linear);
-
 		uniform.SetToTexture(this);
+
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)options.WrapMode);
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)options.WrapMode);
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)options.MagnificationFilter);
+		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)options.MinimizationFilter);
 
 		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, Width, Height, 0, PixelFormat.Rgb,
 					  PixelType.UnsignedByte, Image);
+
 		GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
+		Image = Array.Empty<byte>();
+
 		IsEmpty = false;
+		IsUploaded = true;
 	}
 
 	/// <summary>
@@ -161,7 +224,7 @@ public class Texture : IDisposable
 	/// <summary>
 	/// Unbinds any currently bound <c>Texture</c>.
 	/// </summary>
-	/// 
+	///
 	/// <param name="bindEmpty">
 	/// Whether or not to allow unbinding an from an empty <c>Textture</c>.
 	/// </param>

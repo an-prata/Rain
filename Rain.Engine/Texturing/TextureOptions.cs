@@ -2,12 +2,6 @@ namespace Rain.Engine.Texturing;
 
 public struct TextureOptions
 {
-	public string ImagePath;
-
-	public string GlslName;
-
-	public TextureUnit Unit;
-
 	public TextureWrapMode WrapMode;
 
 	public TextureFilter MagnificationFilter;
