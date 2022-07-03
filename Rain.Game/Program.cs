@@ -13,8 +13,6 @@ class Program
 
 		var rectangle1 = new Rectangle(new(-0.5f, -0.5f, 1.0f), 1.0f, 1.0f, new(0, 255, 255));
 		rectangle1.Rotate(90.0f, Axes.Z, RotationDirection.CounterClockwise); 
-		// When running in a non-square window this will appear to make the rectangle a trapazoid,
-		// however that is just an effect of displaying on a 1.0f by 1.0f normalized device coordinate plane.
 
 		var rectangle2 = new Rectangle(new(-0.5f, 0.5f, 1.0f), 1.0f, 1.0f, new(255, 255, 0));
 
