@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Rain.Engine\Rain.Engine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Resources\**" CopyToOutputDirectory="PreserveNewest"/>
+  </ItemGroup>
+
 </Project>

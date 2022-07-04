@@ -1,7 +1,7 @@
 using Xunit;
 using Rain.Engine.Geometry;
 
-namespace Rain.Engine.Tests;
+namespace Rain.Engine.Tests.Geometry;
 
 public class TransformMatrixTests
 {

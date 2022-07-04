@@ -238,6 +238,38 @@ public class Texture : IDisposable
 		Handle = GL.GenTexture();
 	}
 
+	public override int GetHashCode()
+		=> Image.GetHashCode();
+
+	public bool Equals(Texture texture)
+	{
+		if (IsEmpty && texture.IsEmpty)
+			return true;
+		
+		if (IsUploaded && texture.IsUploaded)
+			return Handle == texture.Handle;
+		
+		if (!IsUploaded && !texture.IsUploaded)
+			return Image == texture.Image;
+	
+		return false;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		if (obj == null)
+			return false;
+
+		if (obj.GetType() != typeof(Texture))
+			return false;
+
+        return Equals(obj);
+	}
+
+	public static bool operator ==(Texture a, Texture b) => a.Equals(b);
+
+	public static bool operator !=(Texture a, Texture b) => !a.Equals(b);
+
 	#region IDisposable
 
 	private bool disposed = false;
@@ -255,8 +287,14 @@ public class Texture : IDisposable
 
 		if (disposing)
 		{
-			Unbind();
-			GL.DeleteTexture(Handle);
+			if (IsUploaded)
+			{
+				Unbind();
+				GL.DeleteTexture(Handle);
+			}
+
+			if (!IsEmpty)
+				Image = Array.Empty<byte>();
 		}
 
 		disposed = true;
