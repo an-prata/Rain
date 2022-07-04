@@ -43,14 +43,7 @@ public class ShaderProgram : IDisposable
 			components[i].Dispose();
 		}
 	}
-
-	public void UploadModelTextures(IRenderable[] models)
-	{
-		for (var model = 0; model < models.Length; model++)
-				for (var face = 0; face < models[model].Faces.Length; face++)
-					models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, GetUniformByName("texture0"));
-	}
-
+	
 	/// <summary>
 	/// Gets an OpenGL Vertex Attribute by its name in the shader.
 	/// </summary>
