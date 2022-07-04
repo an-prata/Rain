@@ -36,7 +36,7 @@ public class Scene : IDisposable
 	/// <param name="models"> The array of <c>IRenderable</c>s to render with this <c>Scene</c>. </param>
 	public Scene(IRenderable[] models)
 	{
-		this.Models = models;
+		Models = models;
 		var sceneBufferSize = 0;
 		int elements = 0;
 
