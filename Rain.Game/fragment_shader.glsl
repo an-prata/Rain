@@ -5,7 +5,6 @@ out vec4 color;
 in vec4 fragmentColor;
 in vec2 textureCoordinate;
 
-uniform float opacity0;
 uniform float opacity1;
 uniform float opacity2;
 uniform float opacity3;
@@ -41,5 +40,23 @@ uniform sampler2D texture15;
 
 void main()
 {
-    color = texture(texture0, textureCoordinate) * fragmentColor;
+    vec4 texel0 = texture(texture0, textureCoordinate);
+
+    texel0 = mix(texel0, texture(texture1, textureCoordinate), opacity1);
+    texel0 = mix(texel0, texture(texture2, textureCoordinate), opacity2);
+    texel0 = mix(texel0, texture(texture3, textureCoordinate), opacity3);
+    texel0 = mix(texel0, texture(texture4, textureCoordinate), opacity4);
+    texel0 = mix(texel0, texture(texture5, textureCoordinate), opacity5);
+    texel0 = mix(texel0, texture(texture6, textureCoordinate), opacity6);
+    texel0 = mix(texel0, texture(texture7, textureCoordinate), opacity7);
+    texel0 = mix(texel0, texture(texture8, textureCoordinate), opacity8);
+    texel0 = mix(texel0, texture(texture9, textureCoordinate), opacity9);
+    texel0 = mix(texel0, texture(texture10, textureCoordinate), opacity10);
+    texel0 = mix(texel0, texture(texture11, textureCoordinate), opacity11);
+    texel0 = mix(texel0, texture(texture12, textureCoordinate), opacity12);
+    texel0 = mix(texel0, texture(texture13, textureCoordinate), opacity13);
+    texel0 = mix(texel0, texture(texture14, textureCoordinate), opacity14);
+    texel0 = mix(texel0, texture(texture15, textureCoordinate), opacity15);
+
+    color = texel0 * fragmentColor;
 } 
