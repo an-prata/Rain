@@ -66,9 +66,9 @@ public class EfficientTextureGroup
 
 	public int Length { get => textures.Length; }
 
-	private Texture[] textures;
+	private readonly Texture[] textures;
 
-	private int[] indices;
+	private readonly int[] indices;
 
 	/// <summary>
 	/// Creates a new <c>EfficientTextureGroup</c> from an array of <c>Texture</c>s.
@@ -79,23 +79,32 @@ public class EfficientTextureGroup
 	/// </param>
 	public EfficientTextureGroup(Texture[] textures)
 	{
-		this.textures = textures;
-		indices = new int[this.textures.Length];
-		indices[0] = 0;
+		this.textures = new Texture[textures.Length];
+		indices = new int[textures.Length];
 
 		// Checks for duplicates in textures and uses indices to point to the first instance of the duplicate textures and
 		// then replaces the second instance of that texture with an empty texture.
-		for (var texture = 1; texture < this.textures.Length; texture++)
+		for (var texture = 0; texture < this.textures.Length; texture++)
 		{
-			for (var duplicateCheck = texture - 1; duplicateCheck >= 0; duplicateCheck--)
-				if (!this.textures[texture].IsEmpty && this.textures[texture] == this.textures[duplicateCheck])
+			// Is a unique Texture.		
+			if (this.textures[texture] is null)
+			{
+				this.textures[texture] = textures[texture];
+				indices[texture] = texture;
+
+				// When a unique Texture is found, fiund all its duplicates and set their cooresponding index in indices to
+				// the index of the Texture they are a duplicate of with the smallest index. 
+				for (var duplicate = texture + 1; duplicate < this.textures.Length; duplicate++)
 				{
-					indices[texture] = duplicateCheck;
-					this.textures[texture].Dispose();
-					this.textures[texture] = new();
+					if (textures[texture] == textures[duplicate] && indices[duplicate] == 0)
+					{
+						indices[duplicate] = texture;
+						this.textures[duplicate] = new();
+					}
 				}
-				else
-					indices[texture] = texture;
+
+				continue;
+			}
 		}
 	}
 }

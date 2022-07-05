@@ -24,9 +24,10 @@ class Program
 		{ 
 			Solid.SolidFromITwoDimensional(rectangle0, new Texture[] 
 			{ 
-				new("interesting.bmp", 1.0f), 
-				new("greg.bmp", 0.5f), 
-				new("garfield.bmp", 0.25f) 
+				new("interesting.bmp", 0.3f), 
+				new("interesting.bmp", 0.5f), 
+				new("interesting.bmp", 0.3f), 
+				new("test.png", 1.0f)
 			}),
 			Solid.SolidFromITwoDimensional(rectangle1, new Texture[] { new("greg.bmp") }), 
 			Solid.SolidFromITwoDimensional(rectangle2, new Texture[] { new("suprise.bmp") }), 
@@ -39,7 +40,8 @@ class Program
 		{
 			Width = 720,
 			Height = 720,
-			StartingScene = scene
+			StartingScene = scene,
+			ClearColor = new(255, 0, 0)
 		});
 
 		game.ActiveScene = scene;

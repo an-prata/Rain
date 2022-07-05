@@ -1,4 +1,6 @@
+using System.Buffers;
 using OpenTK.Graphics.OpenGL;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -13,6 +15,10 @@ public class Texture : IDisposable
 	/// The maximum possible number of textures bound to OpenGL at any given moment.
 	/// </summary>
 	public const int MaximumBoundTextures = 16;
+
+	private IMemoryOwner<Rgba32> textureMemoryOwner;
+
+	private Memory<Rgba32> textureMemory;
 
 	/// <summary>
 	/// The Texture's OpenGL handle for use with OpenGL functions.
@@ -35,7 +41,24 @@ public class Texture : IDisposable
 	/// <summary>
 	/// A byte array representing the image.
 	/// </summary>
-	public byte[] Image { get; private set; }
+	public byte[] Image 
+	{
+		get
+		{	
+			var pixelSpan = textureMemory.Span;
+			var pixelBytes = new byte[Width * Height * 4];
+
+			for (var i = 0; i < pixelSpan.Length; i++)
+			{
+				pixelBytes[i * 4] = pixelSpan[i].R;
+				pixelBytes[i * 4 + 1] = pixelSpan[i].G;
+				pixelBytes[i * 4 + 2] = pixelSpan[i].B;
+				pixelBytes[i * 4 + 3] = pixelSpan[i].A;
+			}
+
+			return pixelBytes;
+		}
+	}
 
 	/// <summary>
 	/// The image's width.
@@ -78,9 +101,15 @@ public class Texture : IDisposable
 		IsEmpty = true;
 		IsUploaded = false;
 
-		Image = Array.Empty<byte>();
-		Width = 0;
-		Height = 0;
+		using var image = new Image<Rgba32>(1, 1, new(255, 255, 255));
+		image.Mutate(x => x.Flip(FlipMode.Vertical));
+
+		textureMemoryOwner = Configuration.Default.MemoryAllocator.Allocate<Rgba32>(image.Width * image.Height);
+		textureMemory = textureMemoryOwner.Memory;
+		image.CopyPixelDataTo(textureMemory.Span);
+
+		Width = image.Width;
+		Height = image.Height;
 		Opacity = 1.0f;
 	}
 
@@ -98,22 +127,13 @@ public class Texture : IDisposable
 		IsEmpty = false;
 		IsUploaded = false;
 
-		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
-
+		using var image = SixLabors.ImageSharp.Image.Load(imagePath).CloneAs<Rgba32>();
 		image.Mutate(x => x.Flip(FlipMode.Vertical));
-		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
 
-		var pixelSpan = pixelMemory.Span;
-		var pixelBytes = new byte[image.Width * image.Height * 4];
+		textureMemoryOwner = Configuration.Default.MemoryAllocator.Allocate<Rgba32>(image.Width * image.Height);
+		textureMemory = textureMemoryOwner.Memory;
+		image.CopyPixelDataTo(textureMemory.Span);
 
-		for (var i = 0; i < pixelSpan.Length; i++)
-		{
-			pixelBytes[i * 3] = pixelSpan[i].R;
-			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
-			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
-		}
-
-		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
 		Opacity = 1.0f;
@@ -144,22 +164,13 @@ public class Texture : IDisposable
 		IsEmpty = false;
 		IsUploaded = false;
 
-		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
-
+		using var image = SixLabors.ImageSharp.Image.Load(imagePath).CloneAs<Rgba32>();
 		image.Mutate(x => x.Flip(FlipMode.Vertical));
-		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
 
-		var pixelSpan = pixelMemory.Span;
-		var pixelBytes = new byte[image.Width * image.Height * 4];
+		textureMemoryOwner = Configuration.Default.MemoryAllocator.Allocate<Rgba32>(image.Width * image.Height);
+		textureMemory = textureMemoryOwner.Memory;
+		image.CopyPixelDataTo(textureMemory.Span);
 
-		for (var i = 0; i < pixelSpan.Length; i++)
-		{
-			pixelBytes[i * 3] = pixelSpan[i].R;
-			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
-			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
-		}
-
-		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
 		Opacity = 1.0f;
@@ -184,22 +195,13 @@ public class Texture : IDisposable
 		IsEmpty = false;
 		IsUploaded = false;
 
-		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
-
+		using var image = SixLabors.ImageSharp.Image.Load(imagePath).CloneAs<Rgba32>();
 		image.Mutate(x => x.Flip(FlipMode.Vertical));
-		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
 
-		var pixelSpan = pixelMemory.Span;
-		var pixelBytes = new byte[image.Width * image.Height * 4];
+		textureMemoryOwner = Configuration.Default.MemoryAllocator.Allocate<Rgba32>(image.Width * image.Height);
+		textureMemory = textureMemoryOwner.Memory;
+		image.CopyPixelDataTo(textureMemory.Span);
 
-		for (var i = 0; i < pixelSpan.Length; i++)
-		{
-			pixelBytes[i * 3] = pixelSpan[i].R;
-			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
-			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
-		}
-
-		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
 		Opacity = opacity;
@@ -234,22 +236,13 @@ public class Texture : IDisposable
 		IsEmpty = false;
 		IsUploaded = false;
 
-		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
-
+		using var image = SixLabors.ImageSharp.Image.Load(imagePath).CloneAs<Rgba32>();
 		image.Mutate(x => x.Flip(FlipMode.Vertical));
-		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
 
-		var pixelSpan = pixelMemory.Span;
-		var pixelBytes = new byte[image.Width * image.Height * 4];
+		textureMemoryOwner = Configuration.Default.MemoryAllocator.Allocate<Rgba32>(image.Width * image.Height);
+		textureMemory = textureMemoryOwner.Memory;
+		image.CopyPixelDataTo(textureMemory.Span);
 
-		for (var i = 0; i < pixelSpan.Length; i++)
-		{
-			pixelBytes[i * 3] = pixelSpan[i].R;
-			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
-			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
-		}
-
-		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
 		Opacity = opacity;
@@ -287,12 +280,10 @@ public class Texture : IDisposable
 		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)options.MagnificationFilter);
 		GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)options.MinimizationFilter);
 
-		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, Width, Height, 0, PixelFormat.Rgb,
+		GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Width, Height, 0, PixelFormat.Rgba,
 					  PixelType.UnsignedByte, Image);
 
 		GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-		Image = Array.Empty<byte>();
 
 		IsEmpty = false;
 		IsUploaded = true;
@@ -342,7 +333,7 @@ public class Texture : IDisposable
 	}
 
 	public override int GetHashCode()
-		=> Image.GetHashCode();
+		=> textureMemory.GetHashCode();
 
 	public bool Equals(Texture texture)
 	{
@@ -352,10 +343,15 @@ public class Texture : IDisposable
 		if (IsUploaded && texture.IsUploaded)
 			return Handle == texture.Handle;
 
-		if (!IsUploaded && !texture.IsUploaded)
-			return Image == texture.Image && Opacity == texture.Opacity;
+		if (textureMemory.Span.Length != texture.textureMemory.Span.Length)
+			return false;
 
-		return false;
+		if (!IsUploaded && !texture.IsUploaded)
+			for (var pixel = 0; pixel < textureMemory.Span.Length; pixel++)
+				if (textureMemory.Span[pixel] != texture.textureMemory.Span[pixel])
+					return false;
+
+		return true;
 	}
 
 	public override bool Equals(object? obj)
@@ -392,12 +388,10 @@ public class Texture : IDisposable
 		{
 			if (IsUploaded)
 			{
+				textureMemoryOwner.Dispose();
 				Unbind();
 				GL.DeleteTexture(Handle);
 			}
-
-			if (!IsEmpty)
-				Image = Array.Empty<byte>();
 		}
 
 		disposed = true;
