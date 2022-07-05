@@ -85,6 +85,10 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		// 1 Enables vertical sync.
 		// -1 for adaptive vsync.
 		Context.SwapInterval = 1;
+
+		// Enable the use of a Texture's alpha component.
+		GL.Enable(EnableCap.Blend);
+		GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 	}
 
 	protected override void OnUnload()
