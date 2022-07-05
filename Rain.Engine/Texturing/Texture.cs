@@ -101,15 +101,15 @@ public class Texture : IDisposable
 		IsEmpty = true;
 		IsUploaded = false;
 
-		using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(new byte[] { 255, 255, 255, 255 } );
+		using var image = new Image<Rgba32>(1, 1, new(255, 255, 255));
 		image.Mutate(x => x.Flip(FlipMode.Vertical));
 
 		textureMemoryOwner = Configuration.Default.MemoryAllocator.Allocate<Rgba32>(image.Width * image.Height);
 		textureMemory = textureMemoryOwner.Memory;
 		image.CopyPixelDataTo(textureMemory.Span);
 
-		Width = 0;
-		Height = 0;
+		Width = image.Width;
+		Height = image.Height;
 		Opacity = 1.0f;
 	}
 
@@ -333,7 +333,7 @@ public class Texture : IDisposable
 	}
 
 	public override int GetHashCode()
-		=> Image.GetHashCode();
+		=> textureMemory.GetHashCode();
 
 	public bool Equals(Texture texture)
 	{
@@ -343,10 +343,15 @@ public class Texture : IDisposable
 		if (IsUploaded && texture.IsUploaded)
 			return Handle == texture.Handle;
 
-		if (!IsUploaded && !texture.IsUploaded)
-			return Image == texture.Image && Opacity == texture.Opacity;
+		if (textureMemory.Span.Length != texture.textureMemory.Span.Length)
+			return false;
 
-		return false;
+		if (!IsUploaded && !texture.IsUploaded)
+			for (var pixel = 0; pixel < textureMemory.Span.Length; pixel++)
+				if (textureMemory.Span[pixel] != texture.textureMemory.Span[pixel])
+					return false;
+
+		return true;
 	}
 
 	public override bool Equals(object? obj)
