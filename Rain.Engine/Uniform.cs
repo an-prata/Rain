@@ -59,7 +59,7 @@ public class Uniform
 	}
 
 	/// <summary>
-	/// Sets the uniform to reference a <c>Shader</c> in GLSL.
+	/// Sets the uniform to reference a <c>Texture</c> in GLSL.
 	/// </summary>
 	///
 	/// <param name="texture">
@@ -67,4 +67,14 @@ public class Uniform
 	/// </param>
 	public void SetToTexture(Texture texture)
 		=> GL.Uniform1(Handle, (int)texture.Unit - (int)TextureUnit.Unit0);
+
+	/// <summary>
+	/// Sets the uniform to reference a float in GLSL.
+	/// </summary>
+	///
+	/// <param name="x">
+	/// The <c>float</c> to reference in the GLSL shader.
+	/// </param>	
+	public void SetToFloat(float x)
+		=> GL.Uniform1(Handle, x);
 }
