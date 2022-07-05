@@ -84,7 +84,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		// 0 Disables vertical sync.
 		// 1 Enables vertical sync.
 		// -1 for adaptive vsync.
-		Context.SwapInterval = 0;
+		Context.SwapInterval = 1;
 	}
 
 	protected override void OnUnload()
