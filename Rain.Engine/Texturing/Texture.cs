@@ -10,6 +10,11 @@ namespace Rain.Engine.Texturing;
 public class Texture : IDisposable
 {
 	/// <summary>
+	/// The maximum possible number of textures bound to OpenGL at any given moment.
+	/// </summary>
+	public const int MaximumBoundTextures = 16;
+
+	/// <summary>
 	/// The Texture's OpenGL handle for use with OpenGL functions.
 	/// </summary>
 	///
@@ -43,6 +48,11 @@ public class Texture : IDisposable
 	public int Height { get; }
 
 	/// <summary>
+	/// The opacity the <c>Texture</c> will be rendered at.
+	/// </summary>
+	public float Opacity { get; set; }
+
+	/// <summary>
 	/// Whether or not image data has been attatched to this <c>Texture</c>.
 	/// </summary>
 	public bool IsEmpty { get; private set; }
@@ -71,6 +81,7 @@ public class Texture : IDisposable
 		Image = Array.Empty<byte>();
 		Width = 0;
 		Height = 0;
+		Opacity = 1.0f;
 	}
 
 	/// <summary>
@@ -105,6 +116,7 @@ public class Texture : IDisposable
 		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
+		Opacity = 1.0f;
 
 		options = new TextureOptions
 		{
@@ -121,7 +133,7 @@ public class Texture : IDisposable
 	/// <param name="imagePath">
 	/// The image to make the new <c>Texture</c> from.
 	/// </param>
-	/// 
+	///
 	/// <param name="options">
 	/// The settings to use when minimizing, magnifying, and wrapping the <c>Texture</c>.
 	/// </param>
@@ -150,6 +162,97 @@ public class Texture : IDisposable
 		Image = pixelBytes;
 		Width = image.Width;
 		Height = image.Height;
+		Opacity = 1.0f;
+		this.options = options;
+	}
+
+	/// <summary>
+	/// Creates a new <c>Texture</c>.
+	/// </summary>
+	///
+	/// <param name="imagePath">
+	/// The image to make the new <c>Texture</c> from.
+	/// </param>
+	///
+	/// <param name="opacity">
+	/// The <c>Texture</c>'s opacity.
+	/// </param>
+	public Texture(string imagePath, float opacity)
+	{
+		Handle = -1;
+		Unit = TextureUnit.None;
+		IsEmpty = false;
+		IsUploaded = false;
+
+		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+
+		image.Mutate(x => x.Flip(FlipMode.Vertical));
+		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
+
+		var pixelSpan = pixelMemory.Span;
+		var pixelBytes = new byte[image.Width * image.Height * 4];
+
+		for (var i = 0; i < pixelSpan.Length; i++)
+		{
+			pixelBytes[i * 3] = pixelSpan[i].R;
+			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
+			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
+		}
+
+		Image = pixelBytes;
+		Width = image.Width;
+		Height = image.Height;
+		Opacity = opacity;
+
+		options = new TextureOptions
+		{
+			WrapMode = TextureWrapMode.Clamp,
+			MagnificationFilter = TextureFilter.Linear,
+			MinimizationFilter = TextureFilter.Linear
+		};
+	}
+
+	/// <summary>
+	/// Creates a new <c>Texture</c>.
+	/// </summary>
+	///
+	/// <param name="imagePath">
+	/// The image to make the new <c>Texture</c> from.
+	/// </param>
+	///
+	/// <param name="options">
+	/// The settings to use when minimizing, magnifying, and wrapping the <c>Texture</c>.
+	/// </param>
+	///
+	/// <param name="opacity">
+	/// The <c>Texture</c>'s opacity.
+	/// </param>
+	public Texture(string imagePath, TextureOptions options, float opacity)
+	{
+		Handle = -1;
+		Unit = TextureUnit.None;
+		IsEmpty = false;
+		IsUploaded = false;
+
+		using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+
+		image.Mutate(x => x.Flip(FlipMode.Vertical));
+		image.DangerousTryGetSinglePixelMemory(out var pixelMemory);
+
+		var pixelSpan = pixelMemory.Span;
+		var pixelBytes = new byte[image.Width * image.Height * 4];
+
+		for (var i = 0; i < pixelSpan.Length; i++)
+		{
+			pixelBytes[i * 3] = pixelSpan[i].R;
+			pixelBytes[i * 3 + 1] = pixelSpan[i].G;
+			pixelBytes[i * 3 + 2] = pixelSpan[i].B;
+		}
+
+		Image = pixelBytes;
+		Width = image.Width;
+		Height = image.Height;
+		Opacity = opacity;
 		this.options = options;
 	}
 
@@ -223,7 +326,7 @@ public class Texture : IDisposable
 		if (!unbindEmpty && IsEmpty)
 			throw new Exception("Cannot unbind from empty Texture.");
 
-		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)TextureUnit.Unit0);
+		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
 		GL.BindTexture(TextureTarget.Texture2D, 0);
 	}
 
@@ -245,13 +348,13 @@ public class Texture : IDisposable
 	{
 		if (IsEmpty && texture.IsEmpty)
 			return true;
-		
+
 		if (IsUploaded && texture.IsUploaded)
 			return Handle == texture.Handle;
-		
+
 		if (!IsUploaded && !texture.IsUploaded)
-			return Image == texture.Image;
-	
+			return Image == texture.Image && Opacity == texture.Opacity;
+
 		return false;
 	}
 

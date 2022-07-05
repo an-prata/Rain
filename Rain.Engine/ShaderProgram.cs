@@ -70,15 +70,16 @@ public class ShaderProgram : IDisposable
 	/// </returns>
 	public Uniform GetUniformByName(string uniformName)
 	{
+		Use();
 		GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var uniforms);
 
 		for (var i = 0; i < uniforms; i++)
 		{
 			var name = GL.GetActiveUniform(Handle, i, out _, out _);
-			if (name != uniformName) continue;
-
 			var handle = GL.GetUniformLocation(Handle, name);
-			return new(name, handle);
+
+			if (name == uniformName)
+				return new(name, handle);
 		}
 
 		throw new NullReferenceException("No uniform of name \"" + uniformName + "\" was found.");
