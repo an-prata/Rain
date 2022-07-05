@@ -143,8 +143,6 @@ public class Scene : IDisposable
 
 	public void Draw(BufferGroup bufferGroup, ShaderProgram program)
 	{
-		var currentlyBoundTexture = new Texture();
-
 		for (var model = 0; model < Models.Length; model++)
 		{
 			for (var face = 0; face < Models[model].Faces.Length; face++)
@@ -155,16 +153,30 @@ public class Scene : IDisposable
 				bufferGroup.BufferData(BufferType.VertexBuffer, vertexArray);
 				bufferGroup.BufferData(BufferType.ElementBuffer, elementArray);
 				
-				if (!Models[model].Faces[face].Texture.IsEmpty && Models[model].Faces[face].Texture != currentlyBoundTexture)
+				for (var texture = 0; texture < Models[model].Faces[face].Textures.Length && texture < Texture.MaximumBoundTextures; texture++)
 				{
-					if (!Models[model].Faces[face].Texture.IsUploaded)
-						Models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, program.GetUniformByName("texture0"));
-					
-					Models[model].Faces[face].Texture.Bind();
-					currentlyBoundTexture = Models[model].Faces[face].Texture;
+					if (!Models[model].Faces[face].Textures[texture].IsEmpty)
+					{
+						if (!Models[model].Faces[face].Textures[texture].IsUploaded)
+							Models[model].Faces[face].Textures[texture].Upload(TextureUnit.Unit0 + texture, program.GetUniformByName($"texture{texture}"));
+						
+						if (texture != 0)
+							program.GetUniformByName($"opacity{texture}").SetToFloat(Models[model].Faces[face].Textures[texture].Opacity);
+
+						Models[model].Faces[face].Textures[texture].Bind();
+					}
 				}
-				
+
 				GL.DrawElements(PrimitiveType.Triangles, elementArray.Length, DrawElementsType.UnsignedInt, 0);
+
+				for (var texture = 0; texture < Models[model].Faces[face].Textures.Length && 
+					 texture < Texture.MaximumBoundTextures; texture++)
+				{
+					Models[model].Faces[face].Textures[texture].Unbind();
+
+					if (texture != 0)
+							program.GetUniformByName($"opacity{texture}").SetToFloat(0.0f);
+				}
 			}
 			
 		}

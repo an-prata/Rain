@@ -7,7 +7,7 @@ public struct TexturedFace : IBufferable
 {
 	public ITwoDimensional Face { get; set; }
 
-	public Texture Texture { get; set; }
+	public Texture[] Textures { get; set; }
 
 	public int GetBufferSize(BufferType bufferType)
 	{

@@ -1,12 +1,10 @@
-using Rain.Engine.Geometry;
-
 namespace Rain.Engine.Texturing;
 
 /// <summary>
 /// Stores <c>Texture</c> instances so that, while still retaining their original indices, there are no duplicates, both in 
 /// computer and GPU memory.
 /// </summary>
-public struct EfficientTextureGroup
+public class EfficientTextureGroup
 {
 	/// <summary>
 	/// All textures stored by this <c>EfficientTextureGroup</c>, indices will be the same as the array passed in during
@@ -16,8 +14,12 @@ public struct EfficientTextureGroup
 	public Texture this[int index]
 	{
 		get => textures[indices[index]];
+
 		set
 		{
+			if (index >= indices.Length)
+				throw new IndexOutOfRangeException();
+
 			// indices[index] == index will only true if the original texture is housed at texture[index], which in this case 
 			// is the same as texture[indices[index]]. This means that texture[index].IsEmpty must be false, and that it is 
 			// potentially pointed to by another index in indices.
@@ -61,6 +63,8 @@ public struct EfficientTextureGroup
 			return;
 		}
 	}
+
+	public int Length { get => textures.Length; }
 
 	private Texture[] textures;
 

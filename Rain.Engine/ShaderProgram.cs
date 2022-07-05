@@ -43,14 +43,7 @@ public class ShaderProgram : IDisposable
 			components[i].Dispose();
 		}
 	}
-
-	public void UploadModelTextures(IRenderable[] models)
-	{
-		for (var model = 0; model < models.Length; model++)
-				for (var face = 0; face < models[model].Faces.Length; face++)
-					models[model].Faces[face].Texture.Upload(TextureUnit.Unit0, GetUniformByName("texture0"));
-	}
-
+	
 	/// <summary>
 	/// Gets an OpenGL Vertex Attribute by its name in the shader.
 	/// </summary>
@@ -77,15 +70,16 @@ public class ShaderProgram : IDisposable
 	/// </returns>
 	public Uniform GetUniformByName(string uniformName)
 	{
+		Use();
 		GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var uniforms);
 
 		for (var i = 0; i < uniforms; i++)
 		{
 			var name = GL.GetActiveUniform(Handle, i, out _, out _);
-			if (name != uniformName) continue;
-
 			var handle = GL.GetUniformLocation(Handle, name);
-			return new(name, handle);
+
+			if (name == uniformName)
+				return new(name, handle);
 		}
 
 		throw new NullReferenceException("No uniform of name \"" + uniformName + "\" was found.");

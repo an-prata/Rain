@@ -251,13 +251,13 @@ public class Solid : IRenderable, IEquatable<Solid>
 			Rotate(-angle, axis, vertex);
 	}
 
-	public static Solid SolidFromITwoDimensional(ITwoDimensional twoDimensional, Texture texture)
+	public static Solid SolidFromITwoDimensional(ITwoDimensional twoDimensional, Texture[] textures)
 	{
 		return new(new(new TexturedFace[] {
 			new TexturedFace 
 			{ 
 				Face = twoDimensional, 
-				Texture = texture 
+				Textures = textures
 			}
 		}), new SolidOptions 
 		{
