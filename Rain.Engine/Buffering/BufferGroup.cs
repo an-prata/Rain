@@ -7,6 +7,8 @@ namespace Rain.Engine.Buffering;
 /// </summary>
 public class BufferGroup : IDisposable
 {
+	private readonly Dictionary<BufferType, Buffer> buffers;
+
 	/// <summary>
 	/// The Vertex Array Object's OpenGL handle for use with OpenGL functions.
 	/// </summary>
@@ -15,8 +17,6 @@ public class BufferGroup : IDisposable
 	/// An integer representing the OpenGL Vertex Array Object.
 	/// </value>
 	public int Handle { get; }
-
-	private readonly Dictionary<BufferType, Buffer> buffers;
 
 	/// <summary>
 	/// Creates a new OpenGL Vertex Array Object.

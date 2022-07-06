@@ -2,10 +2,6 @@ namespace Rain.Engine.Geometry;
 
 public class Rectangle : ITwoDimensional
 {
-/* 	private float width;
-
-	private float height; */
-
 	private float rotationX = 0;
 
 	private float rotationY = 0;
@@ -64,9 +60,6 @@ public class Rectangle : ITwoDimensional
 			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
 			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(1.0f, 1.0f))
 		};
-
-		/* this.width = width;
-		this.height = height; */
 	}
 
 	public Rectangle(Vertex location, float width, float height, Color color)
@@ -81,9 +74,6 @@ public class Rectangle : ITwoDimensional
 			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), color, new(0.0f, 1.0f)),
 			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), color, new(1.0f, 1.0f))
 		};
-
-		/* this.width = width;
-		this.height = height; */
 	}
 
 	public Vertex GetCenterVertex()

@@ -127,7 +127,11 @@ public class Triangle : ITwoDimensional
 		=> Translate(vertex.X, vertex.Y, vertex.Z);
 
 	public void Scale(float x, float y)
-		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
+	{
+		Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
+		width *= x;
+		height *= y;
+	}
 
 	public void Rotate(float angle, Axes axis)
 		=> Rotate(angle, axis, GetCenterVertex());
@@ -135,9 +139,9 @@ public class Triangle : ITwoDimensional
 	public void Rotate(float angle, Axes axis, RotationDirection direction)
 	{
 		if (direction == RotationDirection.CounterClockwise)
-			Rotate(angle, axis);
+			Rotate(angle, axis, GetCenterVertex());
 		else
-			Rotate(-angle, axis);
+			Rotate(-angle, axis, GetCenterVertex());
 	}
 
 	public void Rotate(float angle, Axes axis, Vertex vertex)

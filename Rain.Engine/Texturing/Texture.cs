@@ -16,9 +16,11 @@ public class Texture : IDisposable
 	/// </summary>
 	public const int MaximumBoundTextures = 16;
 
-	private IMemoryOwner<Rgba32> textureMemoryOwner;
+	private readonly IMemoryOwner<Rgba32> textureMemoryOwner;
 
-	private Memory<Rgba32> textureMemory;
+	private readonly Memory<Rgba32> textureMemory;
+
+	private TextureOptions options;
 
 	/// <summary>
 	/// The Texture's OpenGL handle for use with OpenGL functions.
@@ -88,8 +90,6 @@ public class Texture : IDisposable
 	/// While <c>IsUploaded</c> is true, <c>Image</c> will always be an empty array.
 	/// </remarks>
 	public bool IsUploaded { get; private set; }
-
-	private TextureOptions options;
 
 	/// <summary>
 	/// Creates an Empty <c>Texture</c>.

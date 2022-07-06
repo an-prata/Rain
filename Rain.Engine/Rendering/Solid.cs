@@ -253,13 +253,16 @@ public class Solid : IRenderable, IEquatable<Solid>
 
 	public static Solid SolidFromITwoDimensional(ITwoDimensional twoDimensional, Texture[] textures)
 	{
-		return new(new(new TexturedFace[] {
+		var textureFaces = new TexturedFace[] 
+		{
 			new TexturedFace 
 			{ 
 				Face = twoDimensional, 
 				Textures = textures
 			}
-		}), new SolidOptions 
+		};
+
+		var options = new SolidOptions 
 		{
 			LengthX = twoDimensional.Width,
 			LengthY = twoDimensional.Height,
@@ -267,7 +270,9 @@ public class Solid : IRenderable, IEquatable<Solid>
 			RotationX = twoDimensional.RotationX,
 			RotationY = twoDimensional.RotationY,
 			RotationZ = twoDimensional.RotationZ
-		});
+		};
+
+		return new(new(textureFaces), options);
 	}
 
 	public override int GetHashCode()

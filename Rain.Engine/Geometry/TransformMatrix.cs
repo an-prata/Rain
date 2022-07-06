@@ -77,6 +77,7 @@ public struct TransformMatrix
 		var cosTheta = (float)Math.Cos(DegreesToRadians(angle));
 
 		if (axis == Axes.X)
+		{
 			matrix = new float[,]
 			{
 				{ 1.0f,	0.0f, 		0.0f,		0.0f },
@@ -84,8 +85,9 @@ public struct TransformMatrix
 				{ 0.0f,	sinTheta, 	cosTheta, 	0.0f },
 				{ 0.0f,	0.0f, 		0.0f, 		1.0f }
 			};
-
+		}
 		else if (axis == Axes.Y)
+		{
 			matrix = new float[,]
 			{
 				{ cosTheta,		0.0f, 	sinTheta, 	0.0f },
@@ -93,8 +95,9 @@ public struct TransformMatrix
 				{ -sinTheta,	0.0f, 	cosTheta, 	0.0f },
 				{ 0.0f,			0.0f, 	0.0f, 		1.0f }
 			};
-
+		}
 		else if (axis == Axes.Z)
+		{
 			matrix = new float[,]
 			{
 				{ cosTheta,	-sinTheta, 	0.0f,	0.0f },
@@ -102,6 +105,7 @@ public struct TransformMatrix
 				{ 0.0f,		0.0f, 		1.0f, 	0.0f },
 				{ 0.0f,		0.0f, 		0.0f, 	1.0f }
 			};
+		}
 
 		return new TransformMatrix(matrix, TransformType.Rotation);
 	}

@@ -6,6 +6,10 @@ namespace Rain.Engine.Texturing;
 /// </summary>
 public class EfficientTextureGroup
 {
+	private readonly Texture[] textures;
+
+	private readonly int[] indices;
+
 	/// <summary>
 	/// All textures stored by this <c>EfficientTextureGroup</c>, indices will be the same as the array passed in during
 	/// construction, however the <c>Texture</c> at that index is actually empty, and the getter method simply returns the
@@ -66,10 +70,6 @@ public class EfficientTextureGroup
 
 	public int Length { get => textures.Length; }
 
-	private readonly Texture[] textures;
-
-	private readonly int[] indices;
-
 	/// <summary>
 	/// Creates a new <c>EfficientTextureGroup</c> from an array of <c>Texture</c>s.
 	/// </summary>
@@ -102,8 +102,6 @@ public class EfficientTextureGroup
 						this.textures[duplicate] = new();
 					}
 				}
-
-				continue;
 			}
 		}
 	}

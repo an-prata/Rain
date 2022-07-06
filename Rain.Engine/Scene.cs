@@ -10,14 +10,11 @@ using TextureUnit = Rain.Engine.Texturing.TextureUnit;
 
 namespace Rain.Engine;
 
+/// <summary>
+/// A collection of three dimensional models and methods to draw them to the screen.
+/// </summary>
 public class Scene : IDisposable
 {
-	/// <summary> A <c>Span</c> with this <c>Scene</c>'s vertex data. </summary>
-	public Span<float> VertexMemorySpan { get => vertexMemory.Span; }
-
-	/// <summary> A <c>Span</c> with this <c>Scene</c>'s element data. </summary>
-	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
-
 	private readonly Memory<float> vertexMemory;
 
 	private readonly Memory<uint> elementMemory;
@@ -26,14 +23,32 @@ public class Scene : IDisposable
 
 	private GCHandle elementHandle;
 
-	private int[] modelVertexIndices;
+	private readonly int[] modelVertexIndices;
 
-	private int[] modelElementIndices;
+	private readonly int[] modelElementIndices;
 
+	/// <summary> 
+	/// A <c>Span</c> with this <c>Scene</c>'s vertex data. 
+	/// </summary>
+	public Span<float> VertexMemorySpan { get => vertexMemory.Span; }
+
+	/// <summary> 
+	/// A <c>Span</c> with this <c>Scene</c>'s element data. 
+	/// </summary>
+	public Span<uint> ElementMemorySpan { get => elementMemory.Span; }
+
+	/// <summary>
+	/// The array of <c>IRenderable</c>s to render with this <c>Scene</c>.
+	/// </summary>
 	public IRenderable[] Models { get; private set; }
 
-	/// <summary> Creates a new <c>Scene</c> from an array of <c>IRenderable</c>. </summary>
-	/// <param name="models"> The array of <c>IRenderable</c>s to render with this <c>Scene</c>. </param>
+	/// <summary> 
+	/// Creates a new <c>Scene</c> from an array of <c>IRenderable</c>. 
+	/// </summary>
+	/// 
+	/// <param name="models"> 
+	/// The array of <c>IRenderable</c>s to render with this <c>Scene</c>. 
+	/// </param>
 	public Scene(IRenderable[] models)
 	{
 		Models = models;
@@ -44,10 +59,10 @@ public class Scene : IDisposable
 		var elementsAdded = 0;
 		
 		for (var i = 0; i < models.Length; i++)
+		{
 			sceneBufferSize += models[i].Points.Length * Point.BufferSize;
-
-		for (var i = 0; i < models.Length; i++)
 			elements += models[i].Elements.Length;
+		}
 
 		var vertexData = new float[sceneBufferSize];
 		var elementData = new uint[elements];
@@ -79,12 +94,21 @@ public class Scene : IDisposable
 		elementMemory = new(elementData);
 	}
 
-	/// <summary> Creates a new <c>Scene</c> from an array of <c>IModel</c>. </summary>
-	/// <param name="models"> The array of <c>IModel</c>s to render with this <c>Scene</c>. </param>
-	/// <param name="textures"> An array of <c>Texture</c>s with indices coorelating to <c>models</c>'s. </param>
+	/// <summary> 
+	/// Creates a new <c>Scene</c> from an array of <c>IModel</c>. 
+	/// </summary>
+	/// 
+	/// <param name="models"> 
+	/// The array of <c>IModel</c>s to render with this <c>Scene</c>. 
+	/// </param>
+	/// 
+	/// <param name="textures"> 
+	/// An array of <c>Texture</c>s with indices coorelating to <c>models</c>'s. 
+	/// </param>
 	public Scene(IRenderable[] models, Texture[] textures)
 	{
 		Models = models;
+
 		if (models.Length != textures.Length)
 			throw new Exception($"{nameof(textures)} must be same length as {nameof(models)}.");
 
@@ -95,10 +119,10 @@ public class Scene : IDisposable
 		var elementsAdded = 0;
 		
 		for (var i = 0; i < models.Length; i++)
+		{
 			sceneBufferSize += models[i].Points.Length * Point.BufferSize;
-
-		for (var i = 0; i < models.Length; i++)
 			elements += models[i].Elements.Length;
+		}
 
 		var vertexData = new float[sceneBufferSize];
 		var elementData = new uint[elements];
@@ -130,9 +154,17 @@ public class Scene : IDisposable
 		elementMemory = new(elementData);
 	}
 
-	/// <summary>  Gets a pointer to the data for a buffer of <c>type</c>. </summary>
-	/// <param name="type"> The type of <c>Buffer</c> this pointer should be used in. </param>
-	/// <returns> An <c>IntPtr</c> object. </returns>
+	/// <summary> 
+	/// Gets a pointer to the data for a buffer of <c>type</c>. 
+	/// </summary>
+	/// 
+	/// <param name="type"> 
+	/// The type of <c>Buffer</c> this pointer should be used in. 
+	/// </param>
+	/// 
+	/// <returns> 
+	/// An <c>IntPtr</c> object. 
+	/// </returns>
 	public IntPtr GetPointer(BufferType type)
 	{
 		if (type == BufferType.VertexBuffer)
@@ -141,6 +173,17 @@ public class Scene : IDisposable
 			return elementHandle.AddrOfPinnedObject();
 	}
 
+	/// <summary>
+	/// Draws the <c>Scene</c> to the <c>GameWindow</c>.
+	/// </summary>
+	/// 
+	/// <param name="bufferGroup">
+	/// The <c>BufferGroup</c> to use to upload data to the GPU.
+	/// </param>
+	/// 
+	/// <param name="program">
+	/// The <c>ShaderProgram</c> to draw with.
+	/// </param>
 	public void Draw(BufferGroup bufferGroup, ShaderProgram program)
 	{
 		for (var model = 0; model < Models.Length; model++)

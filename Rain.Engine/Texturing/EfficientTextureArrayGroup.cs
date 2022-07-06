@@ -1,7 +1,15 @@
 namespace Rain.Engine.Texturing;
 
+/// <summary>
+/// Stores <c>Texture</c> arrays so that, while still retaining their original indices, there are no duplicates, both in 
+/// computer and GPU memory.
+/// </summary>
 public class EfficientTextureArrayGroup
 {
+	private EfficientTextureGroup textures;
+
+	private int[] indices;
+
 	public Texture[] this[int index]
 	{
 		get 
@@ -24,10 +32,14 @@ public class EfficientTextureArrayGroup
 			return textureArray;
 		}
 	}
-	private EfficientTextureGroup textures;
 
-	private int[] indices;
-
+	/// <summary>
+	/// Creates a new <c>EfficientTextureArrayGroup</c> instance from a jagged array.
+	/// </summary>
+	/// 
+	/// <param name="textures">
+	/// The jagged array to create a new <c>EfficientTextureArrayGroup</c> from.
+	/// </param>
 	public EfficientTextureArrayGroup(Texture[][] textures)
 	{
 		var textureList = new List<Texture>();

@@ -8,7 +8,9 @@ namespace Rain.Engine;
 /// </summary>
 public struct Color
 {
-	/// <summary> The length of any array outputed by <c>Color.Array</c>. </summary>
+	/// <summary> 
+	/// The length of any array outputed by <c>Color.Array</c>. 
+	/// </summary>
 	public const int BufferSize = 4;
 
 	private float r;
@@ -19,30 +21,66 @@ public struct Color
 
 	private float a;
 
-	/// <summary> The color's red component. </summary>
-	/// <value> A value between 0 and 1 representing the brightness of the red pixel. </value>
+	/// <summary> 
+	/// The color's red component. 
+	/// </summary>
+	/// 
+	/// <value> 
+	/// A value between 0 and 1 representing the brightness of the red pixel. 
+	/// </value>
 	public float R { get => r; set => r = Math.Clamp(value, 0.0f, 1.0f); }
 
-	/// <summary> The color's green component. </summary>
-	/// <value> A value between 0 and 1 representing the brightness of the green pixel. </value>
+	/// <summary> 
+	/// The color's green component. 
+	/// </summary>
+	/// 
+	/// <value> 
+	/// A value between 0 and 1 representing the brightness of the green pixel. 
+	/// </value>
 	public float G { get => g; set => g = Math.Clamp(value, 0.0f, 1.0f); }
 	
-	/// <summary> The color's blue component. </summary>
-	/// <value> A value between 0 and 1 representing the brightness of the blue pixel. </value>
+	/// <summary> 
+	/// The color's blue component. 
+	/// </summary>
+	/// 
+	/// <value> 
+	/// A value between 0 and 1 representing the brightness of the blue pixel. 
+	/// </value>
 	public float B { get => b; set => b = Math.Clamp(value, 0.0f, 1.0f); }
 	
-	/// <summary> The color's alpha component. </summary>
-	/// <value> A value between 0 and 1 representing the color's transparency. </value>
+	/// <summary> 
+	/// The color's alpha component. 
+	/// </summary>
+	/// 
+	/// <value> 
+	/// A value between 0 and 1 representing the color's transparency. 
+	/// </value>
 	public float A { get => a; set => a = Math.Clamp(value, 0.0f, 1.0f); }
 
-	/// <summary> An array representing the color. </summary>
-	/// <value> A <c>float[]</c> comprised of the <c>R</c>, <c>G</c>, <c>B</c>, and <c>A</c> values in that order. </value>
+	/// <summary> 
+	/// An array representing the color. 
+	/// </summary>
+	/// 
+	/// <value> 
+	/// A <c>float[]</c> comprised of the <c>R</c>, <c>G</c>, <c>B</c>, and <c>A</c> values in that order. 
+	/// </value>
 	public float[] Array { get => new float[] {R, G, B, A}; }
 
-	/// <summary> Makes a new <c>Color</c> instance with red, green and blue components. </summary>
-	/// <param name="r"> The color's red component. </param>
-	/// <param name="g"> The color's green component. </param>
-	/// <param name="b"> The color's blue component. </param>
+	/// <summary> 
+	/// Makes a new <c>Color</c> instance with red, green and blue components. 
+	/// </summary>
+	/// 
+	/// <param name="r"> 
+	/// The color's red component. 
+	/// </param>
+	/// 
+	/// <param name="g"> 
+	/// The color's green component. 
+	/// </param>
+	/// 
+	/// <param name="b"> 
+	/// The color's blue component. 
+	/// </param>
 	public Color(float r, float g, float b)
 	{
 		this.r = Math.Clamp(r, 0.0f, 1.0f);
@@ -51,11 +89,25 @@ public struct Color
 		a = 1.0f;
 	}
 
-	/// <summary> Makes a new <c>Color</c> instance with red, green, blue and alpha components. </summary>
-	/// <param name="r"> The color's red component. </param>
-	/// <param name="g"> The color's green component. </param>
-	/// <param name="b"> The color's blue component. </param>
-	/// <param name="a"> The color's alpha component. </param>
+	/// <summary> 
+	/// Makes a new <c>Color</c> instance with red, green, blue and alpha components. 
+	/// </summary>
+	/// 
+	/// <param name="r"> 
+	/// The color's red component. 
+	/// </param>
+	/// 
+	/// <param name="g"> 
+	/// The color's green component. 
+	/// </param>
+	/// 
+	/// <param name="b"> 
+	/// The color's blue component. 
+	/// </param>
+	/// 
+	/// <param name="a"> 
+	/// The color's alpha component. 
+	/// </param>
 	public Color(float r, float g, float b, float a)
 	{
 		this.r = Math.Clamp(r, 0.0f, 1.0f);
@@ -64,10 +116,21 @@ public struct Color
 		this.a = Math.Clamp(a, 0.0f, 1.0f);
 	}
 
-	/// <summary> Makes a new <c>Color</c> instance with red, green, and blue components. </summary>
-	/// <param name="r"> The color's red component. </param>
-	/// <param name="g"> The color's green component. </param>
-	/// <param name="b"> The color's blue component. </param>
+	/// <summary> 
+	/// Makes a new <c>Color</c> instance with red, green, and blue components. 
+	/// </summary>
+	/// 
+	/// <param name="r"> 
+	/// The color's red component. 
+	/// </param>
+	/// 
+	/// <param name="g"> 
+	/// The color's green component. 
+	/// </param>
+	/// 
+	/// <param name="b"> 
+	/// The color's blue component. 
+	/// </param>
 	public Color(byte r, byte g, byte b)
 	{
 		this.r = (float)r / byte.MaxValue;
@@ -76,11 +139,25 @@ public struct Color
 		this.a = (float)255 / byte.MaxValue;
 	}
 
-	/// <summary> Makes a new <c>Color</c> instance with red, green, blue and alpha components. </summary>
-	/// <param name="r"> The color's red component. </param>
-	/// <param name="g"> The color's green component. </param>
-	/// <param name="b"> The color's blue component. </param>
-	/// <param name="a"> The color's alpha component. </param>
+	/// <summary> 
+	/// Makes a new <c>Color</c> instance with red, green, blue and alpha components. 
+	/// </summary>
+	/// 
+	/// <param name="r"> 
+	/// The color's red component. 
+	/// </param>
+	/// 
+	/// <param name="g"> 
+	/// The color's green component. 
+	/// </param>
+	/// 
+	/// <param name="b"> 
+	/// The color's blue component. 
+	/// </param>
+	/// 
+	/// <param name="a"> 
+	/// The color's alpha component. 
+	/// </param>
 	public Color(byte r, byte g, byte b, byte a)
 	{
 		this.r = (float)r / byte.MaxValue;
@@ -89,8 +166,13 @@ public struct Color
 		this.a = (float)a / byte.MaxValue;
 	}
 
-	/// <summary> Creates a new OpenTK Color4 instance from an already existing Color instance. </summary>
-	/// <returns> An equivilant OpenTK Color4 instance.</returns>
+	/// <summary> 
+	/// Creates a new OpenTK Color4 instance from an already existing Color instance. 
+	/// </summary>
+	/// 
+	/// <returns> 
+	/// An equivilant OpenTK Color4 instance.
+	/// </returns>
 	public Color4 ToColor4() => new(R, G, B, A);
 
 	public static Color operator +(Color a, Color b) => new(a.R + b.R, a.G + b.G, a.B + b.B, a.A + b.A);
