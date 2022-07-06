@@ -81,7 +81,7 @@ public class Scene : IDisposable
 				vertexData[verticesAdded + i] = modelBufferArray[i];
 
 			for (var i = 0; i < models[model].Elements.Length; i++)
-				elementData[elementsAdded + i] = (uint)verticesAdded / Point.BufferSize + models[model].Elements[i];
+				elementData[elementsAdded + i] = ((uint)verticesAdded / Point.BufferSize) + models[model].Elements[i];
 
 			verticesAdded += modelBufferArray.Length;
 			elementsAdded += models[model].Elements.Length;
@@ -141,7 +141,7 @@ public class Scene : IDisposable
 				vertexData[verticesAdded + i] = modelBufferArray[i];
 
 			for (var i = 0; i < models[model].Elements.Length; i++)
-				elementData[elementsAdded + i] = (uint)verticesAdded / Point.BufferSize + models[model].Elements[i];
+				elementData[elementsAdded + i] = ((uint)verticesAdded / Point.BufferSize) + models[model].Elements[i];
 
 			verticesAdded += modelBufferArray.Length;
 			elementsAdded += models[model].Elements.Length;
@@ -220,8 +220,7 @@ public class Scene : IDisposable
 					if (texture != 0)
 							program.GetUniformByName($"opacity{texture}").SetToFloat(0.0f);
 				}
-			}
-			
+			}			
 		}
 	}
 

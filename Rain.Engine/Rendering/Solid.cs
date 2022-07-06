@@ -184,7 +184,6 @@ public class Solid : IRenderable, IEquatable<Solid>
 		if (bufferType == BufferType.VertexBuffer)
 			for (var face = 0; face < Faces.Length; face++)
 				bufferSize += Faces[face].Face.Points.Length * Point.BufferSize;
-		
 		else
 			for (var face = 0; face < Faces.Length; face++)
 				bufferSize += Faces[face].Face.Elements.Length;

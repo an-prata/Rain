@@ -52,10 +52,12 @@ public class Texture : IDisposable
 
 			for (var i = 0; i < pixelSpan.Length; i++)
 			{
-				pixelBytes[i * 4] = pixelSpan[i].R;
-				pixelBytes[i * 4 + 1] = pixelSpan[i].G;
-				pixelBytes[i * 4 + 2] = pixelSpan[i].B;
-				pixelBytes[i * 4 + 3] = pixelSpan[i].A;
+				var pixel = i * 4;
+				
+				pixelBytes[pixel] = pixelSpan[i].R;
+				pixelBytes[pixel + 1] = pixelSpan[i].G;
+				pixelBytes[pixel + 2] = pixelSpan[i].B;
+				pixelBytes[pixel + 3] = pixelSpan[i].A;
 			}
 
 			return pixelBytes;

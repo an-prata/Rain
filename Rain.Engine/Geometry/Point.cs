@@ -155,6 +155,6 @@ public class Point : IBufferable, ISpacial
 		GL.VertexAttribPointer(shaderProgram.GetAttributeHandleByName("texturePosition"), TextureCoordinate.BufferSize,
 						 	   VertexAttribPointerType.Float, false, 
 							   BufferSize * sizeof(float),
-							   Vertex.BufferSize * sizeof(float) + Color.BufferSize * sizeof(float));
+							   (Vertex.BufferSize * sizeof(float)) + (Color.BufferSize * sizeof(float)));
 	}
 }
