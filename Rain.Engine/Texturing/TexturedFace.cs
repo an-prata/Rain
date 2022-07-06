@@ -41,7 +41,7 @@ public struct TexturedFace : IBufferable
 				var pointArray = (float[])Face.Points[point].GetBufferableArray(bufferType);
 
 				for (var i = 0; i < pointArray.Length; i++)
-					bufferableArray[point * Point.BufferSize + i] = pointArray[i];
+					bufferableArray[(point * Point.BufferSize) + i] = pointArray[i];
 			}
 
 			return bufferableArray;
