@@ -1,9 +1,7 @@
-using OpenTK.Graphics.OpenGL;
-using Rain.Engine.Rendering;
-using Rain.Engine.Texturing;
+// Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
+// See LICENSE file in repository root for complete license text.
 
-using TextureUnit = Rain.Engine.Texturing.TextureUnit;
-using TextureWrapMode = Rain.Engine.Texturing.TextureWrapMode;
+using OpenTK.Graphics.OpenGL;
 
 namespace Rain.Engine;
 
