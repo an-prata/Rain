@@ -138,16 +138,8 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// </returns>
 	public Vector3 ToVector3() => new(X, Y, Z);
 
-	public float GetSlope(Vertex vertex, Axes axis)
-	{
-		return axis switch
-		{
-			Axes.X => vertex.X / X,
-			Axes.Y => vertex.Y / Y,
-			Axes.Z => vertex.Z / Z,
-			_ => throw new Exception($"{axis} is not a valid Axis.")
-		};
-	}
+	public static Vertex DotProduct(Vertex a, Vertex b)
+		=> new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
 	public override int GetHashCode()
 		=> Array.GetHashCode();
