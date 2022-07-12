@@ -138,6 +138,17 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// </returns>
 	public Vector3 ToVector3() => new(X, Y, Z);
 
+	public float GetSlope(Vertex vertex, Axes axis)
+	{
+		return axis switch
+		{
+			Axes.X => vertex.X / X,
+			Axes.Y => vertex.Y / Y,
+			Axes.Z => vertex.Z / Z,
+			_ => throw new Exception($"{axis} is not a valid Axis.")
+		};
+	}
+
 	public override int GetHashCode()
 		=> Array.GetHashCode();
 
@@ -165,9 +176,8 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 
 	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
 
-	public static Vertex operator *(Vertex a, Vertex b) => new(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
-
-	public static Vertex operator /(Vertex a, Vertex b) => new(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+	public static Vertex operator *(Vertex a, Vertex b) 
+		=> new((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X), 1);
 
 	public static bool operator ==(Vertex a, Vertex b) => a.Equals(b);
 
