@@ -28,7 +28,7 @@ jobs:
 
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    
+
     - name: Coverage
       run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=../TestCoverage/lcov.info
     
@@ -37,4 +37,3 @@ jobs:
       with:
         github-token: ${{ secrets.github_token }}
         path-to-lcov: TestCoverage/lcov.info
-
