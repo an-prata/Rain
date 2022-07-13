@@ -71,7 +71,7 @@ public class EfficientTextureGroup
 		}
 	}
 
-	public int Length { get => textures.Length; }
+	public int Length { get => indices.Length; }
 
 	/// <summary>
 	/// Creates a new <c>EfficientTextureGroup</c> from an array of <c>Texture</c>s.
@@ -107,5 +107,15 @@ public class EfficientTextureGroup
 				}
 			}
 		}
+	}
+
+	public Texture[] ToArray()
+	{
+		var array = new Texture[Length];
+
+		for (var texture = 0; texture < Length; texture++)
+			array[texture] = this[texture];
+		
+		return array;
 	}
 }
