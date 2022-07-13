@@ -68,14 +68,13 @@ public class TransformMatrixTests
 				2.0f,	3.0f,	1.0f,
 				3.0f,	-2.0f,	1.0f
 	)]
-	// More floating point error/inaccuracies inherent to the data type.
 	[InlineData(180.0f,	Axes.Z,
-				2.0f,		3.0f,		1.0f,
-				-1.9999998,	-3.0000002,	1.0f
+				2.0f,	3.0f,	1.0f,
+				-2.0,	-3.0,	1.0f
 	)]
 	[InlineData(90.0f,	Axes.X,
 				5.0f,	1.0f,	3.0f,
-				5.0f,	-3.0f,	0.9999999f
+				5.0f,	-3.0f,	1.0f
 	)]
 	public void RotationTest(float angle, Axes axis,
 							 float x,   float y,    float z, 
