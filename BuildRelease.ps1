@@ -1,4 +1,6 @@
 dotnet restore
+dotnet tool restore
+
 dotnet build "Rain.Engine" --configuration Release --output "Build\Release\Windows-Generic-x64" --self-contained --runtime "win-x64"
 dotnet build "Rain.Engine" --configuration Release --output "Build\Release\Windows-Generic-x86" --self-contained --runtime "win-x86"
 dotnet build "Rain.Engine" --configuration Release --output "Build\Release\Windows-Generic-arm64" --self-contained --runtime "win-arm64"
@@ -19,3 +21,5 @@ dotnet build "Rain.Engine" --configuration Release --output "Build\Release\macOS
 dotnet build "Rain.Engine" --configuration Release --output "Build\Release\Linux-x64" --self-contained --runtime "linux-x64"
 dotnet build "Rain.Engine" --configuration Release --output "Build\Release\Linux-arm" --self-contained --runtime "linux-arm"
 dotnet build "Rain.Engine" --configuration Release --output "Build\Release\Linux-arm64" --self-contained --runtime "linux-arm64"
+
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=../TestCoverage/lcov.info
