@@ -29,7 +29,7 @@ public struct Angle
 	/// The angle in Degrees.
 	/// </param>
 	public static double DegreesToRadians(double angle)
-		=> angle * (PI / 180.0f);
+		=> angle * (PI / 180);
 
 	/// <summary>
 	/// Convert Radians to Degrees.
@@ -39,7 +39,38 @@ public struct Angle
 	/// The angle in Radians.
 	/// </param>
 	public static double RadiansToDegrees(double angle)
-		=> angle / (PI / 180.0f);
+		=> angle / (PI / 180);
+
+	/// <summary>
+	/// Gets an angle from three <c>Vertex</c> instances.
+	/// </summary>
+	/// 
+	/// <param name="angleVertex">
+	/// The vertex of the angle to be found.
+	/// </param>
+	/// 
+	/// <param name="a">
+	/// The end point of line "a".
+	/// </param>
+	/// 
+	/// <param name="b">
+	/// The end point of line "b".
+	/// </param>
+	/// 
+	/// <returns>
+	/// A new <c>Angle</c> struct representing the angle.
+	/// </returns>
+	public static Angle GetAngle(Vertex angleVertex, Vertex a, Vertex b)
+	{
+		var lineA = angleVertex.GetDistanceBetween(a);
+		var lineB = angleVertex.GetDistanceBetween(b);
+		var lineAB = a.GetDistanceBetween(b);
+
+		var part1 = (lineA * lineA) + (lineB * lineB) - (lineAB * lineAB);
+		var part2 = 2.0 * lineA * lineB;
+
+		return new() { Radians = Acos(part1 / part2) };
+	}
 	
 	/// <summary>
 	/// Gets an angle from three <c>Point</c> instances.
@@ -61,19 +92,5 @@ public struct Angle
 	/// A new <c>Angle</c> struct representing the angle.
 	/// </returns>
 	public static Angle GetAngle(Point angleVertex, Point a, Point b)
-	{
-		var directionRatioA = a.Vertex - angleVertex.Vertex;
-		var directionRatioB = b.Vertex - angleVertex.Vertex;
-
-		var dotProductVertex = Vertex.DotProduct(directionRatioA, directionRatioB);
-		var dotProduct = dotProductVertex.X + dotProductVertex.Y + dotProductVertex.Z;
-
-		var magnitudeVertexA = Vertex.DotProduct(a.Vertex, a.Vertex);
-		var magnitudeA = magnitudeVertexA.X + magnitudeVertexA.Y + magnitudeVertexA.Z;
-
-		var magnitudeVertexB = Vertex.DotProduct(b.Vertex, b.Vertex);
-		var magnitudeB = magnitudeVertexB.X + magnitudeVertexB.Y + magnitudeVertexB.Z;
-
-		return new() { Degrees = Abs(dotProduct / Sqrt(magnitudeA * magnitudeB)) };
-	}
+		=> GetAngle(angleVertex.Vertex, a.Vertex, b.Vertex);
 }
