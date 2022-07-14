@@ -138,8 +138,50 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// </returns>
 	public Vector3 ToVector3() => new(X, Y, Z);
 
-	public static Vertex DotProduct(Vertex a, Vertex b)
-		=> new(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+	/// <summary>
+	/// Gets the maginitude of this <c>Vertex</c> as if it were a three element Vector.
+	/// </summary>
+	/// 
+	/// <remarks>
+	/// Notated as |vector|.
+	/// </remarks>
+	public double GetMagnitude()
+		=> Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
+
+	/// <summary>
+	/// Calculates the product of multiplication as if the two <c>Vertex</c> objects were a column and row vector.
+	/// </summary>
+	/// 
+	/// <remarks>
+	/// This is the same as the dot product of two vectors and is notated with a dot at middle height between the two
+	/// operands, hence the name dot product.
+	/// </remarks>
+	/// 
+	/// <param name="a">
+	/// The "row" Vector.
+	/// </param>
+	/// 
+	/// <param name="b">
+	/// The "column" Vector.
+	/// </param>
+	public static double ScalaarProduct(Vertex a, Vertex b)
+		=> (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
+	
+	/// <summary>
+	/// Calculates the product of multiplication as if both <c>Vertex</c> objects were column Vectors.
+	/// </summary>
+	/// 
+	/// <remarks>
+	/// This is the same as a vector product.
+	/// </remarks>
+	public static Vertex CrossProduct(Vertex a, Vertex b)
+		=> new((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X), 1);
+
+	/// <summary>
+	/// Gets a <c>Vertex</c> representing the origin in three dimensional space.
+	/// </summary>
+	public static Vertex GetOrigin()
+		=> new(0.0f, 0.0f, 0.0f, 1.0f);
 
 	public override int GetHashCode()
 		=> Array.GetHashCode();
@@ -169,7 +211,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
 
 	public static Vertex operator *(Vertex a, Vertex b) 
-		=> new((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X), 1);
+		=> CrossProduct(a, b);
 
 	public static bool operator ==(Vertex a, Vertex b) => a.Equals(b);
 
