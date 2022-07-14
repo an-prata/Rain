@@ -55,6 +55,23 @@ public class Triangle : ITwoDimensional
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
+	public Triangle(Point[] points)
+	{
+		if (points.Length != 3)
+			throw new Exception($"{nameof(points)} is not length 3 (Given length: {points.Length}).");
+
+		var pointSum = Angle.GetAngle(points[0], points[1], points[2]).Degrees;
+		pointSum += Angle.GetAngle(points[1], points[2], points[0]).Degrees;
+		pointSum += Angle.GetAngle(points[2], points[0], points[1]).Degrees;
+		
+		if (pointSum != 180)
+			throw new Exception($"{nameof(points)} does not make a Triangle");
+
+		Points = points;
+		width = (float)points[0].GetDistanceBetween(points[1]);
+		height = (float)points[0].Vertex.GetMidPoint(points[1].Vertex).GetDistanceBetween(points[2].Vertex);
+	}
+
 	public Triangle(Vertex location, float width, float height)
 	{
 		Points = new Point[]

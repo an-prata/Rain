@@ -147,6 +147,9 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// </remarks>
 	public double GetMagnitude()
 		=> Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
+	
+	public Vertex GetMidPoint(Vertex vertex)
+		=> new((X + vertex.X) / 2, (Y + vertex.Y) / 2, (Y + vertex.Y) / 2);
 
 	/// <summary>
 	/// Calculates the product of multiplication as if the two <c>Vertex</c> objects were a column and row vector.

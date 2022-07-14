@@ -3,9 +3,9 @@ using Rain.Engine.Texturing;
 
 namespace Rain.Engine.Rendering;
 
-public class Prism
+public class Pyramid
 {
-	public static IRenderable MakePrism(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
+	public static IRenderable MakePyramid(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
 	{
 		if (textures.Length != shapeBase.Face.Sides)
 			throw new Exception($"{nameof(textures)} should be of length equal to {shapeBase.Face.Sides}");
@@ -28,13 +28,11 @@ public class Prism
 		shapeBase.Face.Rotate(-shapeBase.Face.RotationY, Axes.Y);
 		shapeBase.Face.Rotate(-shapeBase.Face.RotationZ, Axes.Z);
 
-		var basePrime = new TexturedFace(shapeBase);
-		basePrime.Face.Translate(0, 0, lengthZ);
-
-		var faces = new TexturedFace[textures.Length + 2];
+		var faces = new TexturedFace[textures.Length + 1];
 
 		faces[0] = shapeBase;
-		faces[1] = basePrime;
+
+		var translateUp = TransformMatrix.CreateTranslationMatrix(0, 0, lengthZ);
 
 		for (var point = 0; point < shapeBase.Face.Points.Length; point++)
 		{
@@ -42,17 +40,18 @@ public class Prism
 
 			var facePoints = new Point[]
 			{
-				shapeBase.Face.Points[point], shapeBase.Face.Points[adjacentPoint],
-				basePrime.Face.Points[point], basePrime.Face.Points[adjacentPoint]
+				shapeBase.Face.Points[point], 
+				shapeBase.Face.Points[adjacentPoint],
+				new Point(shapeBase.Face.GetCenterVertex() * translateUp)
 			};
 
 			var face = new TexturedFace()
 			{
-				Face = new Rectangle(facePoints),
+				Face = new Triangle(facePoints),
 				Textures = textures[point].ToArray()
 			};
 
-			faces[point + 2] = face;
+			faces[point + 1] = face;
 		}
 
 		var solid = new Solid(new(faces), options);
