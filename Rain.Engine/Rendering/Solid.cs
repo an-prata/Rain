@@ -94,7 +94,7 @@ public class Solid : IRenderable, IEquatable<Solid>
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
-	private Solid(TexturedFaceGroup faces, SolidOptions options)
+	public Solid(TexturedFaceGroup faces, SolidOptions options)
 	{
 		lengthX = options.LengthX;
 		lengthY = options.LengthY;
@@ -253,7 +253,7 @@ public class Solid : IRenderable, IEquatable<Solid>
 			Rotate(-angle, axis, vertex);
 	}
 
-	public static Solid SolidFromITwoDimensional(ITwoDimensional twoDimensional, Texture[] textures)
+	public static Solid SolidFromFace(ITwoDimensional twoDimensional, Texture[] textures)
 	{
 		var textureFaces = new TexturedFace[] 
 		{

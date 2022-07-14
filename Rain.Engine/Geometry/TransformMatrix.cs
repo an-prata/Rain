@@ -76,8 +76,8 @@ public struct TransformMatrix
 	public static TransformMatrix CreateRotationMatrix(float angle, Axes axis)
 	{
 		var matrix = new float[Size, Size];
-		var sinTheta = (float)Math.Sin(DegreesToRadians(angle));
-		var cosTheta = (float)Math.Cos(DegreesToRadians(angle));
+		var sinTheta = (float)Math.Sin(Angle.DegreesToRadians(angle));
+		var cosTheta = (float)Math.Cos(Angle.DegreesToRadians(angle));
 
 		if (axis == Axes.X)
 		{
@@ -112,9 +112,6 @@ public struct TransformMatrix
 
 		return new TransformMatrix(matrix, TransformType.Rotation);
 	}
-
-	private static float DegreesToRadians(float angle)
-		=> angle * ((float)Math.PI / 180.0f);
 
 	public override int GetHashCode()
 		=> Matrix.GetHashCode();

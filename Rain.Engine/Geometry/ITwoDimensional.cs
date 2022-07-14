@@ -19,6 +19,11 @@ public interface ITwoDimensional : ISpacial
 	Point[] Points { get; }
 
 	/// <summary>
+	/// The number of sides that this <c>ITwoDimensional</c> has.
+	/// </summary>
+	int Sides { get => Points.Length; }
+
+	/// <summary>
 	/// The <c>ITwoDimensional</c>'s width.
 	/// </summary>
 	float Width { get; set; }

@@ -51,6 +51,20 @@ public class Rectangle : ITwoDimensional
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
+	public Rectangle(Point[] points)
+	{
+		if (points.Length != 4)
+			throw new Exception($"{nameof(points)} is not length 4 (Given length: {points.Length}).");
+		
+		if (points[0].GetDistanceBetween(points[1]) != points[2].GetDistanceBetween(points[3]))
+			throw new Exception($"{nameof(points)} does not make a Rectangle");
+		
+		if (points[1].GetDistanceBetween(points[2]) != points[3].GetDistanceBetween(points[0]))
+			throw new Exception($"{nameof(points)} does not make a Rectangle");
+
+		Points = points;
+	}
+
 	public Rectangle(Vertex location, float width, float height)
 	{
 		var halfWidth = width / 2;

@@ -25,16 +25,16 @@ class Program
 
 		var models = new IRenderable[] 
 		{ 
-			Solid.SolidFromITwoDimensional(rectangle0, new Texture[] 
+			Solid.SolidFromFace(rectangle0, new Texture[] 
 			{ 
 				new("interesting.bmp", 0.3f), 
 				new("interesting.bmp", 0.5f), 
 				new("interesting.bmp", 0.3f), 
 				new("test.png", 1.0f)
 			}),
-			Solid.SolidFromITwoDimensional(rectangle1, new Texture[] { new("greg.bmp") }), 
-			Solid.SolidFromITwoDimensional(rectangle2, new Texture[] { new("suprise.bmp") }), 
-			Solid.SolidFromITwoDimensional(rectangle3, new Texture[] { new("garfield.bmp") })
+			Solid.SolidFromFace(rectangle1, new Texture[] { new("greg.bmp") }), 
+			Solid.SolidFromFace(rectangle2, new Texture[] { new("suprise.bmp") }), 
+			Solid.SolidFromFace(rectangle3, new Texture[] { new("garfield.bmp") })
 		};
 
 		var scene = new Scene(models);

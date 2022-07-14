@@ -25,6 +25,12 @@ public struct TexturedFace : IBufferable
 	/// </remarks>
 	public Texture[] Textures { get; set; }
 
+	public TexturedFace(TexturedFace face)
+	{
+		Face = face.Face;
+		Textures = face.Textures;
+	}
+
 	public int GetBufferSize(BufferType bufferType)
 	{
 		if (bufferType == BufferType.VertexBuffer)
