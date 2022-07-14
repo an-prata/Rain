@@ -61,18 +61,6 @@ public class Rectangle : ITwoDimensional
 		
 		if (points[1].GetDistanceBetween(points[2]) != points[3].GetDistanceBetween(points[0]))
 			throw new Exception($"{nameof(points)} does not make a Rectangle");
-		
-		if (Angle.GetAngle(points[0], points[1], points[3]).Degrees != 90)
-			throw new Exception($"{nameof(points)} does not make a Rectangle");
-		
-		if (Angle.GetAngle(points[1], points[2], points[0]).Degrees != 90)
-			throw new Exception($"{nameof(points)} does not make a Rectangle");
-		
-		if (Angle.GetAngle(points[2], points[3], points[1]).Degrees != 90)
-			throw new Exception($"{nameof(points)} does not make a Rectangle");
-		
-		if (Angle.GetAngle(points[3], points[0], points[2]).Degrees != 90)
-			throw new Exception($"{nameof(points)} does not make a Rectangle");
 
 		Points = points;
 	}
