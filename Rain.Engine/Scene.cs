@@ -221,10 +221,32 @@ public class Scene : IDisposable
 					Models[model].Faces[face].Textures[texture].Unbind();
 
 					if (texture != 0)
-							program.GetUniformByName($"opacity{texture}").SetToFloat(0.0f);
+						program.GetUniformByName($"opacity{texture}").SetToFloat(0.0f);
 				}
 			}			
 		}
+	}
+
+	/// <summary>
+	/// Draws the <c>Scene</c> to the <c>GameWindow</c>.
+	/// </summary>
+	/// 
+	/// <param name="bufferGroup">
+	/// The <c>BufferGroup</c> to use to upload data to the GPU.
+	/// </param>
+	/// 
+	/// <param name="program">
+	/// The <c>ShaderProgram</c> to draw with.
+	/// </param>
+	/// 
+	/// <param name="perspective">
+	/// A <c>PerspectiveProjection</c> to create a perspective effect with. 
+	/// </param>
+	public void Draw(BufferGroup bufferGroup, ShaderProgram program, PerspectiveProjection perspective)
+	{
+		program.GetUniformByName("perspectiveProjection").SetToPerspectiveProjection(perspective);
+
+		Draw(bufferGroup, program);
 	}
 
 	#region IDisposable

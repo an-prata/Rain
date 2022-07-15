@@ -15,5 +15,7 @@ public enum TransformType
 
 	Complex,
 
+	Perspective,
+
 	Unknown
 }

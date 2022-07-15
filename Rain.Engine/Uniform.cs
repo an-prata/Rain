@@ -2,6 +2,7 @@
 // See LICENSE file in repository root for complete license text.
 
 using OpenTK.Graphics.OpenGL;
+using Rain.Engine.Rendering;
 using Rain.Engine.Texturing;
 
 using TextureUnit = Rain.Engine.Texturing.TextureUnit;
@@ -80,4 +81,16 @@ public class Uniform
 	/// </param>	
 	public void SetToFloat(float x)
 		=> GL.Uniform1(Handle, x);
+	
+	/// <summary>
+	/// Sets the uniform to a <c>PerspectiveProjection</c>. 
+	/// </summary>
+	/// 
+	/// <param name="projection">
+	/// The <c>PerspectiveProjection</c> to use.
+	/// </param>
+	public void SetToPerspectiveProjection(PerspectiveProjection projection)
+	{
+		GL.UniformMatrix4(Handle, true, ref projection.OpenGLMatrix);
+	}
 }

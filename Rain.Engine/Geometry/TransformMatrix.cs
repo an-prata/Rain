@@ -1,6 +1,10 @@
 // Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
 // See LICENSE file in repository root for complete license text.
 
+using OpenTK.Mathematics;
+
+using static System.Math;
+
 namespace Rain.Engine.Geometry;
 
 public struct TransformMatrix
@@ -67,7 +71,7 @@ public struct TransformMatrix
 
 	// In this state the method could be prone to "Gimbal Lock" (https://en.wikipedia.org/wiki/Gimbal_lock).
 	// Potentialy intensive computationaly as well.
-	// TODO: Look intto this as potential solution (https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation).
+	// TODO: Look into this as potential solution (https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation).
 	// There's lots of scary math without numbers, yay... :)
 	// This could also be a useful resource: https://math.stackexchange.com/questions/8980/euler-angles-and-gimbal-lock
 	// I'm not a mathematition if you couldn't already tell.
@@ -76,8 +80,8 @@ public struct TransformMatrix
 	public static TransformMatrix CreateRotationMatrix(float angle, Axes axis)
 	{
 		var matrix = new float[Size, Size];
-		var sinTheta = (float)Math.Sin(Angle.DegreesToRadians(angle));
-		var cosTheta = (float)Math.Cos(Angle.DegreesToRadians(angle));
+		var sinTheta = (float)Sin(Angle.DegreesToRadians(angle));
+		var cosTheta = (float)Cos(Angle.DegreesToRadians(angle));
 
 		if (axis == Axes.X)
 		{
@@ -111,6 +115,44 @@ public struct TransformMatrix
 		}
 
 		return new TransformMatrix(matrix, TransformType.Rotation);
+	}
+
+	public static TransformMatrix CreatePerspectiveProjectionMatrix(float fovX, float fovY, float nearClip, float farClip)
+	{
+		var upperBound = nearClip * Tan(0.5f * fovY);
+		var lowerBound = -upperBound;
+		
+		var rightBound = nearClip * Tan(0.5f * fovX);
+		var leftBound = -rightBound;
+
+		var x = 2.0f * nearClip / (rightBound - leftBound);
+		var y = 2.0f * nearClip / (upperBound - lowerBound);
+
+		var z0 = (rightBound + leftBound) / (rightBound - leftBound);
+		var z1 = (upperBound + lowerBound) / (upperBound - lowerBound);
+		var z2 = -(farClip + nearClip) / (farClip - nearClip);
+
+		var w = -(2.0f * farClip * nearClip) / (farClip - nearClip);
+
+		var matrix = new float[,]
+		{
+			{ (float)x,		0.0f, 		0.0f,	0.0f	},
+			{ 0.0f,			(float)y,	0.0f, 	0.0f	},
+			{ (float)z0,	(float)z1, 	z2, 	-1.0f	},
+			{ 0.0f,			0.0f,		w, 		0.0f	}
+		};
+
+		return new TransformMatrix(matrix, TransformType.Perspective);
+	}
+
+	public Matrix4 ToOpenGLMatrix4()
+	{
+		return new(
+			Matrix[0,0], Matrix[0,1], Matrix[0,2], Matrix[0,3],
+			Matrix[1,0], Matrix[1,1], Matrix[1,2], Matrix[1,3],
+			Matrix[2,0], Matrix[2,1], Matrix[2,2], Matrix[2,3],
+			Matrix[3,0], Matrix[3,1], Matrix[3,2], Matrix[3,3]
+		);
 	}
 
 	public override int GetHashCode()

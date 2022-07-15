@@ -11,6 +11,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using Rain.Engine.Geometry;
 using Rain.Engine.Texturing;
 using Rain.Engine.Buffering;
+using Rain.Engine.Rendering;
 using Rain.Engine.Extensions;
 
 using Point = Rain.Engine.Geometry.Point;
@@ -23,6 +24,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 {
 	/// <summary> The currently active <c>Scene</c> object for the <c>GameWindow</c>. </summary>
 	public Scene ActiveScene { get; set; }
+
+	private PerspectiveProjection perspective;
 
 	private Color clearColor;
 
@@ -68,6 +71,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		};
 
 		shaderProgram = new(shaderComponents);
+		perspective = new(new Angle { Degrees = 45.0f }, options.Width / options.Height, 0.1f, 100.0f);
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -111,7 +115,13 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
 		shaderProgram.Use();
 
-		ActiveScene.Draw(bufferGroup, shaderProgram);
+		foreach (var model in ActiveScene.Models)
+		{
+			model.Rotate((float)(2.0f * args.Time), Axes.X, model.Location);
+			//model.Translate(0, 0, (float)(-0.1f * args.Time));
+		}
+
+		ActiveScene.Draw(bufferGroup, shaderProgram, perspective);
 		
 		Context.SwapBuffers();
 
