@@ -38,7 +38,7 @@ public class Prism
 
 		for (var point = 0; point < shapeBase.Face.Points.Length; point++)
 		{
-			var adjacentPoint = point == shapeBase.Face.Points.Length ? 0 : point + 1;
+			var adjacentPoint = point == shapeBase.Face.Points.Length - 1 ? 0 : point + 1;
 
 			var facePoints = new Point[]
 			{
