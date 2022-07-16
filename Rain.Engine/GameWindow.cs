@@ -71,7 +71,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		};
 
 		shaderProgram = new(shaderComponents);
-		perspective = new(new Angle { Degrees = 45.0f }, options.Width / options.Height, 0.1f, 100.0f);
+		perspective = new(new Angle { Degrees = 90.0f }, options.Width / options.Height, 0.1f, 100.0f);
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -117,7 +117,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 		foreach (var model in ActiveScene.Models)
 		{
-			model.Rotate((float)(2.0f * args.Time), Axes.X, model.Location);
+			model.Rotate((float)(2.0f * args.Time), Axes.X);
 			//model.Translate(0, 0, (float)(-0.1f * args.Time));
 		}
 
