@@ -95,14 +95,14 @@ public class Rectangle : ITwoDimensional
 
 	public Vertex GetCenterVertex()
 	{
-		var greatestPointX = 0.0f;
-		var leastPointX = 0.0f;
+		var greatestPointX = Points[0].Vertex.X;
+		var leastPointX = Points[0].Vertex.X;
 
-		var greatestPointY = 0.0f;
-		var leastPointY = 0.0f;
+		var greatestPointY = Points[0].Vertex.Y;
+		var leastPointY = Points[0].Vertex.Y;
 
-		var greatestPointZ = 0.0f;
-		var leastPointZ = 0.0f;
+		var greatestPointZ = Points[0].Vertex.Z;
+		var leastPointZ = Points[0].Vertex.Z;
 
 		for (var point = 0; point < Points.Length; point++)
 		{

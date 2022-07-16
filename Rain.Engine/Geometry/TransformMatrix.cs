@@ -9,6 +9,11 @@ namespace Rain.Engine.Geometry;
 
 public struct TransformMatrix
 {
+	public float this[int index0, int index1]
+	{
+		get => Matrix[index0, index1];
+		set => Matrix[index0, index1] = value;
+	}
 	/// <summary> The side size the matrix, every ITransformMatrix should be a Size * Size matrix. </summary>
 	public const int Size = 4;
 
@@ -69,14 +74,9 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Translation);
 	}
 
-	// In this state the method could be prone to "Gimbal Lock" (https://en.wikipedia.org/wiki/Gimbal_lock).
-	// Potentialy intensive computationaly as well.
-	// TODO: Look into this as potential solution (https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation).
-	// There's lots of scary math without numbers, yay... :)
-	// This could also be a useful resource: https://math.stackexchange.com/questions/8980/euler-angles-and-gimbal-lock
-	// I'm not a mathematition if you couldn't already tell.
-	//
-	// I have confirmed the gimble lock... damnit. Other than that this works.
+	public static TransformMatrix CreateTranslationMatrix(Vertex translation)
+		=> CreateTranslationMatrix(translation.X, translation.Y, translation.Z);
+
 	public static TransformMatrix CreateRotationMatrix(float angle, Axes axis)
 	{
 		var matrix = new float[Size, Size];
@@ -191,17 +191,15 @@ public struct TransformMatrix
 
 	public static Vertex operator *(TransformMatrix a, Vertex b)
 	{
-		var vertexArray = new float[Vertex.BufferSize];
-		vertexArray.Initialize();
+		var vertex = new float[]
+		{
+			(a.Matrix[0, 0] * b.X) + (a.Matrix[0, 1] * b.Y) + (a.Matrix[0, 2] * b.Z) + (a.Matrix[0, 3] * b.W),
+			(a.Matrix[1, 0] * b.X) + (a.Matrix[1, 1] * b.Y) + (a.Matrix[1, 2] * b.Z) + (a.Matrix[1, 3] * b.W),
+			(a.Matrix[2, 0] * b.X) + (a.Matrix[2, 1] * b.Y) + (a.Matrix[2, 2] * b.Z) + (a.Matrix[2, 3] * b.W),
+			(a.Matrix[3, 0] * b.X) + (a.Matrix[3, 1] * b.Y) + (a.Matrix[3, 2] * b.Z) + (a.Matrix[3, 3] * b.W),
+		};
 
-		for (var i = 0; i < vertexArray.Length; i++)
-			vertexArray[i] = 0;
-
-		for (var row = 0; row < Size; row++)
-			for (var collum = 0; collum < b.Array.Length; collum++)
-				vertexArray[row] += a.Matrix[row, collum] * b.Array[collum];
-
-		return new Vertex(vertexArray);
+		return new Vertex(vertex);
 	}
 
 	public static Vertex operator *(Vertex a, TransformMatrix b) => b * a;

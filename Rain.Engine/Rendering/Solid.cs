@@ -55,7 +55,7 @@ public class Solid : IRenderable, IEquatable<Solid>
 	public Vertex Location
 	{
 		get => GetCenterVertex();
-		set => Translate(value.X - Location.X, value.Y - Location.Y, value.Z - Location.Z);
+		set => Translate(value - Location);
 	}
 
 	public float LengthX
@@ -109,14 +109,14 @@ public class Solid : IRenderable, IEquatable<Solid>
 
 	public Vertex GetCenterVertex()
 	{
-		var greatestPointX = 0.0f;
-		var leastPointX = 0.0f;
+		var greatestPointX = Points[0].Vertex.X;
+		var leastPointX = Points[0].Vertex.X;
 
-		var greatestPointY = 0.0f;
-		var leastPointY = 0.0f;
+		var greatestPointY = Points[0].Vertex.Y;
+		var leastPointY = Points[0].Vertex.Y;
 
-		var greatestPointZ = 0.0f;
-		var leastPointZ = 0.0f;
+		var greatestPointZ = Points[0].Vertex.Z;
+		var leastPointZ = Points[0].Vertex.Z;
 
 		for (var point = 0; point < Points.Length; point++)
 		{
@@ -200,7 +200,7 @@ public class Solid : IRenderable, IEquatable<Solid>
 	public void Translate(Vertex vertex)
 		=> Translate(vertex.X, vertex.Y, vertex.Z);
 
-	public void Scale(float x, float y, float z)
+	public void Scale(float x = 1, float y = 1, float z = 1)
 	{
 		Points = (this * TransformMatrix.CreateScaleMatrix(x, y, z)).Points;
 		lengthX *= x;
@@ -221,13 +221,11 @@ public class Solid : IRenderable, IEquatable<Solid>
 
 	public void Rotate(float angle, Axes axis, Vertex vertex)
 	{
-		var center = GetCenterVertex();
-		var distance = vertex - center;
-		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+		var transform = TransformMatrix.CreateTranslationMatrix(vertex);
+		transform *= TransformMatrix.CreateRotationMatrix(angle, axis);
+		transform *= TransformMatrix.CreateTranslationMatrix(-vertex);
 
-		Translate(-(center.X + distance.X), -(center.Y + distance.Y), -(center.Z + distance.Z));
-		Points = (this * rotationMatrix).Points;
-		Translate(center.X + distance.X, center.Y + distance.Y, center.Z + distance.Z);
+		Points = (this * transform).Points;
 
 		switch(axis)
 		{

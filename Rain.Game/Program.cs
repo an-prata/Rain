@@ -37,7 +37,7 @@ class Program
 			Solid.SolidFromFace(rectangle3, new Texture[] { new("garfield.bmp") })
 		}; */
 
-		var cubeBase = new Rectangle(new(0.0f, 0.0f, -20.0f), 1.0f, 1.0f, new(203, 178, 238));
+		var cubeBase = new Rectangle(new(0.5f, 0.5f, -50.0f), 10.0f, 10.0f, new(203, 178, 238));
 		var textures = new Texture[] { new("interesting.bmp", 0.3f) };
 
 		var texturedBase = new TexturedFace()
@@ -54,7 +54,7 @@ class Program
 			new(textures)
 		};
 
-		var cube = Prism.MakePrism(texturedBase, cubeTextures, 1.0f);
+		var cube = Prism.MakePrism(texturedBase, cubeTextures, 10.0f);
 		var models = new IRenderable[] { cube };
 		var scene = new Scene(models);
 
