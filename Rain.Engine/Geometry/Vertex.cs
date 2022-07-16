@@ -209,9 +209,34 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
         return Equals(obj);
 	}
 
-	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+	// Vertex to float scalaar operations.
+	public static Vertex operator +(Vertex a, float b) => new(a.X + b, a.Y + b, a.Z + b, 1.0f);
 
-	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+	public static Vertex operator -(Vertex a, float b) => new(a.X - b, a.Y - b, a.Z - b, 1.0f);
+
+	public static Vertex operator *(Vertex a, float b) => new(a.X * b, a.Y * b, a.Z * b, 1.0f);
+
+	public static Vertex operator /(Vertex a, float b) => new(a.X / b, a.Y / b, a.Z / b, 1.0f);
+
+	// Vertex to double scalaar operations.
+	public static Vertex operator +(Vertex a, double b) 
+		=> new((float)(a.X + b), (float)(a.Y + b), (float)(a.Z + b), 1.0f);
+
+	public static Vertex operator -(Vertex a, double b) 
+		=> new((float)(a.X - b), (float)(a.Y - b), (float)(a.Z - b), 1.0f);
+
+	public static Vertex operator *(Vertex a, double b) 
+		=> new((float)(a.X * b), (float)(a.Y * b), (float)(a.Z * b), 1.0f);
+
+	public static Vertex operator /(Vertex a, double b) 
+		=> new((float)(a.X / b), (float)(a.Y / b), (float)(a.Z / b), 1.0f);
+
+	// Vertex to Vertex Vector style operations.
+	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, 1.0f);
+
+	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, 1.0f);
+
+	public static Vertex operator -(Vertex a) => new(-a.X, -a.Y, -a.Z, a.W);
 
 	public static Vertex operator *(Vertex a, Vertex b) 
 		=> CrossProduct(a, b);
