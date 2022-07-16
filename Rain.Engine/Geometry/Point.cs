@@ -103,17 +103,14 @@ public class Point : IBufferable, ISpacial
 	}
 
 	public double GetDistanceBetween(ISpacial other)
-	{
-		var difference = Location - other.Location;
-		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
-	}
+		=> (Location - other.Location).Maginitude;
 
 	public int GetBufferSize(BufferType bufferType)
 	{
 		if (bufferType == BufferType.VertexBuffer)
 			return BufferSize;
-		else
-			return 1;
+		
+		return 1;
 	}
 
 	public Array GetBufferableArray(BufferType bufferType) 

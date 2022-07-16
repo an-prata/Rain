@@ -133,4 +133,50 @@ public interface ITwoDimensional : ISpacial
 	/// The direction to rotate in.
 	/// </param>
 	public void Rotate(float angle, Axes axis, RotationDirection direction);
+
+	/// <summary>
+	/// Rotates the <c>ITwoDimensional</c> about the specified <c>Vertex</c>.
+	/// </summary>
+	/// 
+	/// <remarks>
+	/// Updates the rotation property of the same axis.
+	/// </remarks>
+	/// 
+	/// <param name="angle">
+	/// The angle of rotation.
+	/// </param>
+	///
+	/// <param name="axis">
+	/// The axis to rotate on.
+	/// </param>
+	/// 
+	/// <param name="vertex">
+	/// The <c>Vertex</c> to rotate about.
+	/// </param>
+	public void Rotate(float angle, Axes axis, Vertex vertex);
+
+	/// <summary>
+	/// Rotates the <c>ITwoDimensional</c> about the specified <c>Vertex</c>.
+	/// </summary>
+	/// 
+	/// <remarks>
+	/// Updates the rotation property of the same axis.
+	/// </remarks>
+	/// 
+	/// <param name="angle">
+	/// The angle of rotation.
+	/// </param>
+	///
+	/// <param name="axis">
+	/// The axis to rotate on.
+	/// </param>
+	/// 
+	/// <param name="direction">
+	/// The direction to rotate in.
+	/// </param>
+	/// 
+	/// <param name="vertex">
+	/// The <c>Vertex</c> to rotate about.
+	/// </param>
+	public void Rotate(float angle, Axes axis, RotationDirection direction, Vertex vertex);
 }

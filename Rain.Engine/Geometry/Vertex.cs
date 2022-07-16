@@ -15,8 +15,6 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// </summary>
 	public const int BufferSize = 4;
 
-	public Vertex Location { get => this; }
-
 	/// <summary> 
 	/// The Vertex's X coordinate. 
 	/// </summary>
@@ -37,6 +35,24 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// </summary>
 	public float W { get; set; }
 
+	public Vertex Location { get => this; }
+
+	/// <summary>
+	/// The magnitude of this <c>Vertex</c> as if it were a three element vector.
+	/// </summary>
+	/// 
+	/// <remarks>
+	/// Calculated as the square root of the sum of each X, Y, and Z coordinate.
+	/// </remarks>
+	public double Maginitude { get => Math.Sqrt((X * X) + (Y * Y) + (Z * Z)); }
+
+	/// <summary>
+	/// Gets a new <c>float[]</c> representing the current <c>Vertex</c>.
+	/// </summary>
+	/// 
+	/// <value>
+	/// A float array with values arranged as X, Y, Z, then W.
+	/// </value>
 	public float[] Array { get => new float[BufferSize] {X, Y, Z, W}; }
 
 	/// <summary> 
@@ -124,10 +140,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	}
 
 	public double GetDistanceBetween(ISpacial other)
-	{
-		var difference = Location - other.Location;
-		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
-	}
+		=> (Location - other.Location).Maginitude;
 	
 	/// <summary> 
 	/// Produces an OpenTK Vector3 object from the Vertex. 
@@ -137,17 +150,10 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// An OpenTK Vector3. 
 	/// </returns>
 	public Vector3 ToVector3() => new(X, Y, Z);
-
-	/// <summary>
-	/// Gets the maginitude of this <c>Vertex</c> as if it were a three element Vector.
-	/// </summary>
-	/// 
-	/// <remarks>
-	/// Notated as |vector|.
-	/// </remarks>
-	public double GetMagnitude()
-		=> Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
 	
+	/// <summary>
+	/// Gets a <c>Vertex</c> directly between this and another.
+	/// </summary>
 	public Vertex GetMidPoint(Vertex vertex)
 		=> new((X + vertex.X) / 2, (Y + vertex.Y) / 2, (Y + vertex.Y) / 2);
 
@@ -180,12 +186,6 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	public static Vertex CrossProduct(Vertex a, Vertex b)
 		=> new((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X), 1);
 
-	/// <summary>
-	/// Gets a <c>Vertex</c> representing the origin in three dimensional space.
-	/// </summary>
-	public static Vertex GetOrigin()
-		=> new(0.0f, 0.0f, 0.0f, 1.0f);
-
 	public override int GetHashCode()
 		=> Array.GetHashCode();
 
@@ -209,6 +209,8 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
         return Equals(obj);
 	}
 
+	public static Vertex operator -(Vertex a) => new(-a.X, -a.Y, -a.Z, a.W);
+
 	// Vertex to float scalaar operations.
 	public static Vertex operator +(Vertex a, float b) => new(a.X + b, a.Y + b, a.Z + b, 1.0f);
 
@@ -231,12 +233,10 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	public static Vertex operator /(Vertex a, double b) 
 		=> new((float)(a.X / b), (float)(a.Y / b), (float)(a.Z / b), 1.0f);
 
-	// Vertex to Vertex Vector style operations.
+	// Vertex to Vertex vector style operations.
 	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, 1.0f);
 
 	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, 1.0f);
-
-	public static Vertex operator -(Vertex a) => new(-a.X, -a.Y, -a.Z, a.W);
 
 	public static Vertex operator *(Vertex a, Vertex b) 
 		=> CrossProduct(a, b);

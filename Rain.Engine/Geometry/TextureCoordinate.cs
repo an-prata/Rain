@@ -23,6 +23,13 @@ public class TextureCoordinate
 	/// </summary>
 	public float Y { get; set; }
 
+	/// <summary>
+	/// Gets a <c>float[]</c> representing the current <c>TextureCoordinate</c>.
+	/// </summary>
+	/// 
+	/// <value>
+	/// An array of float in order X then Y.
+	/// </value>
 	public float[] Array { get => new float[BufferSize] { X, Y }; }
 
 	/// <summary> 
@@ -55,12 +62,24 @@ public class TextureCoordinate
 	/// </param>
 	public TextureCoordinate(float[] coordinateArray)
 	{
+		if (coordinateArray.Length != BufferSize)
+			throw new Exception($"{nameof(coordinateArray)} was not of correct length {BufferSize}");
+		
 		X = coordinateArray[0];
 		Y = coordinateArray[1];
 	}
 
 	public override int GetHashCode()
 		=> Array.GetHashCode();
+	
+	public bool Equals(TextureCoordinate obj)
+	{
+		for (var i = 0; i < BufferSize; i++)
+			if (Array[i] != obj.Array[i])
+				return false;
+	
+		return true;
+	}
 
 	public override bool Equals(object? obj)
 	{
@@ -81,21 +100,7 @@ public class TextureCoordinate
 
 	public static TextureCoordinate operator /(TextureCoordinate a, TextureCoordinate b) => new(a.X / b.X, a.Y / b.Y);
 
-	public static bool operator ==(TextureCoordinate a, TextureCoordinate b)
-	{
-		for (var i = 0; i < BufferSize; i++)
-			if (a.Array[i] != b.Array[i])
-				return false;
-	
-		return true;
-	}
+	public static bool operator ==(TextureCoordinate a, TextureCoordinate b) => a.Equals(b);
 
-	public static bool operator !=(TextureCoordinate a, TextureCoordinate b)
-	{
-		for (var i = 0; i < BufferSize; i++)
-			if (a.Array[i] != b.Array[i])
-				return !false;
-	
-		return !true;
-	}
+	public static bool operator !=(TextureCoordinate a, TextureCoordinate b) => !a.Equals(b);
 }

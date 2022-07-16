@@ -3,7 +3,7 @@
 
 namespace Rain.Engine.Geometry;
 
-public class Triangle : ITwoDimensional
+public class Triangle : ISpacial, ITwoDimensional
 {
 	private float width;
 
@@ -55,6 +55,13 @@ public class Triangle : ITwoDimensional
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
+	/// <summary>
+	/// Creates a new <c>Triangle</c> from an array of <c>Point</c> objects.
+	/// </summary>
+	/// 
+	/// <param name="points">
+	/// An array of <c>Points</c>s representing a triangle.
+	/// </param>
 	public Triangle(Point[] points)
 	{
 		if (points.Length != 3)
@@ -72,6 +79,21 @@ public class Triangle : ITwoDimensional
 		height = (float)points[0].Vertex.GetMidPoint(points[1].Vertex).GetDistanceBetween(points[2].Vertex);
 	}
 
+	/// <summary>
+	/// Creates a <c>Triangle</c> that has a right angle from a location, height, and width.
+	/// </summary>
+	/// 
+	/// <param name="location">
+	/// The location of the <c>Triangle</c>, will also be the <c>Point</c> with the right angle.
+	/// </param>
+	/// 
+	/// <param name="width">
+	/// The <c>Triangle</c>'s width.
+	/// </param>
+	/// 
+	/// <param name="height">
+	/// The <c>Triangle</c>'s height.
+	/// </param>
 	public Triangle(Vertex location, float width, float height)
 	{
 		Points = new Point[]
@@ -85,6 +107,25 @@ public class Triangle : ITwoDimensional
 		this.height = height;
 	}
 
+	/// <summary>
+	/// Creates a <c>Triangle</c> that has a right angle from a location, height, width, and color.
+	/// </summary>
+	/// 
+	/// <param name="location">
+	/// The location of the <c>Triangle</c>, will also be the <c>Point</c> with the right angle.
+	/// </param>
+	/// 
+	/// <param name="width">
+	/// The <c>Triangle</c>'s width.
+	/// </param>
+	/// 
+	/// <param name="height">
+	/// The <c>Triangle</c>'s height.
+	/// </param>
+	/// 
+	/// <param name="color">
+	/// The <c>Triangle</c>'s color.
+	/// </param>
 	public Triangle(Vertex location, float width, float height, Color color)
 	{
 		Points = new Point[]
@@ -166,13 +207,11 @@ public class Triangle : ITwoDimensional
 
 	public void Rotate(float angle, Axes axis, Vertex vertex)
 	{
-		var center = GetCenterVertex();
-		var distance = vertex - center;
-		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+		var transform = TransformMatrix.CreateTranslationMatrix(vertex);
+		transform *= TransformMatrix.CreateRotationMatrix(angle, axis);
+		transform *= TransformMatrix.CreateTranslationMatrix(-vertex);
 
-		Translate(-(center.X + distance.X), -(center.Y + distance.Y), -(center.Z + distance.Z));
-		Points = (this * rotationMatrix).Points;
-		Translate(center.X + distance.X, center.Y + distance.Y, center.Z + distance.Z);
+		Points = (this * transform).Points;
 
 		switch(axis)
 		{

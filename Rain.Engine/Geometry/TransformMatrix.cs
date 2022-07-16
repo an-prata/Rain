@@ -11,21 +11,32 @@ public struct TransformMatrix
 {
 	public float this[int index0, int index1]
 	{
-		get => Matrix[index0, index1];
-		set => Matrix[index0, index1] = value;
+		get => matrix[index0, index1];
+		set => matrix[index0, index1] = value;
 	}
-	/// <summary> The side size the matrix, every ITransformMatrix should be a Size * Size matrix. </summary>
+
+	/// <summary> 
+	/// The side size the matrix, every ITransformMatrix should be a Size * Size matrix. 
+	/// </summary>
 	public const int Size = 4;
 
+	/// <summary>
+	/// The <c>TransformType</c> associated with this <c>TransformMatrix</c>.
+	/// </summary>
 	public TransformType TransformType { get; private set; }
 
-	public float[,] Matrix { get; }
+	private float[,] matrix;
 
-	/// <summary> Creates a new TransformMatrix representing the Identity Matrix. </summary>
-	/// <remarks> Multiplying by an Identity Matrix will leave a Vertex unchanged. </remarks>
+	/// <summary> 
+	/// Creates a new TransformMatrix representing the Identity Matrix. 
+	/// </summary>
+	/// 
+	/// <remarks> 
+	/// Multiplying by an Identity Matrix will leave a Vertex unchanged. 
+	/// </remarks>
 	public TransformMatrix()
 	{
-		Matrix = new float[,]
+		matrix = new float[,]
 		{
 			{ 1.0f, 0.0f, 0.0f, 0.0f },
 			{ 0.0f, 1.0f, 0.0f, 0.0f },
@@ -36,6 +47,13 @@ public struct TransformMatrix
 		TransformType = TransformType.Identity;
 	}
 
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> from a two-dimensional float array.
+	/// </summary>
+	/// 
+	/// <param name="matrix">
+	/// A two-dimensional float array who's values will be used to create a <c>TransformMatrix</c>.
+	/// </param>
 	public TransformMatrix(float[,] matrix)
 		=> this = new TransformMatrix(matrix, TransformType.Unknown);
 
@@ -44,10 +62,45 @@ public struct TransformMatrix
 		if (matrix.Length != Size * Size)
 			throw new Exception("2-Dimensional array " + nameof(matrix) + " was not correct size.");
 
-		Matrix = matrix;
+		this.matrix = matrix;
 		TransformType = transformType;
 	}
 
+	/// <summary>
+	/// Converts this <c>TransformMatrix</c> to an OpenGL Matrix4.
+	/// </summary>
+	public Matrix4 ToOpenGLMatrix4()
+	{
+		return new(
+			matrix[0,0], matrix[0,1], matrix[0,2], matrix[0,3],
+			matrix[1,0], matrix[1,1], matrix[1,2], matrix[1,3],
+			matrix[2,0], matrix[2,1], matrix[2,2], matrix[2,3],
+			matrix[3,0], matrix[3,1], matrix[3,2], matrix[3,3]
+		);
+	}
+
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects with the shape's 
+	/// center at the origin, will scale the object by the given values.
+	/// </summary>
+	/// 
+	/// <remarks>
+	/// When a <c>Vertex</c> is multiplied by a <c>TransformMatrix</c> returned by <c>CreateScaleMatrix()</c> it will
+	/// multiply the X, Y, and Z values of that <c>Vertex</c> by the <c>xScale</c>, <c>yScale</c>, and <c>zScale</c> values
+	/// passed into <c>CreateScaleMatrix()</c>.
+	/// </remarks>
+	/// 
+	/// <param name="xScale">
+	/// The scale factor to be applied to the <c>Vertex</c>'s X value.
+	/// </param>
+	/// 
+	/// <param name="yScale">
+	/// The scale factor to be applied to the <c>Vertex</c>'s Y value.
+	/// </param>
+	/// 
+	/// <param name="zScale">
+	/// The scale factor to be applied to the <c>Vertex</c>'s Z value.
+	/// </param>
 	public static TransformMatrix CreateScaleMatrix(float xScale, float yScale, float zScale)
 	{
 		var matrix = new float[,]
@@ -61,6 +114,22 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Scale);
 	}
 
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a <c>Vertex</c>, will move that <c>Vertex</c> a
+	/// distance specified by given values.
+	/// </summary>
+	/// 
+	/// <param name="xTranslation">
+	/// The distance to move along the X axis.
+	/// </param>
+	/// 
+	/// <param name="yTranslation">
+	/// The distance to move along the Y axis.
+	/// </param>
+	/// 
+	/// <param name="zTranslation">
+	/// The distance to move along the Z axis.
+	/// </param>
 	public static TransformMatrix CreateTranslationMatrix(float xTranslation, float yTranslation, float zTranslation)
 	{
 		var matrix = new float[,]
@@ -74,9 +143,30 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Translation);
 	}
 
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a <c>Vertex</c>, will move that <c>Vertex</c> a
+	/// distance specified by given values.
+	/// </summary>
+	/// 
+	/// <param name="translation">
+	/// A <c>Vertex</c> who's X, Y, and Z values will be used as distances to translate any multiplied vertex by on their
+	/// respective axis.
+	/// </param>
 	public static TransformMatrix CreateTranslationMatrix(Vertex translation)
 		=> CreateTranslationMatrix(translation.X, translation.Y, translation.Z);
 
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects, will rotate the shape
+	/// about its center.
+	/// </summary>
+	/// 
+	/// <param name="angle">
+	/// The angle measer to rotate by.
+	/// </param>
+	/// 
+	/// <param name="axis">
+	/// The axis to rotate around.
+	/// </param>
 	public static TransformMatrix CreateRotationMatrix(float angle, Axes axis)
 	{
 		var matrix = new float[Size, Size];
@@ -117,6 +207,26 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Rotation);
 	}
 
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with all of a <c>Scene</c>'s points, will make objects
+	/// appear smaller when farther away and larger when closer, giving the illusion of depth. 
+	/// </summary>
+	/// 
+	/// <param name="fovX">
+	/// The up-down feild of veiw.
+	/// </param>
+	/// 
+	/// <param name="fovY">
+	/// The left-right feild of veiw.
+	/// </param>
+	/// 
+	/// <param name="nearClip">
+	/// The minimum distance at which objects will be drawn.
+	/// </param>
+	/// 
+	/// <param name="farClip">
+	/// The maximum distance at which objects will be drawn.
+	/// </param>
 	public static TransformMatrix CreatePerspectiveProjectionMatrix(float fovX, float fovY, float nearClip, float farClip)
 	{
 		var upperBound = nearClip * Tan(0.5f * fovY);
@@ -145,18 +255,8 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Perspective);
 	}
 
-	public Matrix4 ToOpenGLMatrix4()
-	{
-		return new(
-			Matrix[0,0], Matrix[0,1], Matrix[0,2], Matrix[0,3],
-			Matrix[1,0], Matrix[1,1], Matrix[1,2], Matrix[1,3],
-			Matrix[2,0], Matrix[2,1], Matrix[2,2], Matrix[2,3],
-			Matrix[3,0], Matrix[3,1], Matrix[3,2], Matrix[3,3]
-		);
-	}
-
 	public override int GetHashCode()
-		=> Matrix.GetHashCode();
+		=> matrix.GetHashCode();
 
 	public override bool Equals(object? obj)
 	{
@@ -181,7 +281,7 @@ public struct TransformMatrix
 		for (var aRow = 0; aRow < Size; aRow++)
 			for (var bCollum = 0; bCollum < Size; bCollum++)
 				for (var i = 0; i < Size; i++)
-					matrix[aRow, bCollum] += a.Matrix[aRow, i] * b.Matrix[i, bCollum];
+					matrix[aRow, bCollum] += a.matrix[aRow, i] * b.matrix[i, bCollum];
 
 		if (a.TransformType == b.TransformType)
 			return new TransformMatrix(matrix, a.TransformType);
@@ -193,10 +293,10 @@ public struct TransformMatrix
 	{
 		var vertex = new float[]
 		{
-			(a.Matrix[0, 0] * b.X) + (a.Matrix[0, 1] * b.Y) + (a.Matrix[0, 2] * b.Z) + (a.Matrix[0, 3] * b.W),
-			(a.Matrix[1, 0] * b.X) + (a.Matrix[1, 1] * b.Y) + (a.Matrix[1, 2] * b.Z) + (a.Matrix[1, 3] * b.W),
-			(a.Matrix[2, 0] * b.X) + (a.Matrix[2, 1] * b.Y) + (a.Matrix[2, 2] * b.Z) + (a.Matrix[2, 3] * b.W),
-			(a.Matrix[3, 0] * b.X) + (a.Matrix[3, 1] * b.Y) + (a.Matrix[3, 2] * b.Z) + (a.Matrix[3, 3] * b.W),
+			(a.matrix[0, 0] * b.X) + (a.matrix[0, 1] * b.Y) + (a.matrix[0, 2] * b.Z) + (a.matrix[0, 3] * b.W),
+			(a.matrix[1, 0] * b.X) + (a.matrix[1, 1] * b.Y) + (a.matrix[1, 2] * b.Z) + (a.matrix[1, 3] * b.W),
+			(a.matrix[2, 0] * b.X) + (a.matrix[2, 1] * b.Y) + (a.matrix[2, 2] * b.Z) + (a.matrix[2, 3] * b.W),
+			(a.matrix[3, 0] * b.X) + (a.matrix[3, 1] * b.Y) + (a.matrix[3, 2] * b.Z) + (a.matrix[3, 3] * b.W),
 		};
 
 		return new Vertex(vertex);
@@ -218,7 +318,7 @@ public struct TransformMatrix
 	{
 		for (var row = 0; row < Size; row++)
 			for (var collum = 0; collum < Size; collum++)
-				if (a.Matrix[row, collum] != b.Matrix[row, collum])
+				if (a.matrix[row, collum] != b.matrix[row, collum])
 					return false;
 
 		return true;

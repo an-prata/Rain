@@ -130,10 +130,7 @@ public class Rectangle : ITwoDimensional
 	}
 
 	public double GetDistanceBetween(ISpacial other)
-	{
-		var difference = Location - other.Location;
-		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
-	}
+		=> (Location - other.Location).Maginitude;
 
 	public void Translate(float x, float y, float z)
 		=> Points = (this * TransformMatrix.CreateTranslationMatrix(x, y, z)).Points;
@@ -144,8 +141,11 @@ public class Rectangle : ITwoDimensional
 	public void Scale(float x, float y)
 		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
 
+	public void Scale(float x, float y, float z)
+		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, z)).Points;
+
 	public void Rotate(float angle, Axes axis)
-		=> Rotate(angle, axis, GetCenterVertex());
+		=> Rotate(angle, axis, Location);
 
 	public void Rotate(float angle, Axes axis, RotationDirection direction)
 	{
@@ -157,13 +157,11 @@ public class Rectangle : ITwoDimensional
 
 	public void Rotate(float angle, Axes axis, Vertex vertex)
 	{
-		var center = GetCenterVertex();
-		var distance = vertex - center;
-		var rotationMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+		var transform = TransformMatrix.CreateTranslationMatrix(vertex);
+		transform *= TransformMatrix.CreateRotationMatrix(angle, axis);
+		transform *= TransformMatrix.CreateTranslationMatrix(-vertex);
 
-		Translate(-(center.X + distance.X), -(center.Y + distance.Y), -(center.Z + distance.Z));
-		Points = (this * rotationMatrix).Points;
-		Translate(center.X + distance.X, center.Y + distance.Y, center.Z + distance.Z);
+		Points = (this * transform).Points;
 
 		switch(axis)
 		{
