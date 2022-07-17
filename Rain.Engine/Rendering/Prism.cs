@@ -28,7 +28,7 @@ public class Prism
 		shapeBase.Face.Rotate(-shapeBase.Face.RotationY, Axes.Y);
 		shapeBase.Face.Rotate(-shapeBase.Face.RotationZ, Axes.Z);
 
-		var basePrime = new TexturedFace(shapeBase);
+		shapeBase.CopyTo(out TexturedFace basePrime);
 		basePrime.Face.Translate(0, 0, lengthZ);
 
 		var faces = new TexturedFace[textures.Length + 2];
@@ -40,17 +40,21 @@ public class Prism
 		{
 			var adjacentPoint = point == shapeBase.Face.Points.Length - 1 ? 0 : point + 1;
 
-			var facePoints = new Point[]
-			{
-				shapeBase.Face.Points[point], shapeBase.Face.Points[adjacentPoint],
-				basePrime.Face.Points[point], basePrime.Face.Points[adjacentPoint]
-			};
+			var facePoints = new Point[4];
+			
+			shapeBase.Face.Points[point].CopyTo(out facePoints[0]);
+			facePoints[0].TextureCoordinate = new(0.0f, 0.0f);
 
-			var face = new TexturedFace()
-			{
-				Face = new Rectangle(facePoints),
-				Textures = textures[point].ToArray()
-			};
+			basePrime.Face.Points[point].CopyTo(out facePoints[1]);
+			facePoints[1].TextureCoordinate = new(0.0f, 1.0f);
+			
+			basePrime.Face.Points[adjacentPoint].CopyTo(out facePoints[2]);
+			facePoints[2].TextureCoordinate = new(1.0f, 1.0f);
+
+			shapeBase.Face.Points[adjacentPoint].CopyTo(out facePoints[3]);
+			facePoints[3].TextureCoordinate = new(1.0f, 0.0f);
+
+			var face = new TexturedFace(new Rectangle(facePoints), textures[point].ToArray());
 
 			faces[point + 2] = face;
 		}

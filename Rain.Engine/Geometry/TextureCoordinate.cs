@@ -6,7 +6,7 @@ namespace Rain.Engine.Geometry;
 /// <summary> 
 /// Represents coordinates for texturing an object. 
 /// </summary>
-public class TextureCoordinate
+public struct TextureCoordinate
 {
 	/// <summary> 
 	/// The length of any array outputed by <c>TextureCoordinate.Array</c>. 
@@ -63,7 +63,7 @@ public class TextureCoordinate
 	public TextureCoordinate(float[] coordinateArray)
 	{
 		if (coordinateArray.Length != BufferSize)
-			throw new Exception($"{nameof(coordinateArray)} was not of correct length {BufferSize}");
+			throw new Exception($"{nameof(coordinateArray)} must be of length {BufferSize}");
 		
 		X = coordinateArray[0];
 		Y = coordinateArray[1];

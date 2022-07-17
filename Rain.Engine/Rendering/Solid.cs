@@ -109,45 +109,17 @@ public class Solid : IRenderable, IEquatable<Solid>
 
 	public Vertex GetCenterVertex()
 	{
-		var greatestPointX = Points[0].Vertex.X;
-		var leastPointX = Points[0].Vertex.X;
+		var averageVertex = Points[0].Vertex;
 
-		var greatestPointY = Points[0].Vertex.Y;
-		var leastPointY = Points[0].Vertex.Y;
-
-		var greatestPointZ = Points[0].Vertex.Z;
-		var leastPointZ = Points[0].Vertex.Z;
-
-		for (var point = 0; point < Points.Length; point++)
-		{
-			if (Points[point].Vertex.X > greatestPointX)
-				greatestPointX = Points[point].Vertex.X;
-			else if (Points[point].Vertex.X < leastPointX)
-				leastPointX = Points[point].Vertex.X;
-
-			if (Points[point].Vertex.Y > greatestPointY)
-				greatestPointY = Points[point].Vertex.Y;
-			else if (Points[point].Vertex.Y < leastPointY)
-				leastPointY = Points[point].Vertex.Y;
-
-			if (Points[point].Vertex.Z > greatestPointZ)
-				greatestPointZ = Points[point].Vertex.Z;
-			else if (Points[point].Vertex.Z < leastPointZ)
-				leastPointZ = Points[point].Vertex.Z;
-		}
-
-		var midPointX = (greatestPointX + leastPointX) / 2;
-		var midPointY = (greatestPointY + leastPointY) / 2;
-		var midPointZ = (greatestPointZ + leastPointZ) / 2;
-
-		return new Vertex(midPointX, midPointY, midPointZ);
+		for (var point = 1; point < Points.Length; point++)
+			averageVertex += Points[point].Vertex;
+		
+		averageVertex /= Points.Length;
+		return averageVertex;
 	}
 
 	public double GetDistanceBetween(ISpacial other)
-	{
-		var difference = Location - other.Location;
-		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
-	}
+		=> (Location - other.Location).Maginitude;
 
 	public Array GetBufferableArray(BufferType bufferType)
 	{
@@ -255,11 +227,7 @@ public class Solid : IRenderable, IEquatable<Solid>
 	{
 		var textureFaces = new TexturedFace[] 
 		{
-			new TexturedFace 
-			{ 
-				Face = twoDimensional, 
-				Textures = textures
-			}
+			new TexturedFace(twoDimensional, textures)
 		};
 
 		var options = new SolidOptions 

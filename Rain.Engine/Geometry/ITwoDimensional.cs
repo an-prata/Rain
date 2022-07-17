@@ -56,6 +56,15 @@ public interface ITwoDimensional : ISpacial
 	/// A <c>Vertex</c> positioned at the center of the <c>ITwoDimensional</c>.
 	/// </returns>
 	public Vertex GetCenterVertex();
+
+	/// <summary>
+	/// Copies this <c>ITwoDimensional</c>'s data to another.
+	/// </summary>
+	/// 
+	/// <param name="twoDimensional">
+	/// The <c>ITwoDimensional</c> to copy data to.
+	/// </param>
+	public void CopyTo(out ITwoDimensional twoDimensional);
 	
 	/// <summary>
 	/// Translate the <c>ITwoDimensional</c> through three dimensional space.

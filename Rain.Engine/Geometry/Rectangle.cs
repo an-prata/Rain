@@ -3,6 +3,9 @@
 
 namespace Rain.Engine.Geometry;
 
+/// <summary>
+/// A class for creating and manipulating rectangles.
+/// </summary>
 public class Rectangle : ITwoDimensional
 {
 	private float rotationX = 0;
@@ -11,7 +14,7 @@ public class Rectangle : ITwoDimensional
 
 	private float rotationZ = 0;
 
-	public uint[] Elements => new uint[] { 0, 1, 2, 1, 3, 2 };
+	public uint[] Elements => new uint[] { 0, 1, 2, 0, 2, 3 };
 
 	public Point[] Points { get; private set; }
 
@@ -51,6 +54,13 @@ public class Rectangle : ITwoDimensional
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
+	/// <summary>
+	/// Creates a new <c>Rectangle</c> from an array of <c>Point</c> objects.
+	/// </summary>
+	/// 
+	/// <param name="points">
+	/// An array of <c>Point</c>s representing a rectangle.
+	/// </param>
 	public Rectangle(Point[] points)
 	{
 		if (points.Length != 4)
@@ -62,9 +72,25 @@ public class Rectangle : ITwoDimensional
 		if (points[1].GetDistanceBetween(points[2]) != points[3].GetDistanceBetween(points[0]))
 			throw new Exception($"{nameof(points)} does not make a Rectangle");
 
-		Points = points;
+		Points = new Point[points.Length];
+		points.CopyTo(Points, 0);
 	}
 
+	/// <summary>
+	/// Creates a new <c>Rectangle</c> from a desired location, height, and width.
+	/// </summary>
+	/// 
+	/// <param name="location">
+	/// The location of the <c>Rectangle</c>, this will be positioned at it's center.
+	/// </param>
+	/// 
+	/// <param name="width">
+	/// The <c>Rectangle</c>'s width.
+	/// </param>
+	/// 
+	/// <param name="height">
+	/// The <c>Rectangle</c>'s height.
+	/// </param>
 	public Rectangle(Vertex location, float width, float height)
 	{
 		var halfWidth = width / 2;
@@ -72,13 +98,32 @@ public class Rectangle : ITwoDimensional
 
 		Points = new Point[]
 		{
-			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(0.0f, 0.0f)),
-			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(1.0f, 0.0f)),
-			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
-			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(1.0f, 1.0f))
+			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(1.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(0.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
+			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(1.0f, 1.0f))
 		};
 	}
 
+	/// <summary>
+	/// Creates a new <c>Rectangle</c> from a desired location, height, width, and color.
+	/// </summary>
+	/// 
+	/// <param name="location">
+	/// The location of the <c>Rectangle</c>, this will be positioned at it's center.
+	/// </param>
+	/// 
+	/// <param name="width">
+	/// The <c>Rectangle</c>'s width.
+	/// </param>
+	/// 
+	/// <param name="height">
+	/// The <c>Rectangle</c>'s height.
+	/// </param>
+	/// 
+	/// <param name="color">
+	/// The <c>Rectangle</c>'s color.
+	/// </param>
 	public Rectangle(Vertex location, float width, float height, Color color)
 	{
 		var halfWidth = width / 2;
@@ -86,12 +131,27 @@ public class Rectangle : ITwoDimensional
 
 		Points = new Point[]
 		{
-			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), color, new(0.0f, 0.0f)),
-			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z), color, new(1.0f, 0.0f)),
-			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), color, new(0.0f, 1.0f)),
-			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), color, new(1.0f, 1.0f))
+			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), color, new(1.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z), color, new(0.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), color, new(0.0f, 1.0f)),
+			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), color, new(1.0f, 1.0f))
 		};
 	}
+
+	private Rectangle(Rectangle rectangle)
+	{
+		rotationX = rectangle.rotationX;
+		rotationY = rectangle.rotationY;
+		rotationZ = rectangle.rotationZ;
+
+		Points = new Point[rectangle.Points.Length];
+		
+		for (var point = 0; point < Points.Length; point++)
+			rectangle.Points[point].CopyTo(out Points[point]);
+	}
+
+	public double GetDistanceBetween(ISpacial other)
+		=> (Location - other.Location).Maginitude;
 
 	public Vertex GetCenterVertex()
 	{
@@ -129,8 +189,8 @@ public class Rectangle : ITwoDimensional
 		return new Vertex(midPointX, midPointY, midPointZ);
 	}
 
-	public double GetDistanceBetween(ISpacial other)
-		=> (Location - other.Location).Maginitude;
+	public void CopyTo(out ITwoDimensional twoDimensional)
+		=> twoDimensional = new Rectangle(this);
 
 	public void Translate(float x, float y, float z)
 		=> Points = (this * TransformMatrix.CreateTranslationMatrix(x, y, z)).Points;
@@ -140,9 +200,6 @@ public class Rectangle : ITwoDimensional
 
 	public void Scale(float x, float y)
 		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, 1)).Points;
-
-	public void Scale(float x, float y, float z)
-		=> Points = (this * TransformMatrix.CreateScaleMatrix(x, y, z)).Points;
 
 	public void Rotate(float angle, Axes axis)
 		=> Rotate(angle, axis, Location);

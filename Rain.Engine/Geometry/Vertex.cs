@@ -118,6 +118,9 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// </param>
 	public Vertex(float[] vertexArray)
 	{
+		if (vertexArray.Length != BufferSize)
+			throw new Exception($"{nameof(vertexArray)} must be of length {BufferSize}");
+		
 		X = vertexArray[0];
 		Y = vertexArray[1];
 		Z = vertexArray[2];

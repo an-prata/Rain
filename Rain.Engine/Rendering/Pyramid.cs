@@ -5,7 +5,7 @@ namespace Rain.Engine.Rendering;
 
 public class Pyramid
 {
-	public static IRenderable MakePyramid(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
+	public static Solid MakePyramid(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
 	{
 		if (textures.Length != shapeBase.Face.Sides)
 			throw new Exception($"{nameof(textures)} should be of length equal to {shapeBase.Face.Sides}");
@@ -33,23 +33,24 @@ public class Pyramid
 		faces[0] = shapeBase;
 
 		var translateUp = TransformMatrix.CreateTranslationMatrix(0, 0, lengthZ);
+		var tip = new Point(shapeBase.Face.Location * translateUp);
 
 		for (var point = 0; point < shapeBase.Face.Points.Length; point++)
 		{
-			var adjacentPoint = point == shapeBase.Face.Points.Length ? 0 : point + 1;
+			var adjacentPoint = point == shapeBase.Face.Points.Length - 1 ? 0 : point + 1;
 
-			var facePoints = new Point[]
-			{
-				shapeBase.Face.Points[point], 
-				shapeBase.Face.Points[adjacentPoint],
-				new Point(shapeBase.Face.GetCenterVertex() * translateUp)
-			};
+			var facePoints = new Point[3];
+			
+			shapeBase.Face.Points[point].CopyTo(out facePoints[0]);
+			facePoints[0].TextureCoordinate = new(1.0f, 0.0f);
 
-			var face = new TexturedFace()
-			{
-				Face = new Triangle(facePoints),
-				Textures = textures[point].ToArray()
-			};
+			tip.CopyTo(out facePoints[1]);
+			facePoints[1].TextureCoordinate = new(0.5f, 1.0f);
+			
+			shapeBase.Face.Points[adjacentPoint].CopyTo(out facePoints[2]);
+			facePoints[2].TextureCoordinate = new(0.0f, 0.0f);
+
+			var face = new TexturedFace(new Triangle(facePoints), textures[point].ToArray());
 
 			faces[point + 1] = face;
 		}
