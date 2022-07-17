@@ -3,6 +3,9 @@
 
 namespace Rain.Engine.Geometry;
 
+/// <summary>
+/// A class for creating and manipulating triangles.
+/// </summary>
 public class Triangle : ISpacial, ITwoDimensional
 {
 	private float width;
@@ -66,13 +69,6 @@ public class Triangle : ISpacial, ITwoDimensional
 	{
 		if (points.Length != 3)
 			throw new Exception($"{nameof(points)} is not length 3 (Given length: {points.Length}).");
-
-		var pointSum = Angle.GetAngle(points[0], points[1], points[2]).Degrees;
-		pointSum += Angle.GetAngle(points[1], points[2], points[0]).Degrees;
-		pointSum += Angle.GetAngle(points[2], points[0], points[1]).Degrees;
-		
-		if (pointSum != 180)
-			throw new Exception($"{nameof(points)} does not make a Triangle");
 
 		Points = points;
 		width = (float)points[0].GetDistanceBetween(points[1]);
@@ -139,6 +135,22 @@ public class Triangle : ISpacial, ITwoDimensional
 		this.height = height;
 	}
 
+	private Triangle(Triangle triangle)
+	{
+		width = triangle.width;
+		height = triangle.height;
+
+		rotationX = triangle.rotationX;
+		rotationY = triangle.rotationY;
+		rotationZ = triangle.rotationZ;
+
+		Points = new Point[triangle.Points.Length];
+		triangle.Points.CopyTo(Points, 0);
+	}
+
+	public double GetDistanceBetween(ISpacial other)
+		=> (Location - other.Location).Maginitude;
+
 	public Vertex GetCenterVertex()
 	{
 		var greatestPointX = Points[0].Vertex.X;
@@ -175,11 +187,8 @@ public class Triangle : ISpacial, ITwoDimensional
 		return new Vertex(midPointX, midPointY, midPointZ);
 	}
 
-	public double GetDistanceBetween(ISpacial other)
-	{
-		var difference = Location - other.Location;
-		return Math.Sqrt(Math.Pow(difference.X, 2) + Math.Pow(difference.Y, 2) + Math.Pow(difference.Z, 2));
-	}
+	public void CopyTo(out ITwoDimensional triangle)
+		=> triangle = new Triangle(this);
 
 	public void Translate(float x, float y, float z)
 		=> Points = (this * TransformMatrix.CreateTranslationMatrix(x, y, z)).Points;
