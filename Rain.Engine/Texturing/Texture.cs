@@ -70,12 +70,12 @@ public class Texture : IDisposable
 	/// <summary>
 	/// The image's width.
 	/// </summary>
-	public int Width { get; }
+	public int Width { get; private set; }
 
 	/// <summary>
 	/// The images height.
 	/// </summary>
-	public int Height { get; }
+	public int Height { get; private set; }
 
 	/// <summary>
 	/// The opacity the <c>Texture</c> will be rendered at.
@@ -254,6 +254,26 @@ public class Texture : IDisposable
 		this.options = options;
 	}
 
+	private Texture(Texture texture)
+	{
+		options = texture.options;
+		Handle = texture.Handle;
+		Unit = texture.Unit;
+
+		Width = texture.Width;
+		Height = texture.Height;
+		Opacity = texture.Opacity;
+
+		IsEmpty = texture.IsEmpty;
+		IsUploaded = texture.IsUploaded;
+
+		// Allocates new memory so that changed made to the new texture dont affect the previous.
+		textureMemoryOwner = Configuration.Default.MemoryAllocator.Allocate<Rgba32>(Width * Height);
+		textureMemory = textureMemoryOwner.Memory;
+
+		texture.textureMemory.CopyTo(textureMemory);
+	}
+
 	/// <summary>
 	/// Uploads this <c>Texture</c> to the GPU.
 	/// </summary>
@@ -336,6 +356,16 @@ public class Texture : IDisposable
 
 		Handle = GL.GenTexture();
 	}
+
+	/// <summary>
+	/// Copies this <c>Texture</c>'s data to another.
+	/// </summary>
+	/// 
+	/// <param name="texture">
+	/// The <c>Texture</c> to copy data to.
+	/// </param>
+	public void CopyTo(out Texture texture)
+		=> texture = new(this);
 
 	public override int GetHashCode()
 		=> textureMemory.GetHashCode();
