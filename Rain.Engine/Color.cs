@@ -169,6 +169,24 @@ public struct Color
 		this.a = (float)a / byte.MaxValue;
 	}
 
+	/// <summary>
+	/// Creates a new <c>Color</c> from an array of floats.
+	/// </summary>
+	/// 
+	/// <param name="colorArray">
+	/// An array with elements representing components in order Red, Green, Blue, then Alpha.
+	/// </param>
+	public Color(float[] colorArray)
+	{
+		if (colorArray.Length != BufferSize)
+			throw new Exception($"{nameof(colorArray)} must be of length {BufferSize}");
+		
+		r = Math.Clamp(colorArray[0], 0.0f, 1.0f);
+		g = Math.Clamp(colorArray[1], 0.0f, 1.0f);
+		b = Math.Clamp(colorArray[2], 0.0f, 1.0f);
+		a = Math.Clamp(colorArray[3], 0.0f, 1.0f);
+	}
+
 	/// <summary> 
 	/// Creates a new OpenTK Color4 instance from an already existing Color instance. 
 	/// </summary>
