@@ -22,7 +22,9 @@ namespace Rain.Engine;
 
 public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 {
-	/// <summary> The currently active <c>Scene</c> object for the <c>GameWindow</c>. </summary>
+	/// <summary> 
+	/// The currently active <c>Scene</c> object for the <c>GameWindow</c>. 
+	/// </summary>
 	public Scene ActiveScene { get; set; }
 
 	private PerspectiveProjection perspective;
@@ -95,6 +97,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 		// Enable the use of a Texture's alpha component.
 		GL.Enable(EnableCap.Blend);
+		GL.Enable(EnableCap.DepthTest);
 		GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 	}
 
@@ -107,19 +110,20 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnUpdateFrame(FrameEventArgs args)
 	{
+		foreach (var model in ActiveScene.Models)
+		{
+			model.Rotate((float)(6.0f * args.Time), Axes.X);
+			model.Rotate((float)(6.0f * args.Time), Axes.Y);
+			//model.Translate(0, 0, (float)(-0.1f * args.Time));
+		}
+		
 		base.OnUpdateFrame(args);
 	}
 
 	protected override void OnRenderFrame(FrameEventArgs args)
 	{
-		GL.Clear(ClearBufferMask.ColorBufferBit); // Apply clear color to render.
+		GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit); // Apply clear color to render.
 		shaderProgram.Use();
-
-		foreach (var model in ActiveScene.Models)
-		{
-			model.Rotate((float)(2.0f * args.Time), Axes.X);
-			//model.Translate(0, 0, (float)(-0.1f * args.Time));
-		}
 
 		ActiveScene.Draw(bufferGroup, shaderProgram, perspective);
 		
