@@ -219,9 +219,6 @@ public class Scene : IDisposable
 					 texture < Texture.MaximumBoundTextures; texture++)
 				{
 					Models[model].Faces[face].Textures[texture].Unbind();
-
-					if (texture != 0)
-						program.GetUniformByName($"opacity{texture}").SetToFloat(0.0f);
 				}
 			}			
 		}
