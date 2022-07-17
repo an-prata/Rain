@@ -9,7 +9,7 @@ namespace Rain.Engine.Texturing;
 /// <summary>
 /// A two dimensional face with a set of one or more <c>Textures</c>.
 /// </summary>
-public struct TexturedFace : IBufferable
+public class TexturedFace : IBufferable
 {
 	/// <summary>
 	/// The Face that will be textured.
@@ -25,10 +25,21 @@ public struct TexturedFace : IBufferable
 	/// </remarks>
 	public Texture[] Textures { get; set; }
 
-	public TexturedFace(TexturedFace face)
+	public TexturedFace(ITwoDimensional face, Texture[] textures)
 	{
-		Face = face.Face;
-		Textures = face.Textures;
+		Face = face;
+		Textures = textures;
+	}
+
+	private TexturedFace(TexturedFace texturedFace)
+	{
+		Textures = new Texture[texturedFace.Textures.Length];
+
+		for (var texture = 0; texture < Textures.Length; texture++)
+			texturedFace.Textures[texture].CopyTo(out Textures[texture]);
+
+		texturedFace.Face.CopyTo(out var face);
+		Face = face;
 	}
 
 	public int GetBufferSize(BufferType bufferType)
@@ -60,4 +71,14 @@ public struct TexturedFace : IBufferable
 			return Face.Elements;
 		}
 	}
+
+	/// <summary>
+	/// Copies data from this <c>TexturedFace</c> to another.
+	/// </summary>
+	/// 
+	/// <param name="face">
+	/// The <c>TexturedFace</c> to copy data to.
+	/// </param>
+	public void CopyTo(out TexturedFace face)
+		=> face = new TexturedFace(this);
 }

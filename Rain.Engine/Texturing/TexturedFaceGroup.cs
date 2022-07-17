@@ -12,11 +12,7 @@ public struct TexturedFaceGroup
 {
 	public TexturedFace this[int index]
 	{
-		get => new()
-		{ 
-			Face = Faces[index], 
-			Textures = Textures[index] 
-		};
+		get => new(Faces[index], Textures[index]);
 	}
 
 	public int Length { get => Faces.Length; }
