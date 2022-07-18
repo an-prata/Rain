@@ -190,7 +190,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 		=> new((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X), 1);
 
 	public override int GetHashCode()
-		=> Array.GetHashCode();
+		=> (X, Y, Z, W).GetHashCode();
 
 	public bool Equals(Vertex vertex)
 	{
