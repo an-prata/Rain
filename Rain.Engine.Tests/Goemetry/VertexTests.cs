@@ -216,6 +216,7 @@ public class VertexTests
 		var vertex1 = new Vertex(x1, y1, z1);
 
 		Assert.True(vertex0 != vertex1);
+		Assert.True(!vertex0.Equals(vertex1));
 	}
 
 	[Theory]
