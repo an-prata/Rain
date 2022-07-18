@@ -109,14 +109,136 @@ public class VertexTests
 	}
 
 	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f)]
+	public void NegativeTest(float x, float y, float z)
+	{
+		var vertex = new Vertex(x, y, z);
+		var expected = new Vertex(0.0f, 0.0f, 0.0f) - vertex;
+
+		Assert.Equal(expected, -vertex);
+	}
+
+	[Theory]
+	[InlineData(6.0f, 3.0f, 0.0f, 3.0, 2.0f, 1.0f, 4.5f, 2.5f, 0.5f)]
+	[InlineData(-2.0f, 8.0f, 1.0f, 2.0, -1.0f, 4.0f, 0.0f, 3.5f, 2.5f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0, 0.0f, 0.0f, 3.5f, 0.0f, 0.0f)]
+	public void MidPointTest(float x0, float y0, float z0, 
+							 float x1, float y1, float z1, 
+							 float eX, float eY, float eZ)
+	{
+		var vertex0 = new Vertex(x0, y0, z0);
+		var vertex1 = new Vertex(x1, y1, z1);
+		var expectedVertex = new Vertex(eX, eY, eZ);
+
+		Assert.Equal(vertex0.GetMidPoint(vertex1), expectedVertex);
+	}
+
+	[Theory]
+	[InlineData(6.0f, 3.0f, 0.0f, 3.0, 2.0f, 1.0f, 9.0f, 5.0f, 1.0f)]
+	[InlineData(-2.0f, 8.0f, 1.0f, 2.0, -1.0f, 4.0f, 0.0f, 7.0f, 5.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0, 0.0f, 0.0f, 7.0f, 0.0f, 0.0f)]
+	public void VectorAdditionTest(float x0, float y0, float z0, 
+								   float x1, float y1, float z1, 
+								   float eX, float eY, float eZ)
+	{
+		var vertex0 = new Vertex(x0, y0, z0);
+		var vertex1 = new Vertex(x1, y1, z1);
+		var expectedVertex = new Vertex(eX, eY, eZ);
+
+		Assert.Equal(vertex0 + vertex1, expectedVertex);
+	}
+
+	[Theory]
+	[InlineData(6.0f, 3.0f, 0.0f, 3.0, 2.0f, 1.0f, 3.0f, 1.0f, -1.0f)]
+	[InlineData(-2.0f, 8.0f, 1.0f, 2.0, -1.0f, 4.0f, -4.0f, 9.0f, -3.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0, 0.0f, 0.0f, -7.0f, 0.0f, 0.0f)]
+	public void VectorSubtractionTest(float x0, float y0, float z0, 
+									  float x1, float y1, float z1, 
+									  float eX, float eY, float eZ)
+	{
+		var vertex0 = new Vertex(x0, y0, z0);
+		var vertex1 = new Vertex(x1, y1, z1);
+		var expectedVertex = new Vertex(eX, eY, eZ);
+
+		Assert.Equal(vertex0 - vertex1, expectedVertex);
+	}
+
+	[Theory]
+	[InlineData(3.0f, 4.0f, 5.0f, 7.0, 8.0f, 9.0f, -4.0f, 8.0f, -4.0f)]
+	public void VectorCrossProductMultiplicationTest(float x0, float y0, float z0, 
+													 float x1, float y1, float z1, 
+													 float eX, float eY, float eZ)
+	{
+		var vertex0 = new Vertex(x0, y0, z0);
+		var vertex1 = new Vertex(x1, y1, z1);
+		var expectedVertex = new Vertex(eX, eY, eZ);
+
+		Assert.Equal(vertex0 * vertex1, expectedVertex);
+		Assert.Equal(Vertex.CrossProduct(vertex0, vertex1), expectedVertex);
+	}
+
+	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f, 9.0f, 3.0f, 1.0f)]
+	[InlineData(9.0f, -3.0f, 1.0f, 9.0f, -3.0f, 1.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f, 9.0f, -3.0f, 1.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f, -2.0f, 3.0f, 1.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 9.0f, -3.0f, 0.0f)]
+	public void GetHashCodeTest(float x0, float y0, float z0, float x1, float y1, float z1)
+	{
+		var vertex0 = new Vertex(x0, y0, z0);
+		var vertex1 = new Vertex(x1, y1, z1);
+
+		Assert.Equal(vertex0 == vertex1, vertex0.GetHashCode() == vertex1.GetHashCode());
+	}
+
+	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f)]
+	public void EqualsTest(float x, float y, float z)
+	{
+		var vertex0 = new Vertex(x, y, z);
+		var vertex1 = new Vertex(x, y, z);
+
+		Assert.True(vertex0.Equals(vertex1));
+		Assert.True(vertex0 == vertex1);
+	}
+
+	[Theory]
 	[InlineData(2.0f, 3.0f, 1.0f, 9.0f, 3.0f, 1.0f)]
 	[InlineData(-2.0f, 3.0f, 1.0f, 9.0f, -3.0f, 1.0f)]
 	[InlineData(0.0f, 0.0f, 0.0f, 9.0f, -3.0f, 0.0f)]
-	public void NonEqualityTest(float x1, float y1, float z1, float x2, float y2, float z2)
+	public void NonEqualTest(float x0, float y0, float z0, float x1, float y1, float z1)
 	{
-		var vertex0 = new Vertex(x1, y1, z1);
-		var vertex1 = new Vertex(x2, y2, z2);
+		var vertex0 = new Vertex(x0, y0, z0);
+		var vertex1 = new Vertex(x1, y1, z1);
 
-		Assert.NotEqual(vertex0, vertex1);
+		Assert.True(vertex0 != vertex1);
+		Assert.True(!vertex0.Equals(vertex1));
+	}
+
+	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f, 9.0f, 3.0f, 1.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f, 9.0f, -3.0f, 1.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 9.0f, -3.0f, 0.0f)]
+	public void NonEqualToOtherTypeTest(float x0, float y0, float z0, float x1, float y1, float z1)
+	{
+		var vertex = new Vertex(x0, y0, z0);
+		var vector = new Vector3(x1, y1, z1);
+
+		Assert.False(vertex.Equals(vector));
+	}
+
+	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f)]
+	public void NotEqualToNullTest(float x, float y, float z)
+	{
+		var vertex = new Vertex(x, y, z);
+
+		Assert.False(vertex.Equals(null));
 	}
 }
