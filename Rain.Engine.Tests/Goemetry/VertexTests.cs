@@ -54,6 +54,58 @@ public class VertexTests
 	}
 
 	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f, 3.0, 5.0f, 6.0f, 4.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f, -2.0, -4.0f, 1.0f, -1.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0, 7.0f, 7.0f, 7.0f)]
+	public void ScalaarAdditionTest(float x, float y, float z, double scalaar, float eX, float eY, float eZ)
+	{
+		var vertex = new Vertex(x, y, z) + scalaar;
+		var vertexSingle = new Vertex(x, y, z) + (float)scalaar;
+
+		Assert.Equal(vertex, new Vertex(eX, eY, eZ));
+		Assert.Equal(vertex, vertexSingle);
+	}
+
+	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f, 3.0, -1.0f, 0.0f, -2.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f, -2.0, 0.0f, 5.0f, 3.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0, -7.0f, -7.0f, -7.0f)]
+	public void ScalaarSubtractionTest(float x, float y, float z, double scalaar, float eX, float eY, float eZ)
+	{
+		var vertex = new Vertex(x, y, z) - scalaar;
+		var vertexSingle = new Vertex(x, y, z) - (float)scalaar;
+
+		Assert.Equal(vertex, new Vertex(eX, eY, eZ));
+		Assert.Equal(vertex, vertexSingle);
+	}
+
+	[Theory]
+	[InlineData(2.0f, 3.0f, 1.0f, 3.0, 6.0f, 9.0f, 3.0f)]
+	[InlineData(-2.0f, 3.0f, 1.0f, -2.0, 4.0f, -6.0f, -2.0f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0, 0.0f, 0.0f, 0.0f)]
+	public void ScalaarMultiplicationTest(float x, float y, float z, double scalaar, float eX, float eY, float eZ)
+	{
+		var vertex = new Vertex(x, y, z) * scalaar;
+		var vertexSingle = new Vertex(x, y, z) * (float)scalaar;
+
+		Assert.Equal(vertex, new Vertex(eX, eY, eZ));
+		Assert.Equal(vertex, vertexSingle);
+	}
+
+	[Theory]
+	[InlineData(6.0f, 3.0f, 0.0f, 3.0, 2.0f, 1.0f, 0.0f)]
+	[InlineData(-2.0f, 8.0f, 1.0f, 2.0, -1.0f, 4.0f, 0.5f)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0, 0.0f, 0.0f, 0.0f)]
+	public void ScalaarDivisionTest(float x, float y, float z, double scalaar, float eX, float eY, float eZ)
+	{
+		var vertex = new Vertex(x, y, z) / scalaar;
+		var vertexSingle = new Vertex(x, y, z) / (float)scalaar;
+
+		Assert.Equal(vertex, new Vertex(eX, eY, eZ));
+		Assert.Equal(vertex, vertexSingle);
+	}
+
+	[Theory]
 	[InlineData(2.0f, 3.0f, 1.0f, 9.0f, 3.0f, 1.0f)]
 	[InlineData(-2.0f, 3.0f, 1.0f, 9.0f, -3.0f, 1.0f)]
 	[InlineData(0.0f, 0.0f, 0.0f, 9.0f, -3.0f, 0.0f)]
