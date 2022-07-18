@@ -6,23 +6,23 @@ namespace Rain.Engine.Tests.Geometry;
 public class AngleTests
 {
 	[Theory]
-	[InlineData(0.0f,	-2.0f,	0.0f,
-				7.0f,	0.0f,	0.0f,
-				0.0f,	0.0f,	0.0f,
-				90.0
-	)]
-	[InlineData(0.0f,	0.0f,	0.0f,
-				7.0f,	0.0f,	3.0f,
-				11.0f,	-3.0f,	0.0f,
-				37.1368973146497
-	)]
+	[InlineData(0.0f, -2.0f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 90.0)]
+	[InlineData(0.0f, 0.0f, 0.0f, 7.0f, 0.0f, 3.0f, 11.0f, -3.0f, 0.0f, 37.1368973146497)]
 	public void GetAngleTest(float aX, float aY, float aZ,
 							 float bX, float bY, float bZ,
 							 float vX, float vY, float vZ,
 							 double expectedAngle)
 	{
-		var angle = Angle.GetAngle(new Vertex(vX, vY, vZ), new Vertex(aX, aY, aZ), new Vertex(bX, bY, bZ));
-		Assert.True(angle.Degrees == expectedAngle);
+		var vertex = new Vertex(vX, vY, vZ);
+		var lineA = new Vertex(aX, aY, aZ);
+		var lineB = new Vertex(bX, bY, bZ);
+
+		var vertexPoint = new Vertex(vX, vY, vZ);
+		var lineAPoint = new Vertex(aX, aY, aZ);
+		var lineBPoint = new Vertex(bX, bY, bZ);
+
+		Assert.Equal(Angle.GetAngle(vertex, lineA, lineB).Degrees, expectedAngle);
+		Assert.Equal(Angle.GetAngle(vertexPoint, lineAPoint, lineBPoint).Degrees, expectedAngle);
 	}
 
 	[Theory]
@@ -32,9 +32,20 @@ public class AngleTests
 	[InlineData(90.0)]
 	[InlineData(180.0)]
 	[InlineData(273.22)]
-	public void RadianAndDegreeConversionTest(double degrees)
+	public void DegreeSetterTest(double degrees)
 	{
-		var radians = Angle.DegreesToRadians(degrees);
-		Assert.True(Angle.RadiansToDegrees(radians) == degrees);
+		var angle = new Angle { Degrees = degrees };
+
+		Assert.Equal(angle.Degrees, degrees);
+	}
+
+	[Theory]
+	[InlineData(0.0, 0.0)]
+	[InlineData(180.0, Math.PI)]
+	[InlineData(90.0, Math.PI / 2)]
+	[InlineData(45.0, Math.PI / 4)]
+	public void RadianAndDegreeConversionEqualityTest(double degrees, double radians)
+	{
+		Assert.Equal(Angle.RadiansToDegrees(radians), degrees);
 	}
 }
