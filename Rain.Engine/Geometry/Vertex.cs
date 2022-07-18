@@ -106,7 +106,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	}
 
 	/// <summary> 
-	/// Creates a new vertex from an array fo floats. 
+	/// Creates a new vertex from an array of floats. 
 	/// </summary>
 	/// 
 	/// <remarks> 
@@ -119,7 +119,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	public Vertex(float[] vertexArray)
 	{
 		if (vertexArray.Length != BufferSize)
-			throw new Exception($"{nameof(vertexArray)} must be of length {BufferSize}");
+			throw new ArgumentException($"{nameof(vertexArray)} must be of length {BufferSize}");
 		
 		X = vertexArray[0];
 		Y = vertexArray[1];
@@ -158,7 +158,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// Gets a <c>Vertex</c> directly between this and another.
 	/// </summary>
 	public Vertex GetMidPoint(Vertex vertex)
-		=> new((X + vertex.X) / 2, (Y + vertex.Y) / 2, (Y + vertex.Y) / 2);
+		=> new((X + vertex.X) / 2, (Y + vertex.Y) / 2, (Z + vertex.Z) / 2);
 
 	/// <summary>
 	/// Calculates the product of multiplication as if the two <c>Vertex</c> objects were a column and row vector.
