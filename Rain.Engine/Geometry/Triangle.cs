@@ -54,8 +54,8 @@ public class Triangle : ISpacial, ITwoDimensional
 
 	public float RotationZ 
 	{ 
-		get => rotationZ; 
-		set => Rotate(value / rotationZ, Axes.Z); 
+		get => rotationZ;
+		set => Rotate(value / rotationZ, Axes.Z);
 	}
 
 	/// <summary>

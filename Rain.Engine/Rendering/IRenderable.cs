@@ -9,5 +9,5 @@ namespace Rain.Engine.Rendering;
 
 public interface IRenderable : IBufferable, ITransformable, IModel 
 { 
-	public TexturedFaceGroup Faces { get; }
+	TexturedFaceGroup Faces { get; }
 }

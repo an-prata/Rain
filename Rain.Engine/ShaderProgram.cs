@@ -53,7 +53,8 @@ public class ShaderProgram : IDisposable
 	/// <returns>
 	/// The OpenGL Vertex Attribute's handle.
 	/// </returns>
-	public int GetAttributeHandleByName(string attributeName) => GL.GetAttribLocation(Handle, attributeName);
+	public int GetAttributeHandleByName(string attributeName) 
+		=> GL.GetAttribLocation(Handle, attributeName);
 
 	/// <summary>
 	/// Gets a specific GLSL/OpenGL uniform by name.

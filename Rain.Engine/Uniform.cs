@@ -90,7 +90,5 @@ public class Uniform
 	/// The <c>PerspectiveProjection</c> to use.
 	/// </param>
 	public void SetToPerspectiveProjection(PerspectiveProjection projection)
-	{
-		GL.UniformMatrix4(Handle, true, ref projection.OpenGLMatrix);
-	}
+		=> GL.UniformMatrix4(Handle, true, ref projection.OpenGLMatrix);
 }
