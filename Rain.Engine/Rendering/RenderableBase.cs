@@ -7,7 +7,10 @@ using Rain.Engine.Texturing;
 
 namespace Rain.Engine.Rendering;
 
-public class Solid : IRenderable, IEquatable<Solid>
+/// <summary>
+/// The base class to all three dimensional rednerable objects.
+/// </summary>
+public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 {
 	private float lengthX;
 
@@ -21,7 +24,10 @@ public class Solid : IRenderable, IEquatable<Solid>
 
 	private float rotationZ = 0;
 
-	public TexturedFaceGroup Faces { get; private set; }
+	/// <summary>
+	/// The <c>TexturedFace</c> objects this object is composed of.
+	/// </summary>
+	public abstract TexturedFaceGroup Faces { get; }
 
 	public uint[] Elements => (uint[])GetBufferableArray(BufferType.ElementBuffer);
 
@@ -94,19 +100,6 @@ public class Solid : IRenderable, IEquatable<Solid>
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
-	public Solid(TexturedFaceGroup faces, SolidOptions options)
-	{
-		lengthX = options.LengthX;
-		lengthY = options.LengthY;
-		lengthZ = options.LengthZ;
-
-		rotationX = options.RotationX;
-		rotationY = options.RotationY;
-		rotationZ = options.RotationZ;
-
-		Faces = faces;
-	}
-
 	public Vertex GetCenterVertex()
 	{
 		var averageVertex = Points[0].Vertex;
@@ -174,10 +167,23 @@ public class Solid : IRenderable, IEquatable<Solid>
 
 	public void Scale(float x = 1, float y = 1, float z = 1)
 	{
-		Points = (this * TransformMatrix.CreateScaleMatrix(x, y, z)).Points;
+		var transform = TransformMatrix.CreateScaleMatrix(x, y, z);
+
+		transform *= TransformMatrix.CreateRotationMatrix(-rotationX, Axes.X);
+		transform *= TransformMatrix.CreateRotationMatrix(-rotationY, Axes.Y);
+		transform *= TransformMatrix.CreateRotationMatrix(-rotationZ, Axes.Z);
+
+		Points = (this * transform).Points;
+
 		lengthX *= x;
 		lengthY *= y;
 		lengthZ *= z;
+
+		transform = TransformMatrix.CreateRotationMatrix(rotationX, Axes.X) 
+				  * TransformMatrix.CreateRotationMatrix(rotationY, Axes.Y) 
+				  * TransformMatrix.CreateRotationMatrix(rotationZ, Axes.Z);
+
+		Points = (this * transform).Points;
 	}
 
 	public void Rotate(float angle, Axes axis)
@@ -223,30 +229,10 @@ public class Solid : IRenderable, IEquatable<Solid>
 			Rotate(-angle, axis, vertex);
 	}
 
-	public static Solid SolidFromFace(ITwoDimensional twoDimensional, Texture[] textures)
-	{
-		var textureFaces = new TexturedFace[] 
-		{
-			new TexturedFace(twoDimensional, textures)
-		};
-
-		var options = new SolidOptions 
-		{
-			LengthX = twoDimensional.Width,
-			LengthY = twoDimensional.Height,
-			LengthZ = 0,
-			RotationX = twoDimensional.RotationX,
-			RotationY = twoDimensional.RotationY,
-			RotationZ = twoDimensional.RotationZ
-		};
-
-		return new(new(textureFaces), options);
-	}
-
 	public override int GetHashCode()
 		=> GetBufferableArray(BufferType.VertexBuffer).GetHashCode();
 
-	public bool Equals(Solid? other)
+	public bool Equals(RenderableBase? other)
 	{
 		if (other is null)
 			return false;
@@ -275,9 +261,9 @@ public class Solid : IRenderable, IEquatable<Solid>
         return Equals(obj);
 	}
 
-	public static Solid operator *(Solid a, TransformMatrix b) => b * a;
+	public static RenderableBase operator *(RenderableBase a, TransformMatrix b) => b * a;
 
-	public static Solid operator *(TransformMatrix a, Solid b)
+	public static RenderableBase operator *(TransformMatrix a, RenderableBase b)
 	{
 		for (var i = 0; i < b.Points.Length; i++)
 			b.Points[i].Vertex *= a;
@@ -285,7 +271,7 @@ public class Solid : IRenderable, IEquatable<Solid>
 		return b;
 	}
 
-	public static bool operator ==(Solid a, Solid b) => a.Equals(b);
+	public static bool operator ==(RenderableBase a, RenderableBase b) => a.Equals(b);
 
-	public static bool operator !=(Solid a, Solid b) => !a.Equals(b);
+	public static bool operator !=(RenderableBase a, RenderableBase b) => !a.Equals(b);
 }

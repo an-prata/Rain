@@ -6,22 +6,29 @@ using Rain.Engine.Texturing;
 
 namespace Rain.Engine.Rendering;
 
-public class Prism
+public class Prism : RenderableBase
 {
-	public static IRenderable MakePrism(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
+	public override TexturedFaceGroup Faces { get; }
+
+	/// <summary>
+	/// Creates a new <c>Prism</c> from a base, height, and <c>Texture</c>s for each new face.
+	/// </summary>
+	/// 
+	/// <param name="shapeBase">
+	/// The base of the <c>Prism</c>.
+	/// </param>
+	/// 
+	/// <param name="textures">
+	/// <c>Texture</c>s to use on ecah newly created face.
+	/// </param>
+	/// 
+	/// <param name="lengthZ">
+	/// The length along the Z axis for this <c>Prism</c>.
+	/// </param>
+	public Prism(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
 	{
 		if (textures.Length != shapeBase.Face.Sides)
 			throw new Exception($"{nameof(textures)} should be of length equal to {shapeBase.Face.Sides}");
-		
-		var options = new SolidOptions()
-		{
-			LengthX = shapeBase.Face.Width,
-			LengthY = shapeBase.Face.Height,
-			LengthZ = lengthZ,
-			RotationX = 0,
-			RotationY = 0,
-			RotationZ = 0
-		};
 
 		var rotateBackX = shapeBase.Face.RotationX;
 		var rotateBackY = shapeBase.Face.RotationY;
@@ -62,12 +69,10 @@ public class Prism
 			faces[point + 2] = face;
 		}
 
-		var solid = new Solid(new(faces), options);
+		Faces = new(faces);
 
-		solid.Rotate(rotateBackX, Axes.X);
-		solid.Rotate(rotateBackY, Axes.Y);
-		solid.Rotate(rotateBackZ, Axes.Z);
-
-		return solid;
+		Rotate(rotateBackX, Axes.X);
+		Rotate(rotateBackY, Axes.Y);
+		Rotate(rotateBackZ, Axes.Z);
 	}
 }
