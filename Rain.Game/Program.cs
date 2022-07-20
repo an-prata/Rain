@@ -25,7 +25,7 @@ class Program
 			new(textures)
 		};
 
-		var cube = Prism.MakePrism(texturedBase, cubeTextures, 15.0f);
+		var cube = new Prism(texturedBase, cubeTextures, 15.0f);
 		var models = new IRenderable[] { cube };
 		var scene = new Scene(models);
 
