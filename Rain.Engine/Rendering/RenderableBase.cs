@@ -12,17 +12,17 @@ namespace Rain.Engine.Rendering;
 /// </summary>
 public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 {
-	private float lengthX;
+	private float lengthX = 1.0f;
 
-	private float lengthY;
+	private float lengthY = 1.0f;
 
-	private float lengthZ;
+	private float lengthZ = 1.0f;
 
-	private float rotationX = 0;
+	private float rotationX = 0.0f;
 
-	private float rotationY = 0;
+	private float rotationY = 0.0f;
 
-	private float rotationZ = 0;
+	private float rotationZ = 0.0f;
 
 	/// <summary>
 	/// The <c>TexturedFace</c> objects this object is composed of.
@@ -100,6 +100,17 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
+	public RenderableBase(float lengthX, float lengthY, float lengthZ, float rotationX, float rotationY, float rotationZ)
+	{
+		this.lengthX = lengthX;
+		this.lengthY = lengthY;
+		this.lengthZ = lengthZ;
+
+		this.rotationX = rotationX;
+		this.rotationY = rotationY;
+		this.rotationZ = rotationZ;
+	}
+
 	public Vertex GetCenterVertex()
 	{
 		var averageVertex = Points[0].Vertex;
@@ -167,23 +178,25 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 	public void Scale(float x = 1, float y = 1, float z = 1)
 	{
-		var transform = TransformMatrix.CreateScaleMatrix(x, y, z);
+		var transform = TransformMatrix.CreateTranslationMatrix(Location);
 
 		transform *= TransformMatrix.CreateRotationMatrix(-rotationX, Axes.X);
 		transform *= TransformMatrix.CreateRotationMatrix(-rotationY, Axes.Y);
 		transform *= TransformMatrix.CreateRotationMatrix(-rotationZ, Axes.Z);
+
+		transform *= TransformMatrix.CreateScaleMatrix(x, y, z);
+
+		transform *= TransformMatrix.CreateRotationMatrix(rotationX, Axes.X);
+		transform *= TransformMatrix.CreateRotationMatrix(rotationY, Axes.Y);
+		transform *= TransformMatrix.CreateRotationMatrix(rotationZ, Axes.Z);
+		
+		transform *= TransformMatrix.CreateTranslationMatrix(-Location);
 
 		Points = (this * transform).Points;
 
 		lengthX *= x;
 		lengthY *= y;
 		lengthZ *= z;
-
-		transform = TransformMatrix.CreateRotationMatrix(rotationX, Axes.X) 
-				  * TransformMatrix.CreateRotationMatrix(rotationY, Axes.Y) 
-				  * TransformMatrix.CreateRotationMatrix(rotationZ, Axes.Z);
-
-		Points = (this * transform).Points;
 	}
 
 	public void Rotate(float angle, Axes axis)
