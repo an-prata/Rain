@@ -25,7 +25,8 @@ public class Pyramid : RenderableBase
 	/// <param name="lengthZ">
 	/// The length along the Z axis for this <c>Pyramid</c>.
 	/// </param>
-	public Pyramid(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
+	public Pyramid(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ) :
+		base(shapeBase.Face.Width, shapeBase.Face.Height, lengthZ, shapeBase.Face.RotationX, shapeBase.Face.RotationY, shapeBase.Face.RotationZ)
 	{
 		if (textures.Length != shapeBase.Face.Sides)
 			throw new Exception($"{nameof(textures)} should be of length equal to {shapeBase.Face.Sides}");
