@@ -12,7 +12,7 @@ class Program
 {
 	static void Main()
 	{
-		var cubeBase = new Rectangle(new(0.5f, 0.5f, -30.0f), 15.0f, 15.0f, new(203, 178, 238));
+		var cubeBase = new Rectangle(new(0.5f, 0.5f, -30.0f), 10.0f, 10.0f, new(203, 178, 238));
 		var textures = new Texture[] { new("interesting.bmp", 0.3f) };
 
 		var texturedBase = new TexturedFace(cubeBase, new Texture[] { new("interesting.bmp", 0.3f) } );
@@ -25,7 +25,8 @@ class Program
 			new(textures)
 		};
 
-		var cube = new Prism(texturedBase, cubeTextures, 15.0f);
+		var cube = new Prism(texturedBase, cubeTextures, 10.0f);
+		cube.LengthZ = 30.0f;
 		var models = new IRenderable[] { cube };
 		var scene = new Scene(models);
 
