@@ -25,7 +25,8 @@ public class Pyramid : RenderableBase
 	/// <param name="lengthZ">
 	/// The length along the Z axis for this <c>Pyramid</c>.
 	/// </param>
-	public Pyramid(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ)
+	public Pyramid(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ) :
+		base(shapeBase.Face.Width, shapeBase.Face.Height, lengthZ, shapeBase.Face.RotationX, shapeBase.Face.RotationY, shapeBase.Face.RotationZ)
 	{
 		if (textures.Length != shapeBase.Face.Sides)
 			throw new Exception($"{nameof(textures)} should be of length equal to {shapeBase.Face.Sides}");
@@ -48,7 +49,6 @@ public class Pyramid : RenderableBase
 		for (var point = 0; point < shapeBase.Face.Points.Length; point++)
 		{
 			var adjacentPoint = point == shapeBase.Face.Points.Length - 1 ? 0 : point + 1;
-
 			var facePoints = new Point[3];
 			
 			shapeBase.Face.Points[point].CopyTo(out facePoints[0]);
@@ -65,10 +65,13 @@ public class Pyramid : RenderableBase
 			faces[point + 1] = face;
 		}
 
-		Faces = new(faces);
+		foreach (var face in faces)
+		{
+			face.Face.Rotate(rotateBackX, Axes.X, shapeBase.Face.Location);
+			face.Face.Rotate(rotateBackY, Axes.Y, shapeBase.Face.Location);
+			face.Face.Rotate(rotateBackZ, Axes.Z, shapeBase.Face.Location);
+		}
 
-		Rotate(rotateBackX, Axes.X);
-		Rotate(rotateBackY, Axes.Y);
-		Rotate(rotateBackZ, Axes.Z);
+		Faces = new(faces);
 	}
 }

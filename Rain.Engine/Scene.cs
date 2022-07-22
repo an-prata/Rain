@@ -218,7 +218,8 @@ public class Scene : IDisposable
 				for (var texture = 0; texture < Models[model].Faces[face].Textures.Length && 
 					 texture < Texture.MaximumBoundTextures; texture++)
 				{
-					Models[model].Faces[face].Textures[texture].Unbind();
+					if (!Models[model].Faces[face].Textures[texture].IsEmpty)
+						Models[model].Faces[face].Textures[texture].Unbind();
 				}
 			}			
 		}

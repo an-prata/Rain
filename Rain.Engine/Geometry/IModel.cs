@@ -18,17 +18,17 @@ public interface IModel : ISpacial
 	/// <summary> 
 	/// The length of the <c>IModel</c> along the X axis. 
 	/// </summary>
-	float LengthX { get; }
+	float LengthX { get; set; }
 
 	/// <summary> 
 	/// The length of the <c>IModel</c> along the Y axis. 
 	/// </summary>
-	float LengthY { get; }
+	float LengthY { get; set; }
 
 	/// <summary> 
 	/// The length of the <c>IModel</c> along the Z axis. 
 	/// </summary>
-	float LengthZ { get; }
+	float LengthZ { get; set; }
 
 	/// <summary>
 	/// The <c>IModel</c>'s counter-clockwise rotation on the X axis.

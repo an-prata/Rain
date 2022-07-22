@@ -32,7 +32,7 @@ public class Rectangle : ITwoDimensional
 
 	public float Height 
 	{ 
-		get => (float)Points[0].GetDistanceBetween(Points[2]);
+		get => (float)Points[0].GetDistanceBetween(Points[3]);
 		set => Scale(1, value / Height); 
 	}
 

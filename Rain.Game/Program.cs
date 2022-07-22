@@ -12,21 +12,25 @@ class Program
 {
 	static void Main()
 	{
-		var cubeBase = new Rectangle(new(0.5f, 0.5f, -30.0f), 15.0f, 15.0f, new(203, 178, 238));
-		var textures = new Texture[] { new("interesting.bmp", 0.3f) };
+		var textures = new Texture[] { new Texture() };
 
-		var texturedBase = new TexturedFace(cubeBase, new Texture[] { new("interesting.bmp", 0.3f) } );
-
-		var cubeTextures = new EfficientTextureGroup[] 
+		var textureGroups = new EfficientTextureGroup[] 
 		{ 
-			new(textures),
-			new(textures),
-			new(textures),
-			new(textures)
+			new EfficientTextureGroup(textures),
+			new EfficientTextureGroup(textures),
+			new EfficientTextureGroup(textures),
+			new EfficientTextureGroup(textures)
 		};
 
-		var cube = new Prism(texturedBase, cubeTextures, 15.0f);
-		var models = new IRenderable[] { cube };
+		var face = new Rectangle(new Vertex(10.0f, 10.0f, -50.0f), 10.0f, 10.0f);
+
+		face.Rotate(892.0f, Axes.X);
+		face.Rotate(90.0f, Axes.Y);
+
+		var shapeBase = new TexturedFace(face, textures);
+		var prism = new Pyramid(shapeBase, textureGroups, 10.0f);
+
+		var models = new IRenderable[] { prism };
 		var scene = new Scene(models);
 
 		using var game = new GameWindow(new GameOptions
