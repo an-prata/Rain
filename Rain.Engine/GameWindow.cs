@@ -112,7 +112,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 	{
 		foreach (var model in ActiveScene.Models)
 		{
-			model.LengthY -= (float)(1.0f * args.Time);
+			//model.LengthY -= (float)(1.0f * args.Time);
 			//model.Rotate((float)(2.0f * args.Time), Axes.X);
 			model.Rotate((float)(2.0f * args.Time), Axes.Y);
 			//model.Translate(0, 0, (float)(-0.1f * args.Time));
