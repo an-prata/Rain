@@ -49,7 +49,6 @@ public class Pyramid : RenderableBase
 		for (var point = 0; point < shapeBase.Face.Points.Length; point++)
 		{
 			var adjacentPoint = point == shapeBase.Face.Points.Length - 1 ? 0 : point + 1;
-
 			var facePoints = new Point[3];
 			
 			shapeBase.Face.Points[point].CopyTo(out facePoints[0]);
@@ -66,10 +65,13 @@ public class Pyramid : RenderableBase
 			faces[point + 1] = face;
 		}
 
-		Faces = new(faces);
+		foreach (var face in faces)
+		{
+			face.Face.Rotate(rotateBackX, Axes.X, shapeBase.Face.Location);
+			face.Face.Rotate(rotateBackY, Axes.Y, shapeBase.Face.Location);
+			face.Face.Rotate(rotateBackZ, Axes.Z, shapeBase.Face.Location);
+		}
 
-		Rotate(rotateBackX, Axes.X);
-		Rotate(rotateBackY, Axes.Y);
-		Rotate(rotateBackZ, Axes.Z);
+		Faces = new(faces);
 	}
 }
