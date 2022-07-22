@@ -45,7 +45,7 @@ public struct TexturedFaceGroup
 			textures[face] = texturedFaces[face].Textures;
 		}
 
-		Faces = faces.ToArray();
+		Faces = faces;
 		Textures = new(textures.ToArray());
 	}
 }
