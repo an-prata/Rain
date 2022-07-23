@@ -45,6 +45,26 @@ public struct Angle
 		=> angle / (PI / 180);
 
 	/// <summary>
+	/// Produces a new <c>Angle</c> from a degree value. 
+	/// </summary>
+	/// 
+	/// <param name="degrees">
+	/// The degree value of the <c>Angle</c>.
+	/// </param>
+	public static Angle FromDegrees(double degrees)
+		=> new() { Degrees = degrees };
+
+	/// <summary>
+	/// Produces a new <c>Angle</c> from a radian value. 
+	/// </summary>
+	/// 
+	/// <param name="radians">
+	/// The radian value of the <c>Angle</c>.
+	/// </param>
+	public static Angle FromRadians(double radians)
+		=> new() { Radians = radians };
+
+	/// <summary>
 	/// Gets an angle from three <c>Vertex</c> instances.
 	/// </summary>
 	/// 
@@ -96,4 +116,19 @@ public struct Angle
 	/// </returns>
 	public static Angle GetAngle(Point angleVertex, Point a, Point b)
 		=> GetAngle(angleVertex.Vertex, a.Vertex, b.Vertex);
+
+	public static Angle operator +(Angle a, Angle b)
+		=> new() { Radians = a.Radians + b.Radians };
+
+	public static Angle operator -(Angle angle)
+		=> new() { Radians = -angle.Radians };
+
+	public static Angle operator -(Angle a, Angle b)
+		=> new() { Radians = a.Radians - b.Radians };
+
+	public static Angle operator *(Angle a, Angle b)
+		=> new() { Radians = a.Radians * b.Radians };
+
+	public static Angle operator /(Angle a, Angle b)
+		=> new() { Radians = a.Radians / b.Radians };
 }
