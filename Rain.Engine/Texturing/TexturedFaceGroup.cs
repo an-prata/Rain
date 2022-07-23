@@ -20,7 +20,7 @@ public struct TexturedFaceGroup
 	/// <summary>
 	/// The faces to be textured.
 	/// </summary>
-	public ITwoDimensional[] Faces { get; }
+	public TwoDimensionalBase[] Faces { get; }
 
 	/// <summary>
 	/// An <c>EfficientTextureArrayGroup</c> with an array for each face.
@@ -36,12 +36,12 @@ public struct TexturedFaceGroup
 	/// </param>
 	public TexturedFaceGroup(TexturedFace[] texturedFaces)
 	{
-		var faces = new ITwoDimensional[texturedFaces.Length];
+		var faces = new TwoDimensionalBase[texturedFaces.Length];
 		var textures = new Texture[texturedFaces.Length][];
 
 		for (var face = 0; face < texturedFaces.Length; face++)
 		{
-			faces[face] = texturedFaces[face].Face;
+			faces[face] = texturedFaces[face].GetTwoDimensional();
 			textures[face] = texturedFaces[face].Textures;
 		}
 
