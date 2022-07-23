@@ -2,20 +2,15 @@
 // See LICENSE file in repository root for complete license text.
 
 using Rain.Engine.Geometry;
-using Rain.Engine.Buffering;
+using Rain.Engine.Rendering;
 
 namespace Rain.Engine.Texturing;
 
 /// <summary>
 /// A two dimensional face with a set of one or more <c>Textures</c>.
 /// </summary>
-public class TexturedFace : IBufferable
+public class TexturedFace : Face, ITwoDimensional
 {
-	/// <summary>
-	/// The Face that will be textured.
-	/// </summary>
-	public ITwoDimensional Face { get; set; }
-
 	/// <summary>
 	/// The <c>Textures</c> that will be rendered onto <c>Face</c>.
 	/// </summary>
@@ -25,51 +20,17 @@ public class TexturedFace : IBufferable
 	/// </remarks>
 	public Texture[] Textures { get; set; }
 
-	public TexturedFace(ITwoDimensional face, Texture[] textures)
+	public TexturedFace(TwoDimensionalBase face, Texture[] textures) : base(face)
 	{
-		Face = face;
 		Textures = textures;
 	}
 
-	private TexturedFace(TexturedFace texturedFace)
+	private TexturedFace(TexturedFace texturedFace) : base(texturedFace)
 	{
 		Textures = new Texture[texturedFace.Textures.Length];
 
 		for (var texture = 0; texture < Textures.Length; texture++)
 			texturedFace.Textures[texture].CopyTo(out Textures[texture]);
-
-		texturedFace.Face.CopyTo(out var face);
-		Face = face;
-	}
-
-	public int GetBufferSize(BufferType bufferType)
-	{
-		if (bufferType == BufferType.VertexBuffer)
-			return Face.Points.Length * Point.BufferSize;
-
-		return Face.Elements.Length;
-	}
-
-	public Array GetBufferableArray(BufferType bufferType)
-	{
-		if (bufferType == BufferType.VertexBuffer)
-		{
-			var bufferableArray = new float[Face.Points.Length * Point.BufferSize];
-
-			for (var point = 0; point < Face.Points.Length; point++)
-			{
-				var pointArray = (float[])Face.Points[point].GetBufferableArray(bufferType);
-
-				for (var i = 0; i < pointArray.Length; i++)
-					bufferableArray[(point * Point.BufferSize) + i] = pointArray[i];
-			}
-
-			return bufferableArray;
-		}
-		else
-		{
-			return Face.Elements;
-		}
 	}
 
 	/// <summary>
