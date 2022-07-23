@@ -16,12 +16,12 @@ public interface ITwoDimensional : ISpacial
 	/// <summary>
 	/// An array of points representing the object.
 	/// </summary>
-	Point[] Points { get; }
+	Point[] Points { get; set; }
 
 	/// <summary>
 	/// The number of sides that this <c>ITwoDimensional</c> has.
 	/// </summary>
-	int Sides { get => Points.Length; }
+	int Sides { get; }
 
 	/// <summary>
 	/// The <c>ITwoDimensional</c>'s width.
@@ -56,15 +56,6 @@ public interface ITwoDimensional : ISpacial
 	/// A <c>Vertex</c> positioned at the center of the <c>ITwoDimensional</c>.
 	/// </returns>
 	public Vertex GetCenterVertex();
-
-	/// <summary>
-	/// Copies this <c>ITwoDimensional</c>'s data to another.
-	/// </summary>
-	/// 
-	/// <param name="twoDimensional">
-	/// The <c>ITwoDimensional</c> to copy data to.
-	/// </param>
-	public void CopyTo(out ITwoDimensional twoDimensional);
 	
 	/// <summary>
 	/// Translate the <c>ITwoDimensional</c> through three dimensional space.
