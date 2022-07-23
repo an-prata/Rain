@@ -12,7 +12,7 @@ public class PrismTests
 {
 	[Theory]
 	[InlineData(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)]
-	[InlineData(10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 892.0f, 90.0f)]
+	[InlineData(10.0f, 10.0f, 10.0f, 7.0f, 93.0f, 67.0f, 361.0f, 90.0f)]
 	[InlineData(250.0f, 10.0f, 0.0f, 50.0f, 10.0f, 11.0f, 0.0f, 0.0f)]
 	// Just because this test passes does not mean the Prism has been constructed correctly, the same values should be put in
 	// a project and rendered on an actual window to confirm that the geometry has been rendered correcly.
