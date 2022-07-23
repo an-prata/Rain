@@ -38,8 +38,8 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 			var points = new List<Point>();
 
 			for (var face = 0; face < Faces.Length; face++)
-				for (var point = 0; point < Faces[face].Face.Points.Length; point++)
-					points.Add(Faces[face].Face.Points[point]);
+				for (var point = 0; point < Faces[face].Points.Length; point++)
+					points.Add(Faces[face].Points[point]);
 			
 			return points.ToArray();
 		}
@@ -50,10 +50,10 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 			for (var face = 0; face < Faces.Length; face++)
 			{
-				for (var point = 0; point < Faces[face].Face.Points.Length; point++)
-					Faces[face].Face.Points[point] = value[pointsWritten + point];
+				for (var point = 0; point < Faces[face].Points.Length; point++)
+					Faces[face].Points[point] = value[pointsWritten + point];
 
-				pointsWritten += Faces[face].Face.Points.Length;
+				pointsWritten += Faces[face].Points.Length;
 			}
 		}
 	}
@@ -147,10 +147,10 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 		for (var face = 0; face < Faces.Length; face++)
 		{
-			for (var element = 0; element < Faces[face].Face.Elements.Length; element++)
-				elementData.Add((uint)points + Faces[face].Face.Elements[element]);
+			for (var element = 0; element < Faces[face].Elements.Length; element++)
+				elementData.Add((uint)points + Faces[face].Elements[element]);
 			
-			points += Faces[face].Face.Points.Length;
+			points += Faces[face].Points.Length;
 		}
 
 		return elementData.ToArray();
@@ -162,10 +162,10 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 		if (bufferType == BufferType.VertexBuffer)
 			for (var face = 0; face < Faces.Length; face++)
-				bufferSize += Faces[face].Face.Points.Length * Point.BufferSize;
+				bufferSize += Faces[face].Points.Length * Point.BufferSize;
 		else
 			for (var face = 0; face < Faces.Length; face++)
-				bufferSize += Faces[face].Face.Elements.Length;
+				bufferSize += Faces[face].Elements.Length;
 
 		return bufferSize;
 	}
