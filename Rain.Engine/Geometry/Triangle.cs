@@ -22,7 +22,7 @@ public class Triangle : TwoDimensionalBase
 	/// An array of <c>Points</c>s representing a triangle.
 	/// </param>
 	public Triangle(Point[] points) :
-		base((float)points[0].GetDistanceBetween(points[1]), (float)points[0].Vertex.GetMidPoint(points[1].Vertex).GetDistanceBetween(points[2].Vertex), 0.0f, 0.0f, 0.0f)
+		base((float)points[0].GetDistanceBetween(points[1]), (float)points[0].Vertex.GetMidPoint(points[1].Vertex).GetDistanceBetween(points[2].Vertex))
 	{
 		if (points.Length != 3)
 			throw new Exception($"{nameof(points)} is not length 3 (Given length: {points.Length}).");
@@ -46,13 +46,13 @@ public class Triangle : TwoDimensionalBase
 	/// The <c>Triangle</c>'s height.
 	/// </param>
 	public Triangle(Vertex location, float width, float height) :
-		base(width, height, 0.0f, 0.0f, 0.0f)
+		base(width, height)
 	{
 		Points = new Point[]
 		{
-			new(location, new(255, 255, 255), new(0.0f, 0.0f)),
-			new(new(location.X + width, location.Y, location.Z), new(255, 255, 255), new(1.0f, 0.0f)),
-			new(new(location.X, location.Y + height, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
+			new(location, new TextureCoordinate(0.0f, 0.0f)),
+			new(new(location.X + width, location.Y, location.Z), new TextureCoordinate(1.0f, 0.0f)),
+			new(new(location.X, location.Y + height, location.Z), new TextureCoordinate(0.0f, 1.0f)),
 		};
 	}
 
@@ -76,7 +76,7 @@ public class Triangle : TwoDimensionalBase
 	/// The <c>Triangle</c>'s color.
 	/// </param>
 	public Triangle(Vertex location, float width, float height, Color color) :
-		base(width, height, 0.0f, 0.0f, 0.0f)
+		base(width, height)
 	{
 		Points = new Point[]
 		{
