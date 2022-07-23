@@ -24,8 +24,8 @@ class Program
 
 		var face = new Rectangle(new Vertex(10.0f, 10.0f, -50.0f), 10.0f, 10.0f);
 
-		face.Rotate(892.0f, Axes.X);
-		face.Rotate(90.0f, Axes.Y);
+		face.Rotate(Angle.FromDegrees(892.0f), Axes.X);
+		face.Rotate(Angle.FromDegrees(90.0f), Axes.Y);
 
 		var shapeBase = new TexturedFace(face, textures);
 		var prism = new Pyramid(shapeBase, textureGroups, 10.0f);
