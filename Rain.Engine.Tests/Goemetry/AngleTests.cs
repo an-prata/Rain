@@ -20,12 +20,9 @@ public class AngleTests
 		var lineA = new Vertex(aX, aY, aZ);
 		var lineB = new Vertex(bX, bY, bZ);
 
-		var vertexPoint = new Vertex(vX, vY, vZ);
-		var lineAPoint = new Vertex(aX, aY, aZ);
-		var lineBPoint = new Vertex(bX, bY, bZ);
+		var angle = Angle.GetAngle(vertex, lineA, lineB);
 
-		Assert.Equal(Angle.GetAngle(vertex, lineA, lineB).Degrees, expectedAngle);
-		Assert.Equal(Angle.GetAngle(vertexPoint, lineAPoint, lineBPoint).Degrees, expectedAngle);
+		Assert.Equal(expectedAngle, angle.Degrees);
 	}
 
 	[Theory]
@@ -63,5 +60,70 @@ public class AngleTests
 	public void RadianAndDegreeConversionEqualityTest(double degrees, double radians)
 	{
 		Assert.Equal(Angle.RadiansToDegrees(radians), degrees);
+	}
+
+	[Theory]
+	[InlineData(8.3f, 8.3f, true)]
+	[InlineData(120.0f, 120.0f, true)]
+	[InlineData(120.0f, 67.0f, false)]
+	public void EqualityTest(double a, double b, bool equal)
+	{
+		var aAngle = Angle.FromRadians(a);
+		var bAngle = Angle.FromRadians(b);
+		
+		Assert.Equal(equal, aAngle.Equals(bAngle));
+		Assert.Equal(equal, aAngle == bAngle);
+	}
+
+	[Theory]
+	[InlineData(192.12f, 0.1256f)]
+	[InlineData(1825.0f, 67.9f)]
+	[InlineData(0.0f, 900.0f)]
+	public void AdditionTest(double a, double b)
+	{
+		var aAngle = Angle.FromRadians(a);
+		var bAngle = Angle.FromRadians(b);
+		var expectedAngle = Angle.FromRadians(a + b);
+
+		Assert.Equal(expectedAngle, aAngle + bAngle);
+	}
+
+	[Theory]
+	[InlineData(192.12f, 0.1256f)]
+	[InlineData(1825.0f, 67.9f)]
+	[InlineData(0.0f, 900.0f)]
+	public void SubtractionTest(double a, double b)
+	{
+		var aAngle = Angle.FromRadians(a);
+		var bAngle = Angle.FromRadians(b);
+		var expectedAngle = Angle.FromRadians(a - b);
+
+		Assert.Equal(expectedAngle, aAngle - bAngle);
+	}
+
+	[Theory]
+	[InlineData(192.12f, 0.1256f)]
+	[InlineData(1825.0f, 67.9f)]
+	[InlineData(0.0f, 900.0f)]
+	public void MultiplicationTest(double a, double b)
+	{
+		var aAngle = Angle.FromRadians(a);
+		var bAngle = Angle.FromRadians(b);
+		var expectedAngle = Angle.FromRadians(a * b);
+
+		Assert.Equal(expectedAngle, aAngle * bAngle);
+	}
+
+	[Theory]
+	[InlineData(192.12f, 0.1256f)]
+	[InlineData(1825.0f, 67.9f)]
+	[InlineData(0.0f, 900.0f)]
+	public void DivisionTest(double a, double b)
+	{
+		var aAngle = Angle.FromRadians(a);
+		var bAngle = Angle.FromRadians(b);
+		var expectedAngle = Angle.FromRadians(a / b);
+
+		Assert.Equal(expectedAngle, aAngle / bAngle);
 	}
 }
