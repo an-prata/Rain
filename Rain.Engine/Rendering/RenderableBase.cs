@@ -18,11 +18,11 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 	private float lengthZ = 1.0f;
 
-	private float rotationX = 0.0f;
+	private Angle rotationX;
 
-	private float rotationY = 0.0f;
+	private Angle rotationY;
 
-	private float rotationZ = 0.0f;
+	private Angle rotationZ;
 
 	/// <summary>
 	/// The <c>TexturedFace</c> objects this object is composed of.
@@ -82,25 +82,36 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		set => Scale(1, 1, value / lengthZ); 
 	}
 
-	public float RotationX 
+	public Angle RotationX 
 	{ 
 		get => rotationX; 
 		set => Rotate(value / rotationX, Axes.X); 
 	}
 
-	public float RotationY
+	public Angle RotationY
 	{ 
 		get => rotationY; 
 		set => Rotate(value / rotationY, Axes.Y); 
 	}
 
-	public float RotationZ 
+	public Angle RotationZ 
 	{ 
 		get => rotationZ; 
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
-	public RenderableBase(float lengthX, float lengthY, float lengthZ, float rotationX, float rotationY, float rotationZ)
+	public RenderableBase(float lengthX, float lengthY, float lengthZ)
+	{
+		this.lengthX = lengthX;
+		this.lengthY = lengthY;
+		this.lengthZ = lengthZ;
+
+		rotationX = new() { Radians = 0.0f };
+		rotationY = new() { Radians = 0.0f };
+		rotationZ = new() { Radians = 0.0f };
+	}
+
+	public RenderableBase(float lengthX, float lengthY, float lengthZ, Angle rotationX, Angle rotationY, Angle rotationZ)
 	{
 		this.lengthX = lengthX;
 		this.lengthY = lengthY;
@@ -199,10 +210,10 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		lengthZ *= z;
 	}
 
-	public void Rotate(float angle, Axes axis)
+	public void Rotate(Angle angle, Axes axis)
 		=> Rotate(angle, axis, GetCenterVertex());
 
-	public void Rotate(float angle, Axes axis, RotationDirection direction)
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction)
 	{
 		if (direction == RotationDirection.CounterClockwise)
 			Rotate(angle, axis, GetCenterVertex());
@@ -210,7 +221,7 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 			Rotate(-angle, axis, GetCenterVertex());
 	}
 
-	public void Rotate(float angle, Axes axis, Vertex vertex)
+	public void Rotate(Angle angle, Axes axis, Vertex vertex)
 	{
 		var transform = TransformMatrix.CreateTranslationMatrix(vertex);
 		transform *= TransformMatrix.CreateRotationMatrix(angle, axis);
@@ -234,7 +245,7 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		}
 	}
 
-	public void Rotate(float angle, Axes axis, RotationDirection direction, Vertex vertex)
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction, Vertex vertex)
 	{
 		if (direction == RotationDirection.CounterClockwise)
 			Rotate(angle, axis, vertex);

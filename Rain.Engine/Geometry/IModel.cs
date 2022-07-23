@@ -33,17 +33,17 @@ public interface IModel : ISpacial
 	/// <summary>
 	/// The <c>IModel</c>'s counter-clockwise rotation on the X axis.
 	/// </summary>
-	float RotationX { get; set; }
+	Angle RotationX { get; set; }
 
 	/// <summary>
 	/// The <c>IModel</c>'s counter-clockwise rotation on the Y axis.
 	/// </summary>
-	float RotationY { get; set; }
+	Angle RotationY { get; set; }
 
 	/// <summary>
 	/// The <c>IModel</c>'s counter-clockwise rotation on the Z axis.
 	/// </summary>
-	float RotationZ { get; set; }
+	Angle RotationZ { get; set; }
 
 	/// <summary> 
 	/// Gets the <c>IModel</c>'s center point. 

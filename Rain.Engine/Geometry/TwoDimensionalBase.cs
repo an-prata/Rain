@@ -9,11 +9,11 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 
 	private float height = 0.0f;
 
-	private float rotationX = 0.0f;
+	private Angle rotationX;
 
-	private float rotationY = 0.0f;
+	private Angle rotationY;
 
-	private float rotationZ = 0.0f;
+	private Angle rotationZ;
 
 	public abstract uint[] Elements { get; }
 
@@ -39,25 +39,35 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 		set => Scale(1, value / height); 
 	}
 
-	public float RotationX 
+	public Angle RotationX 
 	{ 
 		get => rotationX; 
 		set => Rotate(value / rotationX, Axes.X); 
 	}
 
-	public float RotationY
+	public Angle RotationY
 	{ 
 		get => rotationY; 
 		set => Rotate(value / rotationY, Axes.Y); 
 	}
 
-	public float RotationZ 
+	public Angle RotationZ 
 	{ 
 		get => rotationZ; 
 		set => Rotate(value / rotationZ, Axes.Z); 
 	}
 
-	public TwoDimensionalBase(float width, float height, float rotationX, float rotationY, float rotationZ)
+	public TwoDimensionalBase(float width, float height)
+	{
+		this.width = width;
+		this.height = height;
+
+		rotationX = new() { Radians = 0.0f };
+		rotationY = new() { Radians = 0.0f };
+		rotationZ = new() { Radians = 0.0f };
+	}
+
+	public TwoDimensionalBase(float width, float height, Angle rotationX, Angle rotationY, Angle rotationZ)
 	{
 		this.width = width;
 		this.height = height;
@@ -111,10 +121,10 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 		height *= y;
 	}
 
-	public void Rotate(float angle, Axes axis)
+	public void Rotate(Angle angle, Axes axis)
 		=> Rotate(angle, axis, Location);
 
-	public void Rotate(float angle, Axes axis, RotationDirection direction)
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction)
 	{
 		if (direction == RotationDirection.CounterClockwise)
 			Rotate(angle, axis, Location);
@@ -122,7 +132,7 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 			Rotate(-angle, axis, Location);
 	}
 
-	public void Rotate(float angle, Axes axis, Vertex vertex)
+	public void Rotate(Angle angle, Axes axis, Vertex vertex)
 	{
 		var transform = TransformMatrix.CreateTranslationMatrix(vertex);
 		transform *= TransformMatrix.CreateRotationMatrix(angle, axis);
@@ -146,7 +156,7 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 		}
 	}
 
-	public void Rotate(float angle, Axes axis, RotationDirection direction, Vertex vertex)
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction, Vertex vertex)
 	{
 		if (direction == RotationDirection.CounterClockwise)
 			Rotate(angle, axis, vertex);

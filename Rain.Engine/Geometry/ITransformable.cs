@@ -66,7 +66,7 @@ public interface ITransformable
 	/// <param name="axis">
 	/// The axis to rotate on.
 	/// </param>
-	public void Rotate(float angle, Axes axis);
+	public void Rotate(Angle angle, Axes axis);
 
 	/// <summary>
 	/// Rotates the <c>ITransformable</c> about its center.
@@ -87,7 +87,7 @@ public interface ITransformable
 	/// <param name="direction">
 	/// The direction to rotate in.
 	/// </param>
-	public void Rotate(float angle, Axes axis, RotationDirection direction);
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction);
 
 	/// <summary>
 	/// Rotates the <c>ITransformable</c> about the specified <c>Vertex</c>.
@@ -108,7 +108,7 @@ public interface ITransformable
 	/// <param name="vertex">
 	/// The <c>Vertex</c> to rotate around.
 	/// </param>
-	public void Rotate(float angle, Axes axis, Vertex vertex);
+	public void Rotate(Angle angle, Axes axis, Vertex vertex);
 
 	/// <summary>
 	/// Rotates the <c>ITransformable</c> about the specified <c>Vertex</c>.
@@ -133,5 +133,5 @@ public interface ITransformable
 	/// <param name="vertex">
 	/// The <c>Vertex</c> to rotate around.
 	/// </param>
-	public void Rotate(float angle, Axes axis, RotationDirection direction, Vertex vertex);
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction, Vertex vertex);
 }
