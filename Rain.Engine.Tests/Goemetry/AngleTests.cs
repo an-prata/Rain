@@ -29,6 +29,19 @@ public class AngleTests
 	}
 
 	[Theory]
+	[InlineData(0.0, 0.0)]
+	[InlineData(180.0, Math.PI)]
+	[InlineData(90.0, Math.PI / 2)]
+	[InlineData(45.0, Math.PI / 4)]
+	public void FromDegreesAndRadiansTest(double degrees, double radians)
+	{
+		var angleFromDegrees = Angle.FromDegrees(degrees);
+		var angleFromRadians = Angle.FromRadians(radians);
+
+		Assert.Equal(angleFromDegrees, angleFromRadians);
+	}
+
+	[Theory]
 	[InlineData(0.0)]
 	[InlineData(1.0)]
 	[InlineData(45.0)]
