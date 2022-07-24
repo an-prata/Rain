@@ -209,7 +209,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 		if (obj.GetType() != typeof(Vertex))
 			return false;
 
-        return Equals(obj);
+        return Equals((Vertex)obj);
 	}
 
 	public static Vertex operator -(Vertex a) => new(-a.X, -a.Y, -a.Z, a.W);
