@@ -20,9 +20,17 @@ public class AngleTests
 		var lineA = new Vertex(aX, aY, aZ);
 		var lineB = new Vertex(bX, bY, bZ);
 
+		var vertexPoint = new Point(new Vertex(vX, vY, vZ));
+		var lineAPoint = new Point(new Vertex(aX, aY, aZ));
+		var lineBPoint = new Point(new Vertex(bX, bY, bZ));
+
 		var angle = Angle.GetAngle(vertex, lineA, lineB);
+		var angleFromPoints = Angle.GetAngle(vertexPoint, lineAPoint, lineBPoint);
 
 		Assert.Equal(expectedAngle, angle.Degrees);
+		Assert.Equal(expectedAngle, angleFromPoints.Degrees);
+		Assert.Equal(angle, angleFromPoints);
+		Assert.Equal(angle.GetHashCode(), angleFromPoints.GetHashCode());
 	}
 
 	[Theory]
@@ -71,8 +79,22 @@ public class AngleTests
 		var aAngle = Angle.FromRadians(a);
 		var bAngle = Angle.FromRadians(b);
 		
-		Assert.Equal(equal, aAngle.Equals(bAngle));
 		Assert.Equal(equal, aAngle == bAngle);
+		Assert.Equal(!equal, aAngle != bAngle);
+
+		// Cast to an object to cover the non-angle Angle.Equals() overload, this is easy to confirm with inlay hints as you
+		// can simply check that the parameter name is "obj".
+		Assert.Equal(equal, aAngle.Equals((object)bAngle));
+
+		Assert.False(aAngle.Equals(null));
+		Assert.False(aAngle.Equals(a));
+		Assert.False(aAngle.Equals(b));
+		Assert.False(aAngle.Equals(equal));
+
+		Assert.False(bAngle.Equals(null));
+		Assert.False(bAngle.Equals(a));
+		Assert.False(bAngle.Equals(b));
+		Assert.False(bAngle.Equals(equal));
 	}
 
 	[Theory]
