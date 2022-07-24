@@ -30,8 +30,8 @@ public class PyramidTests
 
 		var face = new Rectangle(new Vertex(x, y, z), lengthX, lengthY);
 
-		face.Rotate(angleX, Axes.X);
-		face.Rotate(angleY, Axes.Y);
+		face.Rotate(Angle.FromDegrees(angleX), Axes.X);
+		face.Rotate(Angle.FromDegrees(angleY), Axes.Y);
 
 		var shapeBase = new TexturedFace(face, textures);
 		var pyramid = new Pyramid(shapeBase, textureGroups, lengthZ);
@@ -40,8 +40,8 @@ public class PyramidTests
 		Assert.Equal(lengthY, pyramid.LengthY);
 		Assert.Equal(lengthY, pyramid.LengthY);
 
-		Assert.Equal(angleX, pyramid.RotationX);
-		Assert.Equal(angleY, pyramid.RotationY);
+		Assert.Equal(Angle.FromDegrees(angleX), pyramid.RotationX);
+		Assert.Equal(Angle.FromDegrees(angleY), pyramid.RotationY);
 	}
 
 	[Theory]
@@ -91,12 +91,12 @@ public class PyramidTests
 		var shapeBase = new TexturedFace(face, textures);
 		var pyramid = new Pyramid(shapeBase, textureGroups, lengthZ);
 
-		pyramid.Rotate(angleX, Axes.X);
-		pyramid.Rotate(angleY, Axes.Y);
-		pyramid.Rotate(angleZ, Axes.Z);
+		pyramid.Rotate(Angle.FromDegrees(angleX), Axes.X);
+		pyramid.Rotate(Angle.FromDegrees(angleY), Axes.Y);
+		pyramid.Rotate(Angle.FromDegrees(angleZ), Axes.Z);
 
-		Assert.Equal(angleX, pyramid.RotationX);
-		Assert.Equal(angleY, pyramid.RotationY);
-		Assert.Equal(angleY, pyramid.RotationY);
+		Assert.Equal(Angle.FromDegrees(angleX), pyramid.RotationX);
+		Assert.Equal(Angle.FromDegrees(angleY), pyramid.RotationY);
+		Assert.Equal(Angle.FromDegrees(angleY), pyramid.RotationY);
 	}
 }

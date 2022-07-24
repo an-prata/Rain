@@ -12,7 +12,7 @@ public class PrismTests
 {
 	[Theory]
 	[InlineData(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)]
-	[InlineData(10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 892.0f, 90.0f)]
+	[InlineData(10.0f, 10.0f, 10.0f, 7.0f, 93.0f, 67.0f, 361.0f, 90.0f)]
 	[InlineData(250.0f, 10.0f, 0.0f, 50.0f, 10.0f, 11.0f, 0.0f, 0.0f)]
 	// Just because this test passes does not mean the Prism has been constructed correctly, the same values should be put in
 	// a project and rendered on an actual window to confirm that the geometry has been rendered correcly.
@@ -30,8 +30,8 @@ public class PrismTests
 
 		var face = new Rectangle(new Vertex(x, y, z), lengthX, lengthY);
 
-		face.Rotate(angleX, Axes.X);
-		face.Rotate(angleY, Axes.Y);
+		face.Rotate(Angle.FromDegrees(angleX), Axes.X);
+		face.Rotate(Angle.FromDegrees(angleY), Axes.Y);
 
 		var shapeBase = new TexturedFace(face, textures);
 		var prism = new Prism(shapeBase, textureGroups, lengthZ);
@@ -40,8 +40,8 @@ public class PrismTests
 		Assert.Equal(lengthY, prism.LengthY);
 		Assert.Equal(lengthY, prism.LengthY);
 
-		Assert.Equal(angleX, prism.RotationX);
-		Assert.Equal(angleY, prism.RotationY);
+		Assert.Equal(Angle.FromDegrees(angleX), prism.RotationX);
+		Assert.Equal(Angle.FromDegrees(angleY), prism.RotationY);
 	}
 
 	[Theory]
@@ -91,12 +91,12 @@ public class PrismTests
 		var shapeBase = new TexturedFace(face, textures);
 		var prism = new Prism(shapeBase, textureGroups, lengthZ);
 
-		prism.Rotate(angleX, Axes.X);
-		prism.Rotate(angleY, Axes.Y);
-		prism.Rotate(angleZ, Axes.Z);
+		prism.Rotate(Angle.FromDegrees(angleX), Axes.X);
+		prism.Rotate(Angle.FromDegrees(angleY), Axes.Y);
+		prism.Rotate(Angle.FromDegrees(angleZ), Axes.Z);
 
-		Assert.Equal(angleX, prism.RotationX);
-		Assert.Equal(angleY, prism.RotationY);
-		Assert.Equal(angleY, prism.RotationY);
+		Assert.Equal(Angle.FromDegrees(angleX), prism.RotationX);
+		Assert.Equal(Angle.FromDegrees(angleY), prism.RotationY);
+		Assert.Equal(Angle.FromDegrees(angleY), prism.RotationY);
 	}
 }

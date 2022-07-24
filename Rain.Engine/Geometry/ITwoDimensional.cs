@@ -36,17 +36,17 @@ public interface ITwoDimensional : ISpacial
 	/// <summary>
 	/// The <c>ITwoDimensional</c>'s counter-clockwise rotation on the X axis.
 	/// </summary>
-	float RotationX { get; set; }
+	Angle RotationX { get; set; }
 
 	/// <summary>
 	/// The <c>ITwoDimensional</c>'s counter-clockwise rotation on the Y axis.
 	/// </summary>
-	float RotationY { get; set; }
+	Angle RotationY { get; set; }
 
 	/// <summary>
 	/// The <c>ITwoDimensional</c>'s counter-clockwise rotation on the Z axis.
 	/// </summary>
-	float RotationZ { get; set; }
+	Angle RotationZ { get; set; }
 
 	/// <summary>
 	/// Gets the <c>ITwoDimensional</c>'s center point.
@@ -111,7 +111,7 @@ public interface ITwoDimensional : ISpacial
 	/// <param name="axis">
 	/// The axis to rotate on.
 	/// </param>
-	public void Rotate(float angle, Axes axis);
+	public void Rotate(Angle angle, Axes axis);
 
 	/// <summary>
 	/// Rotates the <c>ITwoDimensional</c> about its center.
@@ -132,7 +132,7 @@ public interface ITwoDimensional : ISpacial
 	/// <param name="direction">
 	/// The direction to rotate in.
 	/// </param>
-	public void Rotate(float angle, Axes axis, RotationDirection direction);
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction);
 
 	/// <summary>
 	/// Rotates the <c>ITwoDimensional</c> about the specified <c>Vertex</c>.
@@ -153,7 +153,7 @@ public interface ITwoDimensional : ISpacial
 	/// <param name="vertex">
 	/// The <c>Vertex</c> to rotate about.
 	/// </param>
-	public void Rotate(float angle, Axes axis, Vertex vertex);
+	public void Rotate(Angle angle, Axes axis, Vertex vertex);
 
 	/// <summary>
 	/// Rotates the <c>ITwoDimensional</c> about the specified <c>Vertex</c>.
@@ -178,5 +178,5 @@ public interface ITwoDimensional : ISpacial
 	/// <param name="vertex">
 	/// The <c>Vertex</c> to rotate about.
 	/// </param>
-	public void Rotate(float angle, Axes axis, RotationDirection direction, Vertex vertex);
+	public void Rotate(Angle angle, Axes axis, RotationDirection direction, Vertex vertex);
 }

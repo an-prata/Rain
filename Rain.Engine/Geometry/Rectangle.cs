@@ -22,7 +22,7 @@ public class Rectangle : TwoDimensionalBase
 	/// An array of <c>Point</c>s representing a rectangle.
 	/// </param>
 	public Rectangle(Point[] points) :
-		base((float)points[0].GetDistanceBetween(points[3]), (float)points[0].GetDistanceBetween(points[1]), 0.0f, 0.0f, 0.0f)
+		base((float)points[0].GetDistanceBetween(points[3]), (float)points[0].GetDistanceBetween(points[1]))
 	{
 		if (points.Length != 4)
 			throw new Exception($"{nameof(points)} is not length 4 (Given length: {points.Length}).");
@@ -53,17 +53,17 @@ public class Rectangle : TwoDimensionalBase
 	/// The <c>Rectangle</c>'s height.
 	/// </param>
 	public Rectangle(Vertex location, float width, float height) :
-		base(width, height, 0.0f, 0.0f, 0.0f)
+		base(width, height)
 	{
 		var halfWidth = width / 2;
 		var halfHeight = height / 2;
 
 		Points = new Point[]
 		{
-			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(1.0f, 0.0f)),
-			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z), new(255, 255, 255), new(0.0f, 0.0f)),
-			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(0.0f, 1.0f)),
-			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z), new(255, 255, 255), new(1.0f, 1.0f))
+			new(new(location.X - halfWidth, location.Y - halfHeight, location.Z), new TextureCoordinate(1.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y - halfHeight, location.Z),  new TextureCoordinate(0.0f, 0.0f)),
+			new(new(location.X + halfWidth, location.Y + halfHeight, location.Z),  new TextureCoordinate(0.0f, 1.0f)),
+			new(new(location.X - halfWidth, location.Y + halfHeight, location.Z),  new TextureCoordinate(1.0f, 1.0f))
 		};
 	}
 
@@ -87,7 +87,7 @@ public class Rectangle : TwoDimensionalBase
 	/// The <c>Rectangle</c>'s color.
 	/// </param>
 	public Rectangle(Vertex location, float width, float height, Color color) :
-		base(width, height, 0.0f, 0.0f, 0.0f)
+		base(width, height)
 	{
 		var halfWidth = width / 2;
 		var halfHeight = height / 2;

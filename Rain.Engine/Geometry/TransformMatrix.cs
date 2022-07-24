@@ -157,7 +157,7 @@ public struct TransformMatrix
 
 	/// <summary>
 	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects, will rotate the shape
-	/// about its center.
+	/// about the origin.
 	/// </summary>
 	/// 
 	/// <param name="angle">
@@ -206,6 +206,65 @@ public struct TransformMatrix
 
 		return new TransformMatrix(matrix, TransformType.Rotation);
 	}
+
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects, will rotate the shape
+	/// about the origin.
+	/// </summary>
+	/// 
+	/// <param name="angle">
+	/// The <c>Angle</c> to rotate by.
+	/// </param>
+	/// 
+	/// <param name="axis">
+	/// The axis to rotate around.
+	/// </param>
+	public static TransformMatrix CreateRotationMatrix(Angle angle, Axes axis)
+		=> CreateRotationMatrix((float)angle.Radians, axis);
+	
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects, will rotate the shape
+	/// about the origin.
+	/// </summary>
+	/// 
+	/// <param name="x">
+	/// The angle to rotate around the x axis.
+	/// </param>
+	/// 
+	/// <param name="y">
+	/// The angle to rotate around the y axis.
+	/// </param>
+	/// 
+	/// <param name="z">
+	/// The angle to rotate around the z axis.
+	/// </param>
+	public static TransformMatrix CreateRotationMatrix(float x, float y, float z)
+	{
+		var xRotation = CreateRotationMatrix(x, Axes.X);
+		var yRotation = CreateRotationMatrix(y, Axes.Y);
+		var zRotation = CreateRotationMatrix(z, Axes.Z);
+
+		return zRotation * yRotation * xRotation;
+	}
+	
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects, will rotate the shape
+	/// about the origin.
+	/// </summary>
+	/// 
+	/// <param name="x">
+	/// The angle to rotate around the x axis.
+	/// </param>
+	/// 
+	/// <param name="y">
+	/// The angle to rotate around the y axis.
+	/// </param>
+	/// 
+	/// <param name="z">
+	/// The angle to rotate around the z axis.
+	/// </param>
+	public static TransformMatrix CreateRotationMatrix(Angle x, Angle y, Angle z)
+		=> CreateRotationMatrix((float)x.Radians, (float)y.Radians, (float)z.Radians);
 
 	/// <summary>
 	/// Creates a new <c>TransformMatrix</c> that, when multiplied with all of a <c>Scene</c>'s points, will make objects
