@@ -27,7 +27,8 @@ public class Triangle : TwoDimensionalBase
 		if (points.Length != 3)
 			throw new Exception($"{nameof(points)} is not length 3 (Given length: {points.Length}).");
 
-		Points = points;
+		Points = new Point[points.Length];
+		points.CopyTo(Points, 0);
 	}
 
 	/// <summary>
