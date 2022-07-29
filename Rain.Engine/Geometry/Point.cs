@@ -40,7 +40,7 @@ public class Point : IBufferable, ISpacial
 	public Point(Vertex vertex)
 	{
 		Vertex = vertex;
-		Color = new(180, 164, 240);
+		Color = new(255, 255, 255);
 		TextureCoordinate = new(0.0f, 0.0f);
 	}
 
@@ -76,7 +76,7 @@ public class Point : IBufferable, ISpacial
 	public Point(Vertex vertex, TextureCoordinate textureCoordinate)
 	{
 		Vertex = vertex;
-		Color = new(180, 160, 240);
+		Color = new(255, 255, 255);
 		TextureCoordinate = textureCoordinate;
 	}
 
@@ -102,7 +102,7 @@ public class Point : IBufferable, ISpacial
 		TextureCoordinate = textureCoordinate;
 	}
 
-	private Point(Point point)
+	public Point(Point point)
 	{
 		Vertex = new Vertex(point.Vertex.Array);
 		Color = new Color(point.Color.Array);
@@ -146,8 +146,12 @@ public class Point : IBufferable, ISpacial
 	/// <param name="point">
 	/// The <c>Point</c> to copy data to.
 	/// </param>
-	public void CopyTo(out Point point)
-		=> point = new Point(this);
+	public void CopyTo(Point point)
+	{
+		point.Vertex = new Vertex(Vertex.Array);
+		point.Color = new Color(Color.Array);
+		point.TextureCoordinate = new TextureCoordinate(TextureCoordinate.Array);
+	}
 
 	/// <summary> 
 	/// Tells OpenGL how to use the data sent through the Vertex Buffer. 

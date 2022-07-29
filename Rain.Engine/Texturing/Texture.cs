@@ -319,9 +319,18 @@ public class Texture : IDisposable
 	/// </summary>
 	///
 	/// <param name="bindEmpty">
-	/// Whether or not to allow binding an empty <c>Textture</c>.
+	/// Whether or not to allow binding an empty <c>Texture</c>.
 	/// </param>
-	public void Bind(bool bindEmpty = false)
+	public void Bind()
+	{
+		if (IsEmpty)
+			throw new Exception("Cannot bind empty Texture.");
+
+		GL.ActiveTexture((OpenTK.Graphics.OpenGL.TextureUnit)Unit);
+		GL.BindTexture(TextureTarget.Texture2D, Handle);
+	}
+
+	private void Bind(bool bindEmpty = false)
 	{
 		if (!bindEmpty && IsEmpty)
 			throw new Exception("Cannot bind empty Texture.");

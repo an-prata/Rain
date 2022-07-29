@@ -105,7 +105,9 @@ public class Rectangle : TwoDimensionalBase
 		base(rectangle.Width, rectangle.Height, rectangle.RotationX, rectangle.RotationY, rectangle.RotationZ)
 	{
 		Points = new Point[rectangle.Points.Length];
-		rectangle.Points.CopyTo(Points, 0);
+
+		for (var point = 0; point < Points.Length; point++)
+			Points[point] = new(rectangle.Points[point]);
 	}
 
 	public override void CopyTo(out TwoDimensionalBase twoDimensional)

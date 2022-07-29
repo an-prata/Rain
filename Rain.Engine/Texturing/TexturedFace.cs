@@ -9,20 +9,25 @@ namespace Rain.Engine.Texturing;
 /// <summary>
 /// A two dimensional face with a set of one or more <c>Textures</c>.
 /// </summary>
-public class TexturedFace : Face, ITwoDimensional
+public class TexturedFace : Face
 {
-	/// <summary>
-	/// The <c>Textures</c> that will be rendered onto <c>Face</c>.
-	/// </summary>
-	/// 
-	/// <remarks>
-	/// <c>Texture</c>s are applied in ascending order.
-	/// </remarks>
-	public Texture[] Textures { get; set; }
+	public override Texture[] Textures { get; }
 
 	public TexturedFace(TwoDimensionalBase face, Texture[] textures) : base(face)
 	{
 		Textures = textures;
+
+		for (var texture = 0; texture < Textures.Length; texture++)
+			Textures[texture].Unit = (TextureUnit)((int)TextureUnit.Unit0 + texture);
+	}
+
+	public TexturedFace(TwoDimensionalBase face, Texture[] textures, bool constructWithReference) : 
+		base(face, constructWithReference)
+	{
+		Textures = textures;
+
+		for (var texture = 0; texture < Textures.Length; texture++)
+			Textures[texture].Unit = (TextureUnit)((int)TextureUnit.Unit0 + texture);
 	}
 
 	private TexturedFace(TexturedFace texturedFace) : base(texturedFace)

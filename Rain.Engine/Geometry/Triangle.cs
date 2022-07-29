@@ -91,7 +91,9 @@ public class Triangle : TwoDimensionalBase
 		base(triangle.Width, triangle.Height, triangle.RotationX, triangle.RotationY, triangle.RotationZ)
 	{
 		Points = new Point[triangle.Points.Length];
-		triangle.Points.CopyTo(Points, 0);
+
+		for (var point = 0; point < Points.Length; point++)
+			Points[point] = new(triangle.Points[point]);
 	}
 
 	public override void CopyTo(out TwoDimensionalBase triangle)
