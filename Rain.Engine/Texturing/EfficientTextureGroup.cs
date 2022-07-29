@@ -72,7 +72,6 @@ public class EfficientTextureGroup : IReadOnlyList<Texture>, IEnumerator<Texture
 			return;
 		}
 	}
-
 	
 	/// <summary>
 	/// The number of objects in this <c>EfficientTextureGroup</c>.
@@ -165,7 +164,6 @@ public class EfficientTextureGroup : IReadOnlyList<Texture>, IEnumerator<Texture
 	public void Reset() => current = -1;
 
 	#endregion
-
 
 	#region IDisposable
 
