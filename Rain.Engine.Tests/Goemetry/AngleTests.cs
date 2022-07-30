@@ -118,7 +118,7 @@ public class AngleTests
 	{
 		var aAngle = Angle.FromRadians(a);
 		var bAngle = Angle.FromRadians(b);
-		var expectedAngle = Angle.FromRadians(a - b);
+		var expectedAngle = Angle.FromRadians(((a % Angle.TwoPi) - (b % Angle.TwoPi)) % Angle.TwoPi);
 
 		Assert.Equal(expectedAngle, aAngle - bAngle);
 	}
@@ -131,7 +131,7 @@ public class AngleTests
 	{
 		var aAngle = Angle.FromRadians(a);
 		var bAngle = Angle.FromRadians(b);
-		var expectedAngle = Angle.FromRadians(a * b);
+		var expectedAngle = Angle.FromRadians(a % Angle.TwoPi * (b % Angle.TwoPi) % Angle.TwoPi);
 
 		Assert.Equal(expectedAngle, aAngle * bAngle);
 	}
@@ -144,7 +144,7 @@ public class AngleTests
 	{
 		var aAngle = Angle.FromRadians(a);
 		var bAngle = Angle.FromRadians(b);
-		var expectedAngle = Angle.FromRadians(a / b);
+		var expectedAngle = Angle.FromRadians(a % Angle.TwoPi / (b % Angle.TwoPi) % Angle.TwoPi);
 
 		Assert.Equal(expectedAngle, aAngle / bAngle);
 	}
