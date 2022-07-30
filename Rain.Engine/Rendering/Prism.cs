@@ -2,6 +2,7 @@
 // See LICENSE file in repository root for complete license text.
 
 using Rain.Engine.Geometry;
+using Rain.Engine.Geometry.TwoDimensional;
 using Rain.Engine.Texturing;
 
 namespace Rain.Engine.Rendering;
@@ -39,39 +40,28 @@ public class Prism : RenderableBase
 		shapeBase.CopyTo(out Face basePrime);
 		basePrime.Translate(0, 0, lengthZ);
 
-		var faces = new Face[2 + shapeBase.Sides];
+		var faces = new Face[2 + shapeBase.Sides.Length];
 
 		faces[0] = shapeBase;
 		faces[1] = basePrime;
 
-		for (var point = 0; point < shapeBase.Points.Length; point++)
+		for (var side = 0; side < shapeBase.Sides.Length; side++)
 		{
-			var adjacentPoint = point == shapeBase.Points.Length - 1 ? 0 : point + 1;
-			var facePoints = new Point[4];
-
-			facePoints[0] = new(shapeBase.Points[point])
+			var facePoints = new Point[]
 			{
-				TextureCoordinate = new(0.0f, 0.0f)
+				shapeBase.Sides[side].Item1,
+				basePrime.Sides[side].Item1,
+				basePrime.Sides[side].Item2,
+				shapeBase.Sides[side].Item2
 			};
 
-			facePoints[1] = new(basePrime.Points[point])
-			{
-				TextureCoordinate = new(0.0f, 1.0f)
-			};
-
-			facePoints[2] = new(basePrime.Points[adjacentPoint])
-			{
-				TextureCoordinate = new(1.0f, 1.0f)
-			};
-
-			facePoints[3] = new(shapeBase.Points[adjacentPoint])
-			{
-				TextureCoordinate = new(1.0f, 0.0f)
-			};
+			facePoints[0].TextureCoordinate = TextureCoordinate.BottomLeft;
+			facePoints[1].TextureCoordinate = TextureCoordinate.TopLeft;
+			facePoints[2].TextureCoordinate = TextureCoordinate.TopRight;
+			facePoints[3].TextureCoordinate = TextureCoordinate.BottomRight;
 
 			var face = new Face(new Rectangle(facePoints));
-
-			faces[point + 2] = face;
+			faces[side + 2] = face;
 		}
 
 		foreach (var face in faces)
@@ -102,7 +92,7 @@ public class Prism : RenderableBase
 	public Prism(TexturedFace shapeBase, EfficientTextureGroup[] textures, float lengthZ) :
 		base(shapeBase.Width, shapeBase.Height, lengthZ, shapeBase.RotationX, shapeBase.RotationY, shapeBase.RotationZ)
 	{
-		if (textures.Length != shapeBase.Sides)
+		if (textures.Length != shapeBase.Sides.Length)
 			throw new Exception($"{nameof(textures)} should be of length equal to {shapeBase.Sides}");
 
 		var rotateBackX = shapeBase.RotationX;
@@ -116,39 +106,28 @@ public class Prism : RenderableBase
 		shapeBase.CopyTo(out TexturedFace basePrime);
 		basePrime.Translate(0, 0, lengthZ);
 
-		var faces = new TexturedFace[2 + shapeBase.Sides];
+		var faces = new TexturedFace[2 + shapeBase.Sides.Length];
 
 		faces[0] = shapeBase;
 		faces[1] = basePrime;
 
-		for (var point = 0; point < shapeBase.Points.Length; point++)
+		for (var side = 0; side < shapeBase.Sides.Length; side++)
 		{
-			var adjacentPoint = point == shapeBase.Points.Length - 1 ? 0 : point + 1;
-			var facePoints = new Point[4];
-			
-			facePoints[0] = new(shapeBase.Points[point])
+			var facePoints = new Point[]
 			{
-				TextureCoordinate = new(0.0f, 0.0f)
+				shapeBase.Sides[side].Item1,
+				basePrime.Sides[side].Item1,
+				basePrime.Sides[side].Item2,
+				shapeBase.Sides[side].Item2
 			};
 
-			facePoints[1] = new(basePrime.Points[point])
-			{
-				TextureCoordinate = new(0.0f, 1.0f)
-			};
+			facePoints[0].TextureCoordinate = TextureCoordinate.BottomLeft;
+			facePoints[1].TextureCoordinate = TextureCoordinate.TopLeft;
+			facePoints[2].TextureCoordinate = TextureCoordinate.TopRight;
+			facePoints[3].TextureCoordinate = TextureCoordinate.BottomRight;
 
-			facePoints[2] = new(basePrime.Points[adjacentPoint])
-			{
-				TextureCoordinate = new(1.0f, 1.0f)
-			};
-
-			facePoints[3] = new(shapeBase.Points[adjacentPoint])
-			{
-				TextureCoordinate = new(1.0f, 0.0f)
-			};
-
-			var face = new TexturedFace(new Rectangle(facePoints), textures[point].ToArray());
-
-			faces[point + 2] = face;
+			var face = new TexturedFace(new Rectangle(facePoints), textures[side].ToArray());
+			faces[side + 2] = face;
 		}
 
 		foreach (var face in faces)

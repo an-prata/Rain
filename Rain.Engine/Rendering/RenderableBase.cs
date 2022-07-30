@@ -23,6 +23,8 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 	private Angle rotationZ;
 
+	private int? pointsLength;
+
 	/// <summary>
 	/// The <c>TexturedFace</c> objects this object is composed of.
 	/// </summary>
@@ -34,25 +36,49 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 	{
 		get
 		{
-			var points = new List<Point>();
+			if (pointsLength is null)
+			{
+				pointsLength = 0;
 
-			for (var face = 0; face < Faces.Count; face++)
-				for (var point = 0; point < Faces[face].Points.Length; point++)
-					points.Add(Faces[face].Points[point]);
-			
-			return points.ToArray();
-		}
+				for (var face = 0; face < Faces.Count; face++)
+					pointsLength += Faces[face].Points.Length;
+			}
 
-		set
-		{
-			var pointsWritten = 0;
+			var points = new Point[pointsLength ?? throw new NullReferenceException()];
+			var pointsGotten = 0;
 
 			for (var face = 0; face < Faces.Count; face++)
 			{
 				for (var point = 0; point < Faces[face].Points.Length; point++)
-					Faces[face].Points[point] = value[pointsWritten + point];
+					points[pointsGotten + point] = Faces[face].Points[point];
+				
+				pointsGotten += Faces[face].Points.Length;
+			}
+			
+			return points;
+		}
 
-				pointsWritten += Faces[face].Points.Length;
+		set
+		{
+			if (pointsLength is null)
+			{
+				pointsLength = 0;
+
+				for (var face = 0; face < Faces.Count; face++)
+					pointsLength += Faces[face].Points.Length;
+			}
+
+			if (value.Length != pointsLength)
+				throw new InvalidOperationException();
+			
+			var pointsSet = 0;
+
+			for (var face = 0; face < Faces.Count; face++)
+			{
+				for (var point = 0; point < Faces[face].Points.Length; point++)
+					Faces[face].Points[point] = value[pointsSet + point];
+
+				pointsSet += Faces[face].Points.Length;
 			}
 		}
 	}
@@ -202,7 +228,7 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		
 		transform *= TransformMatrix.CreateTranslationMatrix(-Location);
 
-		Mult(transform);
+		Points = (this * transform).Points;
 
 		lengthX *= x;
 		lengthY *= y;
@@ -284,18 +310,16 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
         return Equals(obj);
 	}
 
-	public void Mult(TransformMatrix a)
-	{
-		for (var i = 0; i < Points.Length; i++)
-			Points[i].Vertex *= a;
-	}
-
 	public static RenderableBase operator *(RenderableBase a, TransformMatrix b) => b * a;
 
 	public static RenderableBase operator *(TransformMatrix a, RenderableBase b)
 	{
-		for (var i = 0; i < b.Points.Length; i++)
-			b.Points[i].Vertex *= a;
+		var points = b.Points;
+
+		for (var point = 0; point < points.Length; point++)
+			points[point].Vertex *= a;
+		
+		b.Points = points;
 
 		return b;
 	}

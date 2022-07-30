@@ -3,13 +3,14 @@
 
 using OpenTK.Graphics.OpenGL;
 using Rain.Engine.Buffering;
+using Rain.Engine.Geometry.TwoDimensional;
 
 namespace Rain.Engine.Geometry;
 
 /// <summary> 
 /// A colored point in 3D space that can be rendered by the GPU. 
 /// </summary>
-public class Point : IBufferable, ISpacial
+public struct Point : IBufferable, ISpacial
 {
 	public const int BufferSize = Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize;
 
@@ -102,13 +103,6 @@ public class Point : IBufferable, ISpacial
 		TextureCoordinate = textureCoordinate;
 	}
 
-	public Point(Point point)
-	{
-		Vertex = new Vertex(point.Vertex.Array);
-		Color = new Color(point.Color.Array);
-		TextureCoordinate = new TextureCoordinate(point.TextureCoordinate.Array);
-	}
-
 	public double GetDistanceBetween(ISpacial other)
 		=> (Location - other.Location).Maginitude;
 
@@ -137,20 +131,6 @@ public class Point : IBufferable, ISpacial
 			vertexData[i + Vertex.BufferSize + Color.BufferSize] = TextureCoordinate.Array[i];
 
 		return vertexData;
-	}
-
-	/// <summary>
-	/// Copies data from this <c>Point</c> to another.
-	/// </summary>
-	/// 
-	/// <param name="point">
-	/// The <c>Point</c> to copy data to.
-	/// </param>
-	public void CopyTo(Point point)
-	{
-		point.Vertex = new Vertex(Vertex.Array);
-		point.Color = new Color(Color.Array);
-		point.TextureCoordinate = new TextureCoordinate(TextureCoordinate.Array);
 	}
 
 	/// <summary> 

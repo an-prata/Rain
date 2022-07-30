@@ -21,15 +21,6 @@ public class TexturedFace : Face
 			Textures[texture].Unit = (TextureUnit)((int)TextureUnit.Unit0 + texture);
 	}
 
-	public TexturedFace(TwoDimensionalBase face, Texture[] textures, bool constructWithReference) : 
-		base(face, constructWithReference)
-	{
-		Textures = textures;
-
-		for (var texture = 0; texture < Textures.Length; texture++)
-			Textures[texture].Unit = (TextureUnit)((int)TextureUnit.Unit0 + texture);
-	}
-
 	private TexturedFace(TexturedFace texturedFace) : base(texturedFace)
 	{
 		Textures = new Texture[texturedFace.Textures.Length];

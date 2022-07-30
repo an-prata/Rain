@@ -22,7 +22,7 @@ public class Face : TwoDimensionalBase, ITwoDimensional, IBufferable, IDisposabl
 		set => face.Points = value;
 	}
 
-	public override int Sides { get => face.Sides; }
+	public override (Point, Point)[] Sides { get => face.Sides; }
 
 	/// <summary>
 	/// The <c>Textures</c> that will be rendered onto <c>Face</c>.
@@ -34,26 +34,12 @@ public class Face : TwoDimensionalBase, ITwoDimensional, IBufferable, IDisposabl
 	/// </remarks>
 	public virtual Texture[]? Textures { get; }
 
-	public Face(TwoDimensionalBase face) :
-		base(face.Width, face.Height, face.RotationX, face.RotationY, face.RotationZ)
+	public Face(TwoDimensionalBase face) : base(face.Width, face.Height, face.RotationX, face.RotationY, face.RotationZ)
 	{
-		face.CopyTo(out this.face);
+		this.face = face;
 	}
 
-	public Face(TwoDimensionalBase face, bool constructWithReference) :
-		base(face.Width, face.Height, face.RotationX, face.RotationY, face.RotationZ)
-	{
-		if (constructWithReference)
-		{
-			this.face = face;
-			return;
-		}
-
-		face.CopyTo(out this.face);
-	}
-
-	private Face(Face face) :
-		base(face.Width, face.Height, face.RotationX, face.RotationY, face.RotationZ)
+	public Face(Face face) : base(face.Width, face.Height, face.RotationX, face.RotationY, face.RotationZ)
 	{
 		face.face.CopyTo(out this.face);
 	}

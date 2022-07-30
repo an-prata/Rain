@@ -15,7 +15,7 @@ public class TexturedFaceGroup : IReadOnlyList<Face>, IEnumerator<Face>, IDispos
 	public TexturedFace this[int index]
 	{
 		// Construct with reference so the returned value can have TransformMatrices applied to it.
-		get => new(Faces[index], Textures[index], constructWithReference: true);
+		get => new(Faces[index], Textures[index]);
 	}
 
 	Face IReadOnlyList<Face>.this[int index]
@@ -57,7 +57,7 @@ public class TexturedFaceGroup : IReadOnlyList<Face>, IEnumerator<Face>, IDispos
 		}
 
 		Faces = faces;
-		Textures = new(textures.ToArray());
+		Textures = new(textures);
 	}
 
 	#region IEnumerable

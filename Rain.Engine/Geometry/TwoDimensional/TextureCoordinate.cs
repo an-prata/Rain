@@ -1,14 +1,36 @@
 // Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
 // See LICENSE file in repository root for complete license text.
 
-namespace Rain.Engine.Geometry;
+namespace Rain.Engine.Geometry.TwoDimensional;
 
 /// <summary> 
 /// Represents coordinates for texturing an object. 
 /// </summary>
 public struct TextureCoordinate
 {
-	/// <summary> 
+	public static TextureCoordinate BottomLeft => new(0.0f, 0.0f);
+	public static TextureCoordinate TopLeft => new(0.0f, 1.0f);
+	public static TextureCoordinate TopRight => new(1.0f, 1.0f);
+	public static TextureCoordinate BottomRight => new(1.0f, 0.0f);
+
+	public static TextureCoordinate BottomMiddle => new(0.5f, 0.0f);
+	public static TextureCoordinate LeftMiddle => new(0.0f, 0.5f);
+	public static TextureCoordinate TopMiddle => new(0.5f, 1.0f);
+	public static TextureCoordinate RightMiddle => new(1.0f, 0.5f);
+
+	public static TextureCoordinate Center => new(0.5f, 0.5f);
+
+	public static TextureCoordinate CoordinateFromAngle(Angle angle)
+	{
+		var vertex = new TwoDimensionalVertex(angle);
+		
+		vertex += 1.0;
+		vertex /= 2.0;
+
+		return new TextureCoordinate(vertex);
+	}
+
+	/// <summary>
 	/// The length of any array outputed by <c>TextureCoordinate.Array</c>. 
 	/// </summary>
 	public const int BufferSize = 2;
@@ -47,6 +69,12 @@ public struct TextureCoordinate
 	{
 		X = x;
 		Y = y;
+	}
+
+	public TextureCoordinate(TwoDimensionalVertex vertex)
+	{
+		X = (float)vertex.X;
+		Y = (float)vertex.Y;
 	}
 
 	/// <summary> 
