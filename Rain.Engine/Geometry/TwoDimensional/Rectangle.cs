@@ -1,6 +1,8 @@
 // Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
 // See LICENSE file in repository root for complete license text.
 
+using Rain.Engine.Geometry.TwoDimensional;
+
 namespace Rain.Engine.Geometry;
 
 /// <summary>
@@ -12,7 +14,16 @@ public class Rectangle : TwoDimensionalBase
 
 	public override Point[] Points { get; set; }
 
-	public override int Sides { get => 4; }
+	public override (Point, Point)[] Sides 
+	{ 
+		get => new (Point, Point)[]
+		{
+			(Points[0], Points[1]),
+			(Points[1], Points[2]),
+			(Points[2], Points[3]),
+			(Points[3], Points[0])
+		}; 
+	}
 
 	/// <summary>
 	/// Creates a new <c>Rectangle</c> from an array of <c>Point</c> objects.
@@ -21,8 +32,7 @@ public class Rectangle : TwoDimensionalBase
 	/// <param name="points">
 	/// An array of <c>Point</c>s representing a rectangle.
 	/// </param>
-	public Rectangle(Point[] points) :
-		base((float)points[0].GetDistanceBetween(points[3]), (float)points[0].GetDistanceBetween(points[1]))
+	public Rectangle(Point[] points) : base((float)points[0].GetDistanceBetween(points[3]), (float)points[0].GetDistanceBetween(points[1]))
 	{
 		if (points.Length != 4)
 			throw new Exception($"{nameof(points)} is not length 4 (Given length: {points.Length}).");
@@ -52,8 +62,7 @@ public class Rectangle : TwoDimensionalBase
 	/// <param name="height">
 	/// The <c>Rectangle</c>'s height.
 	/// </param>
-	public Rectangle(Vertex location, float width, float height) :
-		base(width, height)
+	public Rectangle(Vertex location, float width, float height) : base(width, height)
 	{
 		var halfWidth = width / 2;
 		var halfHeight = height / 2;
@@ -86,8 +95,7 @@ public class Rectangle : TwoDimensionalBase
 	/// <param name="color">
 	/// The <c>Rectangle</c>'s color.
 	/// </param>
-	public Rectangle(Vertex location, float width, float height, Color color) :
-		base(width, height)
+	public Rectangle(Vertex location, float width, float height, Color color) : base(width, height)
 	{
 		var halfWidth = width / 2;
 		var halfHeight = height / 2;
@@ -101,8 +109,7 @@ public class Rectangle : TwoDimensionalBase
 		};
 	}
 
-	private Rectangle(Rectangle rectangle) :
-		base(rectangle.Width, rectangle.Height, rectangle.RotationX, rectangle.RotationY, rectangle.RotationZ)
+	private Rectangle(Rectangle rectangle) : base(rectangle.Width, rectangle.Height, rectangle.RotationX, rectangle.RotationY, rectangle.RotationZ)
 	{
 		Points = new Point[rectangle.Points.Length];
 		rectangle.Points.CopyTo(Points, 0);

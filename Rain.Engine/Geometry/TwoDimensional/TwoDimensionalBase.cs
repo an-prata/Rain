@@ -19,7 +19,7 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 
 	public abstract Point[] Points { get; set; }
 
-	public abstract int Sides { get; }
+	public abstract (Point, Point)[] Sides { get; }
 
 	public Vertex Location
 	{

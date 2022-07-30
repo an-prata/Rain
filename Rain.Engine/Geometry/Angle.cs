@@ -11,6 +11,12 @@ namespace Rain.Engine.Geometry;
 /// </summary>
 public struct Angle : IEquatable<Angle>
 {
+	public const double TwoPi = PI * 2;
+
+	public const double DegreeOverRadian = PI / 180;
+
+	private double radians;
+
 	/// <summary>
 	/// This <c>Angle</c> in Degrees.
 	/// </summary>
@@ -23,7 +29,11 @@ public struct Angle : IEquatable<Angle>
 	/// <summary>
 	/// This <c>Angle</c> in Radians.
 	/// </summary>
-	public double Radians { get; set; }
+	public double Radians 
+	{ 
+		get => radians;
+		set => radians = value % TwoPi; 
+	}
 
 	/// <summary>
 	/// Convert Degrees to Radians.
@@ -33,7 +43,7 @@ public struct Angle : IEquatable<Angle>
 	/// The angle in Degrees.
 	/// </param>
 	public static double DegreesToRadians(double angle)
-		=> angle * (PI / 180);
+		=> angle * DegreeOverRadian;
 
 	/// <summary>
 	/// Convert Radians to Degrees.
@@ -43,7 +53,7 @@ public struct Angle : IEquatable<Angle>
 	/// The angle in Radians.
 	/// </param>
 	public static double RadiansToDegrees(double angle)
-		=> angle / (PI / 180);
+		=> angle / DegreeOverRadian;
 
 	/// <summary>
 	/// Produces a new <c>Angle</c> from a degree value. 

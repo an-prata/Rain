@@ -3,6 +3,10 @@
 
 namespace Rain.Engine.Geometry;
 
+/// <summary>
+/// An interface used to represent any object in space and allows for the calculation of it location and distance from other
+/// ISpacial objects.
+/// </summary>
 public interface ISpacial
 {
 	/// <summary>

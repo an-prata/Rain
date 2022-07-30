@@ -19,9 +19,14 @@ public interface ITwoDimensional : ISpacial
 	Point[] Points { get; set; }
 
 	/// <summary>
-	/// The number of sides that this <c>ITwoDimensional</c> has.
+	/// Adjacent <c>Point</c>s making up sides of the <c>ITwoDimensional</c>.
 	/// </summary>
-	int Sides { get; }
+	/// 
+	/// <remarks>
+	/// This should always skip any <c>Points</c> not on the objects perimeter, and always be in an order that uses the
+	/// previous <c>Item2</c> as the next <c>Item1</c> { (point0, point1), (point1, point2), (point2, point0) }.
+	/// </remarks>
+	(Point, Point)[] Sides { get; }
 
 	/// <summary>
 	/// The <c>ITwoDimensional</c>'s width.

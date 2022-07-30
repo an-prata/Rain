@@ -7,7 +7,7 @@ using Rain.Engine.Texturing;
 
 namespace Rain.Engine.Rendering;
 
-public interface IRenderable : IBufferable, ITransformable, IModel 
+public interface IRenderable : IBufferable, ITransformable, IModel, IDisposable
 { 
-	TexturedFaceGroup Faces { get; }
+	IReadOnlyList<Face> Faces { get; }
 }

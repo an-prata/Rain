@@ -114,7 +114,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		{
 			//model.LengthY -= (float)(1.0f * args.Time);
 			//model.Rotate((float)(2.0f * args.Time), Axes.X);
-			model.Rotate(Angle.FromRadians(2.0f * args.Time), Axes.Y);
+			model.Rotate(Angle.FromRadians(20.0f * args.Time), Axes.Y);
 			//model.Translate(0, 0, (float)(-0.1f * args.Time));
 		}
 		
