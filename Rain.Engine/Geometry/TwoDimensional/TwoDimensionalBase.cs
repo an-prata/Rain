@@ -19,9 +19,9 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 
 	public abstract Point[] Points { get; set; }
 
-	public abstract int Sides { get; }
+	public abstract (Point, Point)[] Sides { get; }
 
-	public Vertex Location
+	public virtual Vertex Location
 	{
 		get => GetCenterVertex();
 		set => Translate(value.X - Location.X, value.Y - Location.Y, value.Z - Location.Z);

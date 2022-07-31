@@ -1,13 +1,15 @@
 // Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
 // See LICENSE file in repository root for complete license text.
 
+using System.Collections;
+
 namespace Rain.Engine.Texturing;
 
 /// <summary>
 /// Stores <c>Texture</c> instances so that, while still retaining their original indices, there are no duplicates, both in 
 /// computer and GPU memory.
 /// </summary>
-public class EfficientTextureGroup
+public class EfficientTextureGroup : IReadOnlyList<Texture>, IEnumerator<Texture>, IDisposable
 {
 	private readonly Texture[] textures;
 
@@ -70,8 +72,11 @@ public class EfficientTextureGroup
 			return;
 		}
 	}
-
-	public int Length { get => indices.Length; }
+	
+	/// <summary>
+	/// The number of objects in this <c>EfficientTextureGroup</c>.
+	/// </summary>
+	public int Count { get => indices.Length; }
 
 	/// <summary>
 	/// Creates a new <c>EfficientTextureGroup</c> from an array of <c>Texture</c>s.
@@ -111,11 +116,78 @@ public class EfficientTextureGroup
 
 	public Texture[] ToArray()
 	{
-		var array = new Texture[Length];
+		var array = new Texture[Count];
 
-		for (var texture = 0; texture < Length; texture++)
+		for (var texture = 0; texture < Count; texture++)
 			array[texture] = this[texture];
 		
 		return array;
 	}
+
+	#region IEnumerable
+
+	IEnumerator<Texture>  IEnumerable<Texture>.GetEnumerator() => this;
+	
+	IEnumerator IEnumerable.GetEnumerator() => this;
+	
+	#endregion
+
+	#region IEnumerator
+
+	private int current = -1;
+
+	object IEnumerator.Current => Current;
+
+	public Texture Current
+	{
+		get
+		{
+			try
+			{
+				return this[current];
+			}
+			catch (IndexOutOfRangeException)
+			{
+				throw new InvalidOperationException();
+			}
+		}
+	}
+
+	public bool MoveNext()
+	{
+		if (++current >= Count)
+			return false;
+		
+		return true;
+	}
+
+	public void Reset() => current = -1;
+
+	#endregion
+
+	#region IDisposable
+
+	private bool disposed = false;
+
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposed) 
+			return;
+
+		if (disposing)
+			foreach (var texture in textures)
+				texture.Dispose();
+
+		disposed = true;
+	}
+
+	~EfficientTextureGroup() => Dispose(false);
+
+	#endregion
 }

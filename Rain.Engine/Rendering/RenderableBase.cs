@@ -1,9 +1,8 @@
 // Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
 // See LICENSE file in repository root for complete license text.
 
-using Rain.Engine.Buffering;
 using Rain.Engine.Geometry;
-using Rain.Engine.Texturing;
+using Rain.Engine.Buffering;
 
 namespace Rain.Engine.Rendering;
 
@@ -24,10 +23,12 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 	private Angle rotationZ;
 
+	private int? pointsLength;
+
 	/// <summary>
 	/// The <c>TexturedFace</c> objects this object is composed of.
 	/// </summary>
-	public abstract TexturedFaceGroup Faces { get; }
+	public abstract IReadOnlyList<Face> Faces { get; }
 
 	public uint[] Elements => (uint[])GetBufferableArray(BufferType.ElementBuffer);
 
@@ -35,25 +36,49 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 	{
 		get
 		{
-			var points = new List<Point>();
+			if (pointsLength is null)
+			{
+				pointsLength = 0;
 
-			for (var face = 0; face < Faces.Length; face++)
+				for (var face = 0; face < Faces.Count; face++)
+					pointsLength += Faces[face].Points.Length;
+			}
+
+			var points = new Point[pointsLength ?? throw new NullReferenceException()];
+			var pointsGotten = 0;
+
+			for (var face = 0; face < Faces.Count; face++)
+			{
 				for (var point = 0; point < Faces[face].Points.Length; point++)
-					points.Add(Faces[face].Points[point]);
+					points[pointsGotten + point] = Faces[face].Points[point];
+				
+				pointsGotten += Faces[face].Points.Length;
+			}
 			
-			return points.ToArray();
+			return points;
 		}
 
 		set
 		{
-			var pointsWritten = 0;
+			if (pointsLength is null)
+			{
+				pointsLength = 0;
 
-			for (var face = 0; face < Faces.Length; face++)
+				for (var face = 0; face < Faces.Count; face++)
+					pointsLength += Faces[face].Points.Length;
+			}
+
+			if (value.Length != pointsLength)
+				throw new InvalidOperationException();
+			
+			var pointsSet = 0;
+
+			for (var face = 0; face < Faces.Count; face++)
 			{
 				for (var point = 0; point < Faces[face].Points.Length; point++)
-					Faces[face].Points[point] = value[pointsWritten + point];
+					Faces[face].Points[point] = value[pointsSet + point];
 
-				pointsWritten += Faces[face].Points.Length;
+				pointsSet += Faces[face].Points.Length;
 			}
 		}
 	}
@@ -156,7 +181,7 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		var points = 0;
 		var elementData = new List<uint>();
 
-		for (var face = 0; face < Faces.Length; face++)
+		for (var face = 0; face < Faces.Count; face++)
 		{
 			for (var element = 0; element < Faces[face].Elements.Length; element++)
 				elementData.Add((uint)points + Faces[face].Elements[element]);
@@ -172,10 +197,10 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		var bufferSize = 0;
 
 		if (bufferType == BufferType.VertexBuffer)
-			for (var face = 0; face < Faces.Length; face++)
+			for (var face = 0; face < Faces.Count; face++)
 				bufferSize += Faces[face].Points.Length * Point.BufferSize;
 		else
-			for (var face = 0; face < Faces.Length; face++)
+			for (var face = 0; face < Faces.Count; face++)
 				bufferSize += Faces[face].Elements.Length;
 
 		return bufferSize;
@@ -289,8 +314,12 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 	public static RenderableBase operator *(TransformMatrix a, RenderableBase b)
 	{
-		for (var i = 0; i < b.Points.Length; i++)
-			b.Points[i].Vertex *= a;
+		var points = b.Points;
+
+		for (var point = 0; point < points.Length; point++)
+			points[point].Vertex *= a;
+		
+		b.Points = points;
 
 		return b;
 	}
@@ -298,4 +327,30 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 	public static bool operator ==(RenderableBase a, RenderableBase b) => a.Equals(b);
 
 	public static bool operator !=(RenderableBase a, RenderableBase b) => !a.Equals(b);
+
+	#region IDisposable
+
+	private bool disposed = false;
+
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposed) 
+			return;
+
+		if (disposing)
+			foreach(var face in Faces)
+				face.Dispose();
+
+		disposed = true;
+	}
+
+	~RenderableBase() => Dispose(false);
+
+	#endregion
 }

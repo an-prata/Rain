@@ -1,6 +1,8 @@
 // Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
 // See LICENSE file in repository root for complete license text.
 
+using Rain.Engine.Geometry.TwoDimensional;
+
 namespace Rain.Engine.Geometry;
 
 /// <summary>
@@ -12,7 +14,15 @@ public class Triangle : TwoDimensionalBase
 
 	public override Point[] Points { get; set; }
 
-	public override int Sides { get => 3; }
+	public override (Point, Point)[] Sides 
+	{ 
+		get => new (Point, Point)[]
+		{
+			(Points[0], Points[1]),
+			(Points[1], Points[2]),
+			(Points[2], Points[0])
+		}; 
+	}
 
 	/// <summary>
 	/// Creates a new <c>Triangle</c> from an array of <c>Point</c> objects.
@@ -21,8 +31,7 @@ public class Triangle : TwoDimensionalBase
 	/// <param name="points">
 	/// An array of <c>Points</c>s representing a triangle.
 	/// </param>
-	public Triangle(Point[] points) :
-		base((float)points[0].GetDistanceBetween(points[1]), (float)points[0].Vertex.GetMidPoint(points[1].Vertex).GetDistanceBetween(points[2].Vertex))
+	public Triangle(Point[] points) : base((float)points[0].GetDistanceBetween(points[1]), (float)points[0].Vertex.GetMidPoint(points[1].Vertex).GetDistanceBetween(points[2].Vertex))
 	{
 		if (points.Length != 3)
 			throw new Exception($"{nameof(points)} is not length 3 (Given length: {points.Length}).");
@@ -46,8 +55,7 @@ public class Triangle : TwoDimensionalBase
 	/// <param name="height">
 	/// The <c>Triangle</c>'s height.
 	/// </param>
-	public Triangle(Vertex location, float width, float height) :
-		base(width, height)
+	public Triangle(Vertex location, float width, float height) : base(width, height)
 	{
 		Points = new Point[]
 		{
@@ -76,8 +84,7 @@ public class Triangle : TwoDimensionalBase
 	/// <param name="color">
 	/// The <c>Triangle</c>'s color.
 	/// </param>
-	public Triangle(Vertex location, float width, float height, Color color) :
-		base(width, height)
+	public Triangle(Vertex location, float width, float height, Color color) : base(width, height)
 	{
 		Points = new Point[]
 		{
@@ -87,8 +94,7 @@ public class Triangle : TwoDimensionalBase
 		};
 	}
 
-	private Triangle(Triangle triangle) :
-		base(triangle.Width, triangle.Height, triangle.RotationX, triangle.RotationY, triangle.RotationZ)
+	private Triangle(Triangle triangle) : base(triangle.Width, triangle.Height, triangle.RotationX, triangle.RotationY, triangle.RotationZ)
 	{
 		Points = new Point[triangle.Points.Length];
 		triangle.Points.CopyTo(Points, 0);

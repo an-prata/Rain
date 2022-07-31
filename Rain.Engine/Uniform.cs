@@ -81,6 +81,16 @@ public class Uniform
 	/// </param>	
 	public void SetToFloat(float x)
 		=> GL.Uniform1(Handle, x);
+
+	/// <summary>
+	/// Sets the uniform to reference a bool in GLSL.
+	/// </summary>
+	///
+	/// <param name="x">
+	/// The <c>bool</c> to reference in the GLSL shader.
+	/// </param>
+	public void SetToBool(bool x)
+		=> GL.Uniform1(Handle, x ? 1 : 0);
 	
 	/// <summary>
 	/// Sets the uniform to a <c>PerspectiveProjection</c>. 

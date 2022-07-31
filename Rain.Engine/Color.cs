@@ -196,6 +196,23 @@ public struct Color
 	/// </returns>
 	public Color4 ToColor4() => new(R, G, B, A);
 
+	public override int GetHashCode()
+		=> (R, G, B, A).GetHashCode();
+
+	public bool Equals(Color color)
+		=> (R, G, B, A) == (color.R, color.G, color.B, color.A);
+
+	public override bool Equals(object? obj)
+	{
+		if (obj == null)
+			return false;
+
+		if (obj.GetType() != typeof(Color))
+			return false;
+
+        return Equals((Color)obj);
+	}
+
 	public static Color operator +(Color a, Color b) => new(a.R + b.R, a.G + b.G, a.B + b.B, a.A + b.A);
 
 	public static Color operator -(Color a, Color b) => new(a.R - b.R, a.G - b.G, a.B - b.B, a.A - b.A);
@@ -203,4 +220,8 @@ public struct Color
 	public static Color operator *(Color a, Color b) => new(a.R * b.R, a.G * b.G, a.B * b.B, a.A * b.A);
 
 	public static Color operator /(Color a, Color b) => new(a.R / b.R, a.G / b.G, a.B / b.B, a.A / b.A);
+
+	public static bool operator ==(Color a, Color b) => a.Equals(b);
+
+	public static bool operator !=(Color a, Color b) => !a.Equals(b);
 }

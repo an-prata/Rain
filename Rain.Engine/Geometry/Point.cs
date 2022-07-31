@@ -3,13 +3,14 @@
 
 using OpenTK.Graphics.OpenGL;
 using Rain.Engine.Buffering;
+using Rain.Engine.Geometry.TwoDimensional;
 
 namespace Rain.Engine.Geometry;
 
 /// <summary> 
 /// A colored point in 3D space that can be rendered by the GPU. 
 /// </summary>
-public class Point : IBufferable, ISpacial
+public struct Point : IBufferable, ISpacial
 {
 	public const int BufferSize = Vertex.BufferSize + Color.BufferSize + TextureCoordinate.BufferSize;
 
@@ -40,7 +41,7 @@ public class Point : IBufferable, ISpacial
 	public Point(Vertex vertex)
 	{
 		Vertex = vertex;
-		Color = new(180, 164, 240);
+		Color = new(255, 255, 255);
 		TextureCoordinate = new(0.0f, 0.0f);
 	}
 
@@ -76,7 +77,7 @@ public class Point : IBufferable, ISpacial
 	public Point(Vertex vertex, TextureCoordinate textureCoordinate)
 	{
 		Vertex = vertex;
-		Color = new(180, 160, 240);
+		Color = new(255, 255, 255);
 		TextureCoordinate = textureCoordinate;
 	}
 
@@ -100,13 +101,6 @@ public class Point : IBufferable, ISpacial
 		Vertex = vertex;
 		Color = color;
 		TextureCoordinate = textureCoordinate;
-	}
-
-	private Point(Point point)
-	{
-		Vertex = new Vertex(point.Vertex.Array);
-		Color = new Color(point.Color.Array);
-		TextureCoordinate = new TextureCoordinate(point.TextureCoordinate.Array);
 	}
 
 	public double GetDistanceBetween(ISpacial other)
@@ -139,16 +133,6 @@ public class Point : IBufferable, ISpacial
 		return vertexData;
 	}
 
-	/// <summary>
-	/// Copies data from this <c>Point</c> to another.
-	/// </summary>
-	/// 
-	/// <param name="point">
-	/// The <c>Point</c> to copy data to.
-	/// </param>
-	public void CopyTo(out Point point)
-		=> point = new Point(this);
-
 	/// <summary> 
 	/// Tells OpenGL how to use the data sent through the Vertex Buffer. 
 	/// </summary>
@@ -174,4 +158,36 @@ public class Point : IBufferable, ISpacial
 							   BufferSize * sizeof(float),
 							   (Vertex.BufferSize * sizeof(float)) + (Color.BufferSize * sizeof(float)));
 	}
+
+	public override int GetHashCode()
+		=> GetBufferableArray(BufferType.VertexBuffer).GetHashCode();
+
+	public bool Equals(Point point)
+	{
+		if (Vertex != point.Vertex)
+			return false;
+			
+		if (Color != point.Color)
+			return false;
+
+		if (TextureCoordinate != point.TextureCoordinate)
+			return false;
+
+		return true;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		if (obj == null)
+			return false;
+
+		if (obj.GetType() != typeof(Point))
+			return false;
+
+        return Equals((Point)obj);
+	}
+
+	public static bool operator ==(Point a, Point b) => a.Equals(b);
+
+	public static bool operator !=(Point a, Point b) => !a.Equals(b);
 }
