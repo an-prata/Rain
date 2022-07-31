@@ -3,7 +3,7 @@
 
 using Rain.Engine.Geometry.TwoDimensional;
 
-namespace Rain.Engine.Geometry;
+namespace Rain.Engine.Geometry.TwoDimensional;
 
 /// <summary>
 /// A class for creating and manipulating equilateral shapes.
@@ -42,6 +42,12 @@ public class Equilateral : TwoDimensionalBase
 		} 
 	}
 
+	public override Vertex Location
+	{
+		get => Points[0].Vertex;
+		set => base.Location = value;
+	}
+
 	/// <summary>
 	/// Creates a new <c>Equilateral</c>.
 	/// </summary>
@@ -57,9 +63,10 @@ public class Equilateral : TwoDimensionalBase
 	/// <param name="sides">
 	/// The number of sides.
 	/// </param>
-	public Equilateral(Vertex location, float radius, int sides) : base(radius * 2.0f, radius * 2.0f)
+	public Equilateral(Vertex location, float radius, int sides) : base(2.0f, 2.0f)
 	{
-		this.sides = sides;
+		// Throws an InvalidOperationException if sides is less than 2.
+		this.sides = sides > 2 ? sides : throw new InvalidOperationException($"Cannot create an Equilateral with {sides} sides");
 		Points = new Point[sides + 1];
 		Elements = new uint[sides * 3];
 
@@ -104,9 +111,10 @@ public class Equilateral : TwoDimensionalBase
 	/// <param name="sides">
 	/// The number of sides.
 	/// </param>
-	public Equilateral(Vertex location, float radius, int sides, Color color) : base(radius * 2.0f, radius * 2.0f)
+	public Equilateral(Vertex location, float radius, int sides, Color color) : base(2.0f, 2.0f)
 	{
-		this.sides = sides;
+		// Throws an InvalidOperationException if sides is less than 2.
+		this.sides = sides > 2 ? sides : throw new InvalidOperationException($"Cannot create an Equilateral with {sides} sides");
 		Points = new Point[sides + 1];
 		Elements = new uint[sides * 3];
 		

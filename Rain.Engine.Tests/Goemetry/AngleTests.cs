@@ -148,4 +148,24 @@ public class AngleTests
 
 		Assert.Equal(expectedAngle, aAngle / bAngle);
 	}
+
+	[Fact]
+	public void ModuloTwoPiTest()
+	{
+		for (var deg = 0; deg < 3600; deg++)
+		{
+			var angle = Angle.FromDegrees(deg);
+
+			Assert.True(angle.Degrees < 360.0);
+			Assert.True(angle.Radians < Angle.TwoPi);
+		}
+
+		for (var rad = 0.0; rad < 10.0 * Angle.TwoPi; rad += 0.01)
+		{
+			var angle = Angle.FromRadians(rad);
+
+			Assert.True(angle.Degrees < 360.0);
+			Assert.True(angle.Radians < Angle.TwoPi);
+		}
+	}
 }

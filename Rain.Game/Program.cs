@@ -3,6 +3,7 @@
 
 using Rain.Engine;
 using Rain.Engine.Geometry;
+using Rain.Engine.Geometry.TwoDimensional;
 using Rain.Engine.Rendering;
 using Rain.Engine.Texturing;
 

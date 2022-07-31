@@ -100,14 +100,8 @@ public struct TextureCoordinate
 	public override int GetHashCode()
 		=> Array.GetHashCode();
 	
-	public bool Equals(TextureCoordinate obj)
-	{
-		for (var i = 0; i < BufferSize; i++)
-			if (Array[i] != obj.Array[i])
-				return false;
-	
-		return true;
-	}
+	public bool Equals(TextureCoordinate coordinate)
+		=> (X, Y) == (coordinate.X, coordinate.Y);
 
 	public override bool Equals(object? obj)
 	{
@@ -117,7 +111,7 @@ public struct TextureCoordinate
 		if (obj.GetType() != typeof(TextureCoordinate))
 			return false;
 
-        return (TextureCoordinate)obj == this;
+        return Equals((TextureCoordinate)obj);
 	}
 
 	public static TextureCoordinate operator +(TextureCoordinate a, TextureCoordinate b) => new(a.X + b.X, a.Y + b.Y);

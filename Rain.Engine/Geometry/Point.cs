@@ -158,4 +158,36 @@ public struct Point : IBufferable, ISpacial
 							   BufferSize * sizeof(float),
 							   (Vertex.BufferSize * sizeof(float)) + (Color.BufferSize * sizeof(float)));
 	}
+
+	public override int GetHashCode()
+		=> GetBufferableArray(BufferType.VertexBuffer).GetHashCode();
+
+	public bool Equals(Point point)
+	{
+		if (Vertex != point.Vertex)
+			return false;
+			
+		if (Color != point.Color)
+			return false;
+
+		if (TextureCoordinate != point.TextureCoordinate)
+			return false;
+
+		return true;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		if (obj == null)
+			return false;
+
+		if (obj.GetType() != typeof(Point))
+			return false;
+
+        return Equals((Point)obj);
+	}
+
+	public static bool operator ==(Point a, Point b) => a.Equals(b);
+
+	public static bool operator !=(Point a, Point b) => !a.Equals(b);
 }
