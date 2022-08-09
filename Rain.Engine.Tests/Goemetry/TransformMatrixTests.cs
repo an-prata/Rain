@@ -69,19 +69,19 @@ public class TransformMatrixTests
 				3.0f,	-2.0f,	1.0f
 	)]
 	[InlineData(180.0f,	Axes.Z,
-				2.0f,	3.0f,	1.0f,
-				-2.0,	-3.0,	1.0f
+				2.0f,		3.0f,		1.0f,
+				-1.9999998,	-3.0000002,	1.0f
 	)]
 	[InlineData(90.0f,	Axes.X,
 				5.0f,	1.0f,	3.0f,
-				5.0f,	-3.0f,	1.0f
+				5.0f,	-3.0f,	0.9999999f
 	)]
 	public void RotationTest(float angle, Axes axis,
 							 float x,   float y,    float z, 
 							 float eX,  float eY,   float eZ)
 	{
 		var vertex = new Vertex(x, y, z);
-		var transformMatrix = TransformMatrix.CreateRotation(angle, axis);
+		var transformMatrix = TransformMatrix.CreateRotation(Angle.FromDegrees(angle), axis);
 		Assert.True(vertex * transformMatrix == new Vertex(eX, eY, eZ));
 	}
 }

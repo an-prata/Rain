@@ -314,6 +314,47 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Perspective);
 	}
 
+	/// <summary>
+	/// Creates a new <c>TransformMatrix</c> that can be used to convert any <c>Vertex</c> or <c>Points</c>, or set thereof,
+	/// from world space, to relative space.
+	/// </summary>
+	/// 
+	/// <param name="location">
+	/// The location in world space to be made the center, or origin, of this relative space.
+	/// </param>
+	/// 
+	/// <param name="facing">
+	/// A point specifying the direction to face, should be directly in front of <c>location</c> as this point in space will
+	/// be made, regardless of its position in world space, to be the origin in relative space (or <c>location</c> in world 
+	/// space), but with its Z component being the distance between it and <c>location</c>.
+	/// </param>
+	/// 
+	/// <param name="above">
+	/// A point to be made directly above the origin in relative space, much like <c>facing</c>, this point will be made the
+	/// origin in relative space (or <c>location</c> in world space), but with its Y component being the distance between it 
+	/// and <c>location</c>.
+	/// </param>
+	public static TransformMatrix CreateRelativeSpace(Vertex location, Vertex facing, Vertex above)
+	{
+		var column2 = Vertex.Normalize(location - facing);
+		var column0 = Vertex.Normalize(Vertex.CrossProduct(above, column2));
+		var column1 = Vertex.Normalize(Vertex.CrossProduct(column2, column0));
+
+		var rotations = new TransformMatrix(new float[,] {
+			{ column0.X,	column1.X,	column2.X,	0.0f },
+			{ column0.Y,	column1.Y,	column2.Y,	0.0f },
+			{ column0.Z,	column1.Z,	column2.Z,	0.0f },
+			{ 
+				-((column0.X * location.X) + (column0.Y * location.Y) + (column0.Z * location.Z)),
+				-((column1.X * location.X) + (column1.Y * location.Y) + (column1.Z * location.Z)),
+				-((column2.X * location.X) + (column2.Y * location.Y) + (column2.Z * location.Z)),
+				1.0f 
+			},
+		});
+
+		return rotations;
+	}
+
 	public override int GetHashCode()
 		=> matrix.GetHashCode();
 

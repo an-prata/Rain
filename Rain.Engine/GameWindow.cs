@@ -29,6 +29,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	private PerspectiveProjection perspective;
 
+	private Camera camera;
+
 	private Color clearColor;
 
 	private BufferGroup bufferGroup;
@@ -49,7 +51,7 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		StartFocused 	= options.StartFocused ?? true,
 		API 			= ContextAPI.OpenGL,
 		Profile 		= ContextProfile.Core,
-		APIVersion 		= new Version(3, 3)
+		APIVersion 		= new Version(4, 5)
 	})
 	{
 		if (options.CenterWindow ?? false)
@@ -73,7 +75,8 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		};
 
 		shaderProgram = new(shaderComponents);
-		perspective = new(new Angle { Degrees = 90.0f }, options.Width / options.Height, 0.1f, 100.0f);
+		perspective = new(new Angle { Degrees = 45.0f }, options.Width / options.Height, 0.1f, 100.0f);
+		camera = new(new(0.0f, 0.0f, 4.0f));
 	}
 
 	protected override void OnResize(ResizeEventArgs e)
@@ -98,7 +101,9 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		// Enable the use of a Texture's alpha component.
 		GL.Enable(EnableCap.Blend);
 		GL.Enable(EnableCap.DepthTest);
+
 		GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+		CursorState = CursorState.Grabbed;
 	}
 
 	protected override void OnUnload()
@@ -110,13 +115,26 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 
 	protected override void OnUpdateFrame(FrameEventArgs args)
 	{
-		foreach (var model in ActiveScene.Models)
-		{
-			//model.LengthY -= (float)(1.0f * args.Time);
-			//model.Rotate((float)(2.0f * args.Time), Axes.X);
-			model.Rotate(Angle.FromRadians(20.0f * args.Time), Axes.Y);
-			//model.Translate(0, 0, (float)(-0.1f * args.Time));
-		}
+		if (!IsFocused)
+			return;
+		
+		if (IsKeyDown(Keys.W))
+			camera.Location += camera.Facing * (float)args.Time * 2;
+		if (IsKeyDown(Keys.S))
+			camera.Location -= camera.Facing * (float)args.Time * 2;
+		if (IsKeyDown(Keys.D))
+			camera.Location += camera.Right * (float)args.Time * 2;
+		if (IsKeyDown(Keys.A))
+			camera.Location -= camera.Right * (float)args.Time * 2;
+		
+		camera.RotationX -= Angle.FromDegrees((MouseState.Y - MouseState.PreviousY) * 0.2f);
+		camera.RotationY += Angle.FromDegrees((MouseState.X - MouseState.PreviousX) * 0.2f);
+
+		if (camera.RotationX.Degrees > 89.0)
+			camera.RotationX = Angle.FromDegrees(89.0);
+
+		if (camera.RotationX.Degrees < -89.0)
+			camera.RotationX = Angle.FromDegrees(-89.0);
 		
 		base.OnUpdateFrame(args);
 	}
@@ -126,11 +144,11 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit); // Apply clear color to render.
 		shaderProgram.Use();
 
-		ActiveScene.Draw(bufferGroup, shaderProgram, perspective);
+		ActiveScene.Draw(bufferGroup, shaderProgram, perspective, camera);
 		
 		Context.SwapBuffers();
-
 		base.OnRenderFrame(args);
+
 		Console.WriteLine(args.Time);
 	}
 }
