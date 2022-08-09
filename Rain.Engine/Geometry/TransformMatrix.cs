@@ -330,17 +330,33 @@ public struct TransformMatrix
 
 	public static TransformMatrix operator *(TransformMatrix a, TransformMatrix b)
 	{
-		var matrix = new float[4,4];
-		matrix.Initialize();
-
-		for (var row = 0; row < Size; row++)
-			for (var collum = 0; collum < Size; collum++)
-				matrix[row, collum] = 0.0f;
-
-		for (var aRow = 0; aRow < Size; aRow++)
-			for (var bCollum = 0; bCollum < Size; bCollum++)
-				for (var i = 0; i < Size; i++)
-					matrix[aRow, bCollum] += a.matrix[aRow, i] * b.matrix[i, bCollum];
+		var matrix = new float[,]
+		{
+			{
+				(a[0, 0] * b[0, 0]) + (a[0, 1] * b[1, 0]) + (a[0, 2] * b[2, 0]) + (a[0, 3] * b[3, 0]),
+				(a[0, 0] * b[0, 1]) + (a[0, 1] * b[1, 1]) + (a[0, 2] * b[2, 1]) + (a[0, 3] * b[3, 1]),
+				(a[0, 0] * b[0, 2]) + (a[0, 1] * b[1, 2]) + (a[0, 2] * b[2, 2]) + (a[0, 3] * b[3, 2]),
+				(a[0, 0] * b[0, 3]) + (a[0, 1] * b[1, 3]) + (a[0, 2] * b[2, 3]) + (a[0, 3] * b[3, 3])
+			},
+			{
+				(a[1, 0] * b[0, 0]) + (a[1, 1] * b[1, 0]) + (a[1, 2] * b[2, 0]) + (a[1, 3] * b[3, 0]),
+				(a[1, 0] * b[0, 1]) + (a[1, 1] * b[1, 1]) + (a[1, 2] * b[2, 1]) + (a[1, 3] * b[3, 1]),
+				(a[1, 0] * b[0, 2]) + (a[1, 1] * b[1, 2]) + (a[1, 2] * b[2, 2]) + (a[1, 3] * b[3, 2]),
+				(a[1, 0] * b[0, 3]) + (a[1, 1] * b[1, 3]) + (a[1, 2] * b[2, 3]) + (a[1, 3] * b[3, 3])
+			},
+			{
+				(a[2, 0] * b[0, 0]) + (a[2, 1] * b[1, 0]) + (a[2, 2] * b[2, 0]) + (a[2, 3] * b[3, 0]),
+				(a[2, 0] * b[0, 1]) + (a[2, 1] * b[1, 1]) + (a[2, 2] * b[2, 1]) + (a[2, 3] * b[3, 1]),
+				(a[2, 0] * b[0, 2]) + (a[2, 1] * b[1, 2]) + (a[2, 2] * b[2, 2]) + (a[2, 3] * b[3, 2]),
+				(a[2, 0] * b[0, 3]) + (a[2, 1] * b[1, 3]) + (a[2, 2] * b[2, 3]) + (a[2, 3] * b[3, 3])
+			},
+			{
+				(a[3, 0] * b[0, 0]) + (a[3, 1] * b[1, 0]) + (a[3, 2] * b[2, 0]) + (a[3, 3] * b[3, 0]),
+				(a[3, 0] * b[0, 1]) + (a[3, 1] * b[1, 1]) + (a[3, 2] * b[2, 1]) + (a[3, 3] * b[3, 1]),
+				(a[3, 0] * b[0, 2]) + (a[3, 1] * b[1, 2]) + (a[3, 2] * b[2, 2]) + (a[3, 3] * b[3, 2]),
+				(a[3, 0] * b[0, 3]) + (a[3, 1] * b[1, 3]) + (a[3, 2] * b[2, 3]) + (a[3, 3] * b[3, 3])
+			}
+		};
 
 		if (a.TransformType == b.TransformType)
 			return new TransformMatrix(matrix, a.TransformType);
@@ -350,15 +366,12 @@ public struct TransformMatrix
 
 	public static Vertex operator *(TransformMatrix a, Vertex b)
 	{
-		var vertex = new float[]
-		{
-			(a.matrix[0, 0] * b.X) + (a.matrix[0, 1] * b.Y) + (a.matrix[0, 2] * b.Z) + (a.matrix[0, 3] * b.W),
-			(a.matrix[1, 0] * b.X) + (a.matrix[1, 1] * b.Y) + (a.matrix[1, 2] * b.Z) + (a.matrix[1, 3] * b.W),
-			(a.matrix[2, 0] * b.X) + (a.matrix[2, 1] * b.Y) + (a.matrix[2, 2] * b.Z) + (a.matrix[2, 3] * b.W),
-			(a.matrix[3, 0] * b.X) + (a.matrix[3, 1] * b.Y) + (a.matrix[3, 2] * b.Z) + (a.matrix[3, 3] * b.W),
-		};
-
-		return new Vertex(vertex);
+		return new Vertex
+		(
+			(a.matrix[0, 0] * b.X) + (a.matrix[0, 1] * b.Y) + (a.matrix[0, 2] * b.Z) + a.matrix[0, 3],
+			(a.matrix[1, 0] * b.X) + (a.matrix[1, 1] * b.Y) + (a.matrix[1, 2] * b.Z) + a.matrix[1, 3],
+			(a.matrix[2, 0] * b.X) + (a.matrix[2, 1] * b.Y) + (a.matrix[2, 2] * b.Z) + a.matrix[2, 3]
+		);
 	}
 
 	public static Vertex operator *(Vertex a, TransformMatrix b) => b * a;

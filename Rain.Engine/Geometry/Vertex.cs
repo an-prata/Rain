@@ -13,7 +13,9 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// <summary> 
 	/// The length of any array outputed by <c>Vertex.Array</c>. 
 	/// </summary>
-	public const int BufferSize = 4;
+	public const int BufferSize = 3;
+
+	public static Vertex Origin => new(0.0f, 0.0f, 0.0f);
 
 	/// <summary> 
 	/// The Vertex's X coordinate. 
@@ -29,11 +31,6 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// The Vertex's Z coordinate. 
 	/// </summary>
 	public float Z { get; set; }
-
-	/// <summary> 
-	/// The Vertex's W coordinate. 
-	/// </summary>
-	public float W { get; set; }
 
 	public Vertex Location { get => this; }
 
@@ -53,7 +50,7 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// <value>
 	/// A float array with values arranged as X, Y, Z, then W.
 	/// </value>
-	public float[] Array { get => new float[BufferSize] {X, Y, Z, W}; }
+	public float[] Array { get => new float[BufferSize] { X, Y, Z }; }
 
 	/// <summary> 
 	/// Creates a new Vertex from X, Y, and Z coordinates. 
@@ -75,34 +72,6 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 		X = x;
 		Y = y;
 		Z = z;
-		W = 1.0f;
-	}
-
-	/// <summary> 
-	/// Creates a new Vertex from X, Y, Z, and W coordinates. 
-	/// </summary>
-	/// 
-	/// <param name="x"> 
-	/// The X coordinate. 
-	/// </param>
-	/// 
-	/// <param name="y"> 
-	/// The Y coordinate. 
-	/// </param>
-	/// 
-	/// <param name="z"> 
-	/// The Z coordinate. 
-	/// </param>
-	/// 
-	/// <param name="w"> 
-	/// The W coordinate. 
-	/// </param>
-	public Vertex(float x, float y, float z, float w)
-	{
-		X = x;
-		Y = y;
-		Z = z;
-		W = w;
 	}
 
 	/// <summary> 
@@ -124,7 +93,6 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 		X = vertexArray[0];
 		Y = vertexArray[1];
 		Z = vertexArray[2];
-		W = vertexArray[3];
 	}
 
 	/// <summary> 
@@ -139,7 +107,6 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 		X = vector.X;
 		Y = vector.Y;
 		Z = vector.Z;
-		W = 1.0f;
 	}
 
 	public double GetDistanceBetween(ISpacial other)
@@ -187,10 +154,16 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 	/// This is the same as a vector product.
 	/// </remarks>
 	public static Vertex CrossProduct(Vertex a, Vertex b)
-		=> new((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X), 1);
+		=> new((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X));
+	
+	public static Vertex Normalize(Vertex vertex)
+	{
+		var scale = 1.0 / vertex.Maginitude;
+		return new((float)(vertex.X * scale), (float)(vertex.Y * scale), (float)(vertex.Z * scale));
+	}
 
 	public override int GetHashCode()
-		=> (X, Y, Z, W).GetHashCode();
+		=> (X, Y, Z).GetHashCode();
 
 	public bool Equals(Vertex vertex)
 	{
@@ -212,34 +185,34 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
         return Equals((Vertex)obj);
 	}
 
-	public static Vertex operator -(Vertex a) => new(-a.X, -a.Y, -a.Z, a.W);
+	public static Vertex operator -(Vertex a) => new(-a.X, -a.Y, -a.Z);
 
 	// Vertex to float scalaar operations.
-	public static Vertex operator +(Vertex a, float b) => new(a.X + b, a.Y + b, a.Z + b, 1.0f);
+	public static Vertex operator +(Vertex a, float b) => new(a.X + b, a.Y + b, a.Z + b);
 
-	public static Vertex operator -(Vertex a, float b) => new(a.X - b, a.Y - b, a.Z - b, 1.0f);
+	public static Vertex operator -(Vertex a, float b) => new(a.X - b, a.Y - b, a.Z - b);
 
-	public static Vertex operator *(Vertex a, float b) => new(a.X * b, a.Y * b, a.Z * b, 1.0f);
+	public static Vertex operator *(Vertex a, float b) => new(a.X * b, a.Y * b, a.Z * b);
 
-	public static Vertex operator /(Vertex a, float b) => new(a.X / b, a.Y / b, a.Z / b, 1.0f);
+	public static Vertex operator /(Vertex a, float b) => new(a.X / b, a.Y / b, a.Z / b);
 
 	// Vertex to double scalaar operations.
 	public static Vertex operator +(Vertex a, double b) 
-		=> new((float)(a.X + b), (float)(a.Y + b), (float)(a.Z + b), 1.0f);
+		=> new((float)(a.X + b), (float)(a.Y + b), (float)(a.Z + b));
 
 	public static Vertex operator -(Vertex a, double b) 
-		=> new((float)(a.X - b), (float)(a.Y - b), (float)(a.Z - b), 1.0f);
+		=> new((float)(a.X - b), (float)(a.Y - b), (float)(a.Z - b));
 
 	public static Vertex operator *(Vertex a, double b) 
-		=> new((float)(a.X * b), (float)(a.Y * b), (float)(a.Z * b), 1.0f);
+		=> new((float)(a.X * b), (float)(a.Y * b), (float)(a.Z * b));
 
 	public static Vertex operator /(Vertex a, double b) 
-		=> new((float)(a.X / b), (float)(a.Y / b), (float)(a.Z / b), 1.0f);
+		=> new((float)(a.X / b), (float)(a.Y / b), (float)(a.Z / b));
 
 	// Vertex to Vertex vector style operations.
-	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z, 1.0f);
+	public static Vertex operator +(Vertex a, Vertex b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
-	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z, 1.0f);
+	public static Vertex operator -(Vertex a, Vertex b) => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
 	public static Vertex operator *(Vertex a, Vertex b) 
 		=> CrossProduct(a, b);
