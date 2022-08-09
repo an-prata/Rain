@@ -207,26 +207,26 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 	}
 
 	public void Translate(float x, float y, float z)
-		=> Points = (this * TransformMatrix.CreateTranslationMatrix(x, y, z)).Points;
+		=> Points = (this * TransformMatrix.CreateTranslation(x, y, z)).Points;
 
 	public void Translate(Vertex vertex)
 		=> Translate(vertex.X, vertex.Y, vertex.Z);
 
 	public void Scale(float x = 1, float y = 1, float z = 1)
 	{
-		var transform = TransformMatrix.CreateTranslationMatrix(Location);
+		var transform = TransformMatrix.CreateTranslation(Location);
 
-		transform *= TransformMatrix.CreateRotationMatrix(-rotationX, Axes.X);
-		transform *= TransformMatrix.CreateRotationMatrix(-rotationY, Axes.Y);
-		transform *= TransformMatrix.CreateRotationMatrix(-rotationZ, Axes.Z);
+		transform *= TransformMatrix.CreateRotation(-rotationX, Axes.X);
+		transform *= TransformMatrix.CreateRotation(-rotationY, Axes.Y);
+		transform *= TransformMatrix.CreateRotation(-rotationZ, Axes.Z);
 
-		transform *= TransformMatrix.CreateScaleMatrix(x, y, z);
+		transform *= TransformMatrix.CreateScale(x, y, z);
 
-		transform *= TransformMatrix.CreateRotationMatrix(rotationX, Axes.X);
-		transform *= TransformMatrix.CreateRotationMatrix(rotationY, Axes.Y);
-		transform *= TransformMatrix.CreateRotationMatrix(rotationZ, Axes.Z);
+		transform *= TransformMatrix.CreateRotation(rotationX, Axes.X);
+		transform *= TransformMatrix.CreateRotation(rotationY, Axes.Y);
+		transform *= TransformMatrix.CreateRotation(rotationZ, Axes.Z);
 		
-		transform *= TransformMatrix.CreateTranslationMatrix(-Location);
+		transform *= TransformMatrix.CreateTranslation(-Location);
 
 		Points = (this * transform).Points;
 
@@ -248,9 +248,9 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 
 	public void Rotate(Angle angle, Axes axis, Vertex vertex)
 	{
-		var transform = TransformMatrix.CreateTranslationMatrix(vertex);
-		transform *= TransformMatrix.CreateRotationMatrix(angle, axis);
-		transform *= TransformMatrix.CreateTranslationMatrix(-vertex);
+		var transform = TransformMatrix.CreateTranslation(vertex);
+		transform *= TransformMatrix.CreateRotation(angle, axis);
+		transform *= TransformMatrix.CreateTranslation(-vertex);
 
 		Points = (this * transform).Points;
 

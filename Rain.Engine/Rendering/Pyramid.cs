@@ -33,7 +33,7 @@ public class Pyramid : RenderableBase
 		shapeBase.Rotate(-shapeBase.RotationY, Axes.Y);
 		shapeBase.Rotate(-shapeBase.RotationZ, Axes.Z);
 
-		var translateUp = TransformMatrix.CreateTranslationMatrix(0, 0, lengthZ);
+		var translateUp = TransformMatrix.CreateTranslation(0, 0, lengthZ);
 		var tip = new Point(shapeBase.Location * translateUp, shapeBase.Points[0].Color, TextureCoordinate.TopMiddle); 
 
 		var faces = new Face[1 + shapeBase.Sides.Length];
@@ -93,7 +93,7 @@ public class Pyramid : RenderableBase
 		shapeBase.Rotate(-shapeBase.RotationY, Axes.Y);
 		shapeBase.Rotate(-shapeBase.RotationZ, Axes.Z);
 
-		var translateUp = TransformMatrix.CreateTranslationMatrix(0, 0, lengthZ);
+		var translateUp = TransformMatrix.CreateTranslation(0, 0, lengthZ);
 		var tip = new Point(shapeBase.Location * translateUp, color, TextureCoordinate.TopLeft); 
 
 		var faces = new Face[1 + shapeBase.Sides.Length];
@@ -155,7 +155,7 @@ public class Pyramid : RenderableBase
 		shapeBase.Rotate(-shapeBase.RotationY, Axes.Y);
 		shapeBase.Rotate(-shapeBase.RotationZ, Axes.Z);
 
-		var translateUp = TransformMatrix.CreateTranslationMatrix(0, 0, lengthZ);
+		var translateUp = TransformMatrix.CreateTranslation(0, 0, lengthZ);
 		var tip = new Point(shapeBase.Location * translateUp, shapeBase.Points[0].Color, new(0.5f, 1.0f)); 
 
 		var faces = new TexturedFace[1 + shapeBase.Sides.Length];

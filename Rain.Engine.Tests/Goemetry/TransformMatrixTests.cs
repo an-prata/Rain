@@ -59,7 +59,7 @@ public class TransformMatrixTests
 								float eX,   float eY,   float eZ)
 	{
 		var vertex = new Vertex(x, y, z);
-		var translation = TransformMatrix.CreateTranslationMatrix(tX, tY, tZ);
+		var translation = TransformMatrix.CreateTranslation(tX, tY, tZ);
 		Assert.True(translation * vertex == new Vertex(eX, eY, eZ));
 	}
 
@@ -81,7 +81,7 @@ public class TransformMatrixTests
 							 float eX,  float eY,   float eZ)
 	{
 		var vertex = new Vertex(x, y, z);
-		var transformMatrix = TransformMatrix.CreateRotationMatrix(angle, axis);
+		var transformMatrix = TransformMatrix.CreateRotation(angle, axis);
 		Assert.True(vertex * transformMatrix == new Vertex(eX, eY, eZ));
 	}
 }
