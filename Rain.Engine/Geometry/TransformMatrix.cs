@@ -9,6 +9,8 @@ namespace Rain.Engine.Geometry;
 
 public struct TransformMatrix
 {
+	private readonly float[,] matrix;
+
 	public float this[int index0, int index1]
 	{
 		get => matrix[index0, index1];
@@ -24,8 +26,6 @@ public struct TransformMatrix
 	/// The <c>TransformType</c> associated with this <c>TransformMatrix</c>.
 	/// </summary>
 	public TransformType TransformType { get; private set; }
-
-	private float[,] matrix;
 
 	/// <summary> 
 	/// Creates a new TransformMatrix representing the Identity Matrix. 
@@ -101,7 +101,7 @@ public struct TransformMatrix
 	/// <param name="zScale">
 	/// The scale factor to be applied to the <c>Vertex</c>'s Z value.
 	/// </param>
-	public static TransformMatrix CreateScaleMatrix(float xScale, float yScale, float zScale)
+	public static TransformMatrix CreateScale(float xScale, float yScale, float zScale)
 	{
 		var matrix = new float[,]
 		{
@@ -130,7 +130,7 @@ public struct TransformMatrix
 	/// <param name="zTranslation">
 	/// The distance to move along the Z axis.
 	/// </param>
-	public static TransformMatrix CreateTranslationMatrix(float xTranslation, float yTranslation, float zTranslation)
+	public static TransformMatrix CreateTranslation(float xTranslation, float yTranslation, float zTranslation)
 	{
 		var matrix = new float[,]
 		{
@@ -152,8 +152,8 @@ public struct TransformMatrix
 	/// A <c>Vertex</c> who's X, Y, and Z values will be used as distances to translate any multiplied vertex by on their
 	/// respective axis.
 	/// </param>
-	public static TransformMatrix CreateTranslationMatrix(Vertex translation)
-		=> CreateTranslationMatrix(translation.X, translation.Y, translation.Z);
+	public static TransformMatrix CreateTranslation(Vertex translation)
+		=> CreateTranslation(translation.X, translation.Y, translation.Z);
 
 	/// <summary>
 	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects, will rotate the shape
@@ -161,17 +161,17 @@ public struct TransformMatrix
 	/// </summary>
 	/// 
 	/// <param name="angle">
-	/// The angle measer to rotate by.
+	/// The angle measer to rotate by in radians.
 	/// </param>
 	/// 
 	/// <param name="axis">
 	/// The axis to rotate around.
 	/// </param>
-	public static TransformMatrix CreateRotationMatrix(float angle, Axes axis)
+	public static TransformMatrix CreateRotation(float angle, Axes axis)
 	{
 		var matrix = new float[Size, Size];
-		var sinTheta = (float)Sin(Angle.DegreesToRadians(angle));
-		var cosTheta = (float)Cos(Angle.DegreesToRadians(angle));
+		var sinTheta = (float)Sin(angle);
+		var cosTheta = (float)Cos(angle);
 
 		if (axis == Axes.X)
 		{
@@ -219,8 +219,8 @@ public struct TransformMatrix
 	/// <param name="axis">
 	/// The axis to rotate around.
 	/// </param>
-	public static TransformMatrix CreateRotationMatrix(Angle angle, Axes axis)
-		=> CreateRotationMatrix((float)angle.Radians, axis);
+	public static TransformMatrix CreateRotation(Angle angle, Axes axis)
+		=> CreateRotation((float)angle.Radians, axis);
 	
 	/// <summary>
 	/// Creates a new <c>TransformMatrix</c> that, when multiplied with a shape's <c>Vertex</c> objects, will rotate the shape
@@ -238,11 +238,11 @@ public struct TransformMatrix
 	/// <param name="z">
 	/// The angle to rotate around the z axis.
 	/// </param>
-	public static TransformMatrix CreateRotationMatrix(float x, float y, float z)
+	public static TransformMatrix CreateRotation(float x, float y, float z)
 	{
-		var xRotation = CreateRotationMatrix(x, Axes.X);
-		var yRotation = CreateRotationMatrix(y, Axes.Y);
-		var zRotation = CreateRotationMatrix(z, Axes.Z);
+		var xRotation = CreateRotation(x, Axes.X);
+		var yRotation = CreateRotation(y, Axes.Y);
+		var zRotation = CreateRotation(z, Axes.Z);
 
 		return zRotation * yRotation * xRotation;
 	}
@@ -263,8 +263,8 @@ public struct TransformMatrix
 	/// <param name="z">
 	/// The angle to rotate around the z axis.
 	/// </param>
-	public static TransformMatrix CreateRotationMatrix(Angle x, Angle y, Angle z)
-		=> CreateRotationMatrix((float)x.Radians, (float)y.Radians, (float)z.Radians);
+	public static TransformMatrix CreateRotation(Angle x, Angle y, Angle z)
+		=> CreateRotation((float)x.Radians, (float)y.Radians, (float)z.Radians);
 
 	/// <summary>
 	/// Creates a new <c>TransformMatrix</c> that, when multiplied with all of a <c>Scene</c>'s points, will make objects
@@ -272,11 +272,11 @@ public struct TransformMatrix
 	/// </summary>
 	/// 
 	/// <param name="fovX">
-	/// The up-down feild of veiw.
+	/// The left-right feild of veiw.
 	/// </param>
 	/// 
 	/// <param name="fovY">
-	/// The left-right feild of veiw.
+	/// The up-down feild of veiw.
 	/// </param>
 	/// 
 	/// <param name="nearClip">
@@ -286,7 +286,7 @@ public struct TransformMatrix
 	/// <param name="farClip">
 	/// The maximum distance at which objects will be drawn.
 	/// </param>
-	public static TransformMatrix CreatePerspectiveProjectionMatrix(float fovX, float fovY, float nearClip, float farClip)
+	public static TransformMatrix CreatePerspectiveProjection(float fovX, float fovY, float nearClip, float farClip)
 	{
 		var upperBound = nearClip * Tan(0.5f * fovY);
 		var lowerBound = -upperBound;
