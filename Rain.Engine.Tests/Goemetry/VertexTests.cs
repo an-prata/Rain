@@ -22,7 +22,7 @@ public class VertexTests
 
 	[Theory]
 	[InlineData(2)]
-	[InlineData(3)]
+	[InlineData(4)]
 	[InlineData(7)]
 	public void VertexConstructorArgumentExceptionTest(int length)
 	{
