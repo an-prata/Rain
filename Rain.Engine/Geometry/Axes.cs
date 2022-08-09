@@ -5,9 +5,18 @@ namespace Rain.Engine.Geometry;
 
 public enum Axes
 {
+	/// <summary>
+	/// Represents the X axis.
+	/// </summary>
 	X,
 
+	/// <summary>
+	/// Represents the Y axis.
+	/// </summary>
 	Y,
 	
+	/// <summary>
+	/// Represents the Z axis.
+	/// </summary>
 	Z
 }
