@@ -101,9 +101,6 @@ public class GameWindow : OpenTK.Windowing.Desktop.GameWindow
 		// Enable the use of a Texture's alpha component.
 		GL.Enable(EnableCap.Blend);
 		GL.Enable(EnableCap.DepthTest);
-		GL.Enable(EnableCap.StencilTest);
-
-		
 
 		GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 		CursorState = CursorState.Grabbed;

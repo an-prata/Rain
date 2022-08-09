@@ -67,7 +67,6 @@ class Program
 		var models = new IRenderable[] { prism, t_prism, p_floor, p_floor1 };
 		var scene = new Scene(models);
 
-
 		using var game = new GameWindow(new GameOptions
 		{
 			Width = 720,
