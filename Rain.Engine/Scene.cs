@@ -1,15 +1,10 @@
 // Copyright (c) 2022 Evan Overman (https://an-prata.it). Licensed under the MIT License.
 // See LICENSE file in repository root for complete license text.
 
-using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
 
-using Rain.Engine.Geometry;
-using Rain.Engine.Texturing;
 using Rain.Engine.Buffering;
 using Rain.Engine.Rendering;
-
-using TextureUnit = Rain.Engine.Texturing.TextureUnit;
 
 namespace Rain.Engine;
 
@@ -84,7 +79,33 @@ public class Scene : IDisposable
 	/// </param>
 	public void Draw(BufferGroup bufferGroup, ShaderProgram program, PerspectiveProjection perspective)
 	{
-		program.GetUniformByName("perspectiveProjection").SetToPerspectiveProjection(perspective);
+		program.GetUniformByName("perspectiveProjection").SetToMatrix4(perspective);
+
+		Draw(bufferGroup, program);
+	}
+
+	/// <summary>
+	/// Draws the <c>Scene</c> to the <c>GameWindow</c>.
+	/// </summary>
+	/// 
+	/// <param name="bufferGroup">
+	/// The <c>BufferGroup</c> to use to upload data to the GPU.
+	/// </param>
+	/// 
+	/// <param name="program">
+	/// The <c>ShaderProgram</c> to draw with.
+	/// </param>
+	/// 
+	/// <param name="perspective">
+	/// A <c>PerspectiveProjection</c> to create a perspective effect with. 
+	/// </param>
+	/// 
+	/// <param name="camera">
+	/// </param>
+	public void Draw(BufferGroup bufferGroup, ShaderProgram program, PerspectiveProjection perspective, Camera camera)
+	{
+		program.GetUniformByName("perspectiveProjection").SetToMatrix4(perspective);
+		program.GetUniformByName("cameraTransform").SetToMatrix4(camera);
 
 		Draw(bufferGroup, program);
 	}

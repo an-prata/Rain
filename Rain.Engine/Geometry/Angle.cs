@@ -165,4 +165,10 @@ public struct Angle : IEquatable<Angle>
 
 	public static Angle operator /(Angle a, Angle b)
 		=> new() { Radians = a.Radians / b.Radians };
+
+	public static Angle operator *(Angle a, double b)
+		=> new() { Radians = a.Radians * b };
+
+	public static Angle operator /(Angle a, double b)
+		=> new() { Radians = a.Radians / b };
 }
