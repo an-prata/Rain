@@ -8,28 +8,23 @@ namespace Rain.Engine.Rendering;
 
 public class PerspectiveProjection
 {
-	private const float DefaultFov = 1.0f;
-
 	private const float DefaultAspectRatio = 1.0f;
 
 	private const float DefaultNearClip = 0.05f;
 
 	private const float DefaultFarClip = 100.0f;
 
-	private Matrix4 openGLMatrix;
-
-	private Angle fov;
-
-	private float aspectRatio;
-
-	private float nearClip;
-
-	private float farClip;
-
 	/// <summary>
 	/// A reference to a copy of this <c>PerspectiveProjection</c> as an OpenGL compatable <c>Matrix4</c>.
 	/// </summary>
+	/// 
+	/// <remarks>
+	/// Note that while this is a reference, it is a reference to a pre-computed struct, and modifying it will not modify its
+	/// correspoding <c>TransformMatrix</c>.
+	/// </remarks>
 	public virtual ref Matrix4 OpenGLMatrixPerspectiveTransform { get => ref openGLMatrix; }
+
+	private Matrix4 openGLMatrix;
 
 	/// <summary>
 	/// The underlying <c>TransformMatrix</c> of this <c>PerspectiveProjection</c>
@@ -48,6 +43,8 @@ public class PerspectiveProjection
 			PerspectiveMatrix = TransformMatrix.CreatePerspectiveProjection((float)FovX.Radians, (float)FovY.Radians, nearClip, farClip);
 		} 
 	}
+
+	private Angle fov;
 
 	/// <summary>
 	/// The feild of view that this <c>PerspectiveProjection</c> will apply along the X axis.
@@ -80,6 +77,8 @@ public class PerspectiveProjection
 		} 
 	}
 
+	private float aspectRatio;
+
 	/// <summary>
 	/// The distance at which nothing before will be rendered.
 	/// </summary>
@@ -92,6 +91,8 @@ public class PerspectiveProjection
 			PerspectiveMatrix = TransformMatrix.CreatePerspectiveProjection((float)FovX.Radians, (float)FovY.Radians, nearClip, farClip);
 		} 
 	}
+
+	private float nearClip;
 
 	/// <summary>
 	/// The distance at which nothing beyond will be rendered.
@@ -106,7 +107,9 @@ public class PerspectiveProjection
 		} 
 	}
 
-	public PerspectiveProjection(Angle fov, float aspectRatio, float nearClip, float farClip)
+	private float farClip;
+
+	public PerspectiveProjection(Angle fov, float aspectRatio = DefaultAspectRatio, float nearClip = DefaultNearClip, float farClip = DefaultFarClip)
 	{
 		this.fov = fov;
 		this.aspectRatio = aspectRatio;
