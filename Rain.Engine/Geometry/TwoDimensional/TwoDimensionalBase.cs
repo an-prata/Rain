@@ -94,7 +94,7 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 	public abstract void CopyTo(out TwoDimensionalBase twoDimensional);
 
 	public void Translate(float x, float y, float z)
-		=> Points = (this * TransformMatrix.CreateTranslation(x, y, z)).Points;
+		=> Points *= TransformMatrix.CreateTranslation(x, y, z);
 
 	public void Translate(Vertex vertex)
 		=> Translate(vertex.X, vertex.Y, vertex.Z);
@@ -115,7 +115,7 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 		
 		transform *= TransformMatrix.CreateTranslation(-Location);
 
-		Points = (this * transform).Points;
+		Points *= transform;
 
 		width *= x;
 		height *= y;
@@ -138,7 +138,7 @@ public abstract class TwoDimensionalBase : ITwoDimensional, ISpacial
 		transform *= TransformMatrix.CreateRotation(angle, axis);
 		transform *= TransformMatrix.CreateTranslation(-vertex);
 
-		Points = (this * transform).Points;
+		Points *= transform;
 
 		switch(axis)
 		{

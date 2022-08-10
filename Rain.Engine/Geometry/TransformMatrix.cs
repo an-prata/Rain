@@ -405,26 +405,53 @@ public struct TransformMatrix
 		return new TransformMatrix(matrix, TransformType.Complex);
 	}
 
-	public static Vertex operator *(TransformMatrix a, Vertex b)
+	public static Vertex operator *(Vertex vertex, TransformMatrix matrix) => matrix * vertex;
+
+	public static Vertex operator *(TransformMatrix matrix, Vertex vertex)
 	{
 		return new Vertex
 		(
-			(a.matrix[0, 0] * b.X) + (a.matrix[0, 1] * b.Y) + (a.matrix[0, 2] * b.Z) + a.matrix[0, 3],
-			(a.matrix[1, 0] * b.X) + (a.matrix[1, 1] * b.Y) + (a.matrix[1, 2] * b.Z) + a.matrix[1, 3],
-			(a.matrix[2, 0] * b.X) + (a.matrix[2, 1] * b.Y) + (a.matrix[2, 2] * b.Z) + a.matrix[2, 3]
+			(matrix.matrix[0, 0] * vertex.X) + (matrix.matrix[0, 1] * vertex.Y) + (matrix.matrix[0, 2] * vertex.Z) + matrix.matrix[0, 3],
+			(matrix.matrix[1, 0] * vertex.X) + (matrix.matrix[1, 1] * vertex.Y) + (matrix.matrix[1, 2] * vertex.Z) + matrix.matrix[1, 3],
+			(matrix.matrix[2, 0] * vertex.X) + (matrix.matrix[2, 1] * vertex.Y) + (matrix.matrix[2, 2] * vertex.Z) + matrix.matrix[2, 3]
 		);
 	}
 
-	public static Vertex operator *(Vertex a, TransformMatrix b) => b * a;
+	public static Point operator *(Point a, TransformMatrix b) => b * a;
 
-	public static ITwoDimensional operator *(ITwoDimensional a, TransformMatrix b) => b * a;
-
-	public static ITwoDimensional operator *(TransformMatrix a, ITwoDimensional b)
+	public static Point operator *(TransformMatrix a, Point b)
 	{
-		for (var i = 0; i < b.Points.Length; i++)
-			b.Points[i].Vertex *= a;
+		var vertex = new Vertex(
+			(a.matrix[0, 0] * b.Vertex.X) + (a.matrix[0, 1] * b.Vertex.Y) + (a.matrix[0, 2] * b.Vertex.Z) + a.matrix[0, 3],
+			(a.matrix[1, 0] * b.Vertex.X) + (a.matrix[1, 1] * b.Vertex.Y) + (a.matrix[1, 2] * b.Vertex.Z) + a.matrix[1, 3],
+			(a.matrix[2, 0] * b.Vertex.X) + (a.matrix[2, 1] * b.Vertex.Y) + (a.matrix[2, 2] * b.Vertex.Z) + a.matrix[2, 3]
+		);
 
-		return b;
+		return new Point(vertex, b.Color, b.TextureCoordinate);
+	}
+
+	public static Vertex[] operator *(in TransformMatrix matrix, in Vertex[] vertices) => vertices * matrix;
+
+	public static Vertex[] operator *(in Vertex[] vertices, in TransformMatrix matrix)
+	{
+		var transformedVertices = new Vertex[vertices.Length];
+
+		for (var vertex = 0; vertex < transformedVertices.Length; vertex++)
+			transformedVertices[vertex] = vertices[vertex] * matrix;
+		
+		return transformedVertices;
+	}
+
+	public static Point[] operator *(in TransformMatrix matrix, in Point[] points) => points * matrix;
+
+	public static Point[] operator *(in Point[] points, in TransformMatrix matrix)
+	{
+		var transformedPoints = new Point[points.Length];
+
+		for (var point = 0; point < transformedPoints.Length; point++)
+			transformedPoints[point] = points[point] * matrix;
+		
+		return transformedPoints;
 	}
 
 	public static bool operator ==(TransformMatrix a, TransformMatrix b)
