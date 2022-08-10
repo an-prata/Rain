@@ -207,7 +207,7 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 	}
 
 	public void Translate(float x, float y, float z)
-		=> Points = (this * TransformMatrix.CreateTranslation(x, y, z)).Points;
+		=> Points *= TransformMatrix.CreateTranslation(x, y, z);
 
 	public void Translate(Vertex vertex)
 		=> Translate(vertex.X, vertex.Y, vertex.Z);
@@ -228,7 +228,7 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		
 		transform *= TransformMatrix.CreateTranslation(-Location);
 
-		Points = (this * transform).Points;
+		Points *= transform;
 
 		lengthX *= x;
 		lengthY *= y;
@@ -252,7 +252,7 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 		transform *= TransformMatrix.CreateRotation(angle, axis);
 		transform *= TransformMatrix.CreateTranslation(-vertex);
 
-		Points = (this * transform).Points;
+		Points *= transform;
 
 		switch(axis)
 		{
@@ -308,20 +308,6 @@ public abstract class RenderableBase : IRenderable, IEquatable<RenderableBase>
 			return false;
 
         return Equals(obj);
-	}
-
-	public static RenderableBase operator *(RenderableBase a, TransformMatrix b) => b * a;
-
-	public static RenderableBase operator *(TransformMatrix a, RenderableBase b)
-	{
-		var points = b.Points;
-
-		for (var point = 0; point < points.Length; point++)
-			points[point].Vertex *= a;
-		
-		b.Points = points;
-
-		return b;
 	}
 
 	public static bool operator ==(RenderableBase a, RenderableBase b) => a.Equals(b);
