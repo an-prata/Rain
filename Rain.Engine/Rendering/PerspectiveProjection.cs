@@ -6,6 +6,14 @@ using Rain.Engine.Geometry;
 
 namespace Rain.Engine.Rendering;
 
+/// <summary>
+/// A class utilizing the perspective <c>TransformMatrix</c> to give the illusion of perspective in rendering.
+/// </summary>
+/// 
+/// <remarks>
+/// Applying this <c>PerspectiveProjection</c> outside the shader program will not bring desired results as the <c>Vertex</c>
+/// struct lacks a W component.
+/// </remarks>
 public class PerspectiveProjection
 {
 	private const float DefaultAspectRatio = 1.0f;
@@ -65,7 +73,7 @@ public class PerspectiveProjection
 	public Angle FovY { get => Fov; }
 
 	/// <summary>
-	/// The ratio of the display area's length over its height.
+	/// The ratio of the display area's width over its height.
 	/// </summary>
 	public float AspectRatio 
 	{ 
@@ -109,6 +117,25 @@ public class PerspectiveProjection
 
 	private float farClip;
 
+	/// <summary>
+	/// Creates a new <c>PerspectiveProjection</c>.
+	/// </summary>
+	/// 
+	/// <param name="fov">
+	/// The feild of view that this <c>PerspectiveProjection</c> will apply to transformed vertices.
+	/// </param>
+	/// 
+	/// <param name="aspectRatio">
+	/// The ratio of the view areas width over its height.
+	/// </param>
+	/// 
+	/// <param name="nearClip">
+	/// The distance at which nothing before will be rendered.
+	/// </param>
+	/// 
+	/// <param name="farClip">
+	/// The distance at which nothing beyond will be rendered.
+	/// </param>
 	public PerspectiveProjection(Angle fov, float aspectRatio = DefaultAspectRatio, float nearClip = DefaultNearClip, float farClip = DefaultFarClip)
 	{
 		this.fov = fov;
