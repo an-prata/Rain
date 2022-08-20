@@ -2,6 +2,7 @@
 // See LICENSE file in repository root for complete license text.
 
 using OpenTK.Graphics.OpenGL;
+using Rain.Engine.Geometry;
 using Rain.Engine.Rendering;
 using Rain.Engine.Texturing;
 
@@ -91,6 +92,26 @@ public class Uniform
 	/// </param>
 	public void SetToBool(bool x)
 		=> GL.Uniform1(Handle, x ? 1 : 0);
+
+	/// <summary>
+	/// Sets a <c>vec3</c> uniform to the specified <c>Vertex</c>.
+	/// </summary>
+	/// 
+	/// <param name="vertex">
+	/// The <c>Vertex</c> to set.
+	/// </param>
+	public void SetToVertex(Vertex vertex)
+		=> GL.Uniform3(Handle, vertex.X, vertex.Y, vertex.Z);
+
+	/// <summary>
+	/// Sets a <c>vec4</c> uniform to the specified <c>Color</c>.
+	/// </summary>
+	/// 
+	/// <param name="color">
+	/// The <c>Color</c> to set.
+	/// </param>
+	public void SetToColor(Color color)
+		=> GL.Uniform4(Handle, color.R, color.G, color.B, color.A);
 	
 	/// <summary>
 	/// Sets the uniform to a <c>PerspectiveProjection</c>. 
@@ -102,6 +123,13 @@ public class Uniform
 	public void SetToMatrix4(PerspectiveProjection projection)
 		=> GL.UniformMatrix4(Handle, true, ref projection.OpenGLMatrixPerspectiveTransform);
 
+	/// <summary>
+	/// Sets the uniform to a <c>Camera</c>. 
+	/// </summary>
+	/// 
+	/// <param name="projection">
+	/// The <c>Camera</c> to use.
+	/// </param>
 	public void SetToMatrix4(Camera projection)
 		=> GL.UniformMatrix4(Handle, true, ref projection.OpenGLMatrixCameraTranform);
 }
