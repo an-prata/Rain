@@ -162,6 +162,13 @@ public struct Vertex : ISpacial, IEquatable<Vertex>
 		return new((float)(vertex.X * scale), (float)(vertex.Y * scale), (float)(vertex.Z * scale));
 	}
 
+	public static Vertex GetNormal(Vertex a, Vertex b, Vertex c)
+	{
+		var normal = CrossProduct(b - a, c - a);
+		Normalize(normal);
+		return normal;
+	}
+
 	public override int GetHashCode()
 		=> (X, Y, Z).GetHashCode();
 
